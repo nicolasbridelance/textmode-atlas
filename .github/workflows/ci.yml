@@ -98,6 +98,8 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Generate Paraglide messages and SvelteKit types
+        run: pnpm --filter museum run prepare
       - name: Unused TypeScript code and dependencies, duplication
         run: |
           pnpm run hygiene:unused
