@@ -59,6 +59,6 @@ The first thing a visitor sees, built in pipeline order so that nothing is throw
 | Item | Why it matters | Plan |
 | --- | --- | --- |
 | Paraglide fetches its inlang plugins from a CDN at build time | breaks the offline, reproducible build goal | spike 0003 |
-| TAKEDOWN has no contact address | withdrawals must not go through public issues | publish with the domain name |
+| Contact address is a personal Gmail | fine for now; should become a project address | move to the domain once chosen |
 | Embedding tables not in the schema | their dimension depends on models not chosen yet | add with research workstream 1 |
 | OpenTofu for staging / production not written | needed from M4 | after the host decision |

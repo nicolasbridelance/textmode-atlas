@@ -19,8 +19,8 @@ Every record in the museum offers four actions. Each one opens a moderation tick
 
 The site has no form yet. Until it does:
 
-- **for a withdrawal**, write to the project's contact address (*to be published with the domain
-  name*) rather than opening a public issue;
+- **for a withdrawal**, write to **ennead.studio@gmail.com** (subject: "textmode-atlas withdrawal")
+  rather than opening a public issue. A link to the record, or the title and handle, is enough;
 - for anything else, open an issue with the matching template.
 
 A withdrawal requires no proof of ownership: when in doubt, the museum withdraws. A request to

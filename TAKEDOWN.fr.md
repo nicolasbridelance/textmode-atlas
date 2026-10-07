@@ -19,8 +19,9 @@ Chaque fiche du musée propose quatre actions. Chacune ouvre un ticket de modér
 
 Le site n'a pas encore de formulaire. En attendant :
 
-- **pour un retrait**, écrivez à l'adresse de contact du projet (*publiée avec le nom de domaine*)
-  plutôt que d'ouvrir un ticket public ;
+- **pour un retrait**, écrivez à **ennead.studio@gmail.com** (objet : « textmode-atlas retrait »)
+  plutôt que d'ouvrir un ticket public. Un lien vers la fiche, ou le titre et le pseudonyme,
+  suffisent ;
 - pour le reste, ouvrez un ticket avec le modèle correspondant.
 
 Un retrait n'exige aucune preuve de propriété : dans le doute, le musée retire. Une demande
