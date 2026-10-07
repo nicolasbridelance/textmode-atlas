@@ -65,6 +65,10 @@ unused:
 duplicates:
     pnpm run hygiene:duplicates
 
+# ansilove draws every golden artifact with the recorded pixels (ADR 0010); needs ansilove
+parity:
+    uv run --frozen python scripts/check_ansilove_parity.py
+
 # Post-commit pruning candidates (report only; see CLAUDE.md, post-commit protocol)
 hygiene: unused duplicates
     @echo "── TODO / FIXME (each must link an issue)"

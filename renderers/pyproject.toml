@@ -7,7 +7,7 @@ version = "0.0.0"
 description = "Decoders (ANSI, ASCII, XBIN, SAUCE) and renderers"
 requires-python = ">=3.12,<3.13"
 license = "Apache-2.0"
-dependencies = ["pyarrow>=18"]
+dependencies = ["pillow>=11", "pyarrow>=18"]
 
 [build-system]
 requires = ["hatchling"]

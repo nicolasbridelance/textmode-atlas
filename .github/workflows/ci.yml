@@ -87,6 +87,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - run: docker run --rm tm-dev:ci sh -c "ansilove -v && uv --version && just --version"
+      - name: ansilove draws the golden artifacts with the recorded pixels (ADR 0010)
+        run: docker run --rm -v "$PWD:/w" -w /w tm-dev:ci just parity
 
   licenses:
     runs-on: ubuntu-24.04
