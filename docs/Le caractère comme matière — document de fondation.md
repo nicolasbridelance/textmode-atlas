@@ -317,12 +317,12 @@ textmode-atlas/
 
 Les commandes exactes de `uv` et de SvelteKit évoluent ; elles sont à vérifier contre leur documentation au moment de l'exécution.
 
-Écarts constatés au scaffold (2026-10-07) :
+Les décisions qui précisent ou modifient ce document sont consignées en ADR dans [docs/adr/](adr/) ; ce document en garde le résultat. Écarts constatés au scaffold :
 
-- **MinIO n'est plus distribué en image publique.** Il est remplacé par **Garage** (Deuxfleurs, association française), compatible S3. Garage ne gère pas le versionnement d'objets : l'écriture unique des originaux est garantie par `tm.storage.put_original`, qui n'écrit jamais sur une clé existante. Le versionnement reste activé côté Scaleway en production.
-- **Garage n'a pas de console web.** Le bucket public est servi en lecture par son point d'accès web (port 3902), que le serveur de développement du site atteint par un proxy `/files`, comme le CDN en production.
-- **SvelteKit 3** déclare ses variables d'environnement dans `src/env.ts` (`defineEnvVars`) et les expose par `$app/env/public`.
+- **Garage** remplace MinIO pour le stockage S3 local ([ADR 0003](adr/0003-garage-for-local-object-storage.md)).
+- **SvelteKit 3** déclare ses variables d'environnement dans `src/env.ts` et les expose par `$app/env/public`.
 - Le site est créé par `sv create` avec les modules officiels : TypeScript, Prettier, ESLint, Vitest, Playwright, `adapter-static`, Paraglide.
+- Langues : [ADR 0004](adr/0004-english-repository-multilingual-museum.md) ; police de référence : [ADR 0005](adr/0005-reference-font-from-libansilove.md) ; affichage : [ADR 0006](adr/0006-display-requires-permission.md).
 
 ## Schéma : œuvres et fichiers
 

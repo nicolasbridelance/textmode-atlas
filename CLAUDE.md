@@ -15,8 +15,16 @@ first, in the same pull request.
 [docs/journal/](docs/journal/), `git log --oneline -15` and `git status`. Take the next unchecked
 task of the current focus unless the owner asks otherwise.
 
+**Autonomous mode** ([ADR 0008](docs/adr/0008-autonomous-development.md)). Claude opens and
+merges its own pull requests once every CI job is green; the owner reviews afterwards. Ask the
+owner only for what needs a person (accounts, secrets, contacts, legal or financial decisions);
+prepare anything sent on his behalf, never send it.
+
 **During the session.**
 - One topic per branch (`feat/work-screen`, `fix/…`), merged into `main` by pull request.
+- A decision that is hard to reverse, has alternatives, or departs from the spec → an ADR in
+  [docs/adr/](docs/adr/). An unknown that blocks a decision → a time-boxed spike on a
+  `spike/NNNN-topic` branch, never merged, reported in [docs/spikes/](docs/spikes/).
 - Visible changes are checked in rendering, not only in code: `just shots [path…]`, then look at
   the images (desktop and mobile, every locale).
 - Commits follow the rules below; `just check` must be green before a push (the pre-push hook

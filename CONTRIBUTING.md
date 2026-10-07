@@ -23,7 +23,10 @@ identity without that person's consent.
 
 ## Method
 
-- One branch per topic, a reviewed pull request, a green CI. `main` is protected.
+- One branch per topic and a pull request; a green CI is required to merge (see
+  [ADR 0008](docs/adr/0008-autonomous-development.md)).
+- Significant decisions are recorded in [docs/adr/](docs/adr/); explorations are time-boxed
+  [spikes](docs/spikes/) whose code is never merged.
 - `just hooks` installs git hooks: fast checks on commit, message rules, `just check` on push.
 - Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/):
   `type(scope): summary`, subject of 72 characters at most, a body that says why. A functional

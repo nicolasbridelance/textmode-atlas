@@ -37,7 +37,17 @@ The first thing a visitor sees, built in pipeline order so that nothing is throw
 - [ ] Work screen: canvas renderer from the grid and the bitmap font, profile switch, modem-speed playback, zoom to the cell, draw-order layer (honest about file order versus gesture)
 - [ ] Visual regression screenshots of the golden artifacts
 
+## Spikes to run
+
+| Spike | Question | Time box | Before |
+| --- | --- | --- | --- |
+| 0001 | Does our grid renderer match ansilove pixel for pixel on real packs (blink, iCE, 9th column, SAUCE flags)? Files stay local. | 3 h | conservation renderer |
+| 0002 | Can a canvas draw a 500-line ANSI at cell zoom and modem speed at 60 fps on a mid-range phone? | 2 h | work screen |
+| 0003 | Can Paraglide build offline (vendored inlang plugins)? | 1 h | known debt below |
+
 ## M0 tasks that need a person (Nicolas)
+
+- [ ] Branch protection on `main`: require the CI jobs (python, web, licenses, secrets, commits), no required review (ADR 0008)
 
 - [ ] Contacts: 16colo.rs, Demozoo, IF Archive (access, API limits, terms)
 - [ ] Radios: Nectarine, SLAY Radio, Ericade, Kohina, BitJam (agreement, HTTPS stream)
@@ -48,7 +58,7 @@ The first thing a visitor sees, built in pipeline order so that nothing is throw
 
 | Item | Why it matters | Plan |
 | --- | --- | --- |
-| Paraglide fetches its inlang plugins from a CDN at build time | breaks the offline, reproducible build goal | vendor the plugins or pin them in the lockfile |
+| Paraglide fetches its inlang plugins from a CDN at build time | breaks the offline, reproducible build goal | spike 0003 |
 | TAKEDOWN has no contact address | withdrawals must not go through public issues | publish with the domain name |
 | Embedding tables not in the schema | their dimension depends on models not chosen yet | add with research workstream 1 |
 | OpenTofu for staging / production not written | needed from M4 | after the host decision |
