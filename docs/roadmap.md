@@ -62,8 +62,8 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 ## M0 tasks that need a person (Nicolas)
 
 - [x] Branch protection on `main`: ruleset with the CI jobs required, no review (ADR 0008)
-- [ ] Add `devcontainer` to the required checks of the `main` ruleset
-- [ ] Repository description and topics (the Codespaces token cannot set them)
+- [x] Add `devcontainer` to the required checks of the `main` ruleset
+- [x] Repository description and topics
 
 - [ ] Before M4: contacts with 16colo.rs, Demozoo, IF Archive (access, API limits, terms); not needed before, packs and API are public
 - [ ] Radios: Nectarine, SLAY Radio, Ericade, Kohina, BitJam (agreement, HTTPS stream); until then the site links out to the station instead of embedding its stream
