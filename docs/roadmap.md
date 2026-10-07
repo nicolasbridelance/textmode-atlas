@@ -29,8 +29,8 @@ Status: ✅ done · 🔨 in progress · ⏳ next · 💤 later
 The first thing a visitor sees, built in pipeline order so that nothing is throwaway.
 
 - [x] Push `scaffold`, open the pull request, get the first CI run green ([#1](https://github.com/nicolasbridelance/textmode-atlas/pull/1))
-- [ ] Golden artifact #1: an ANSI made for the project (CC0), with its SAUCE record
-- [ ] `tm_render`: SAUCE reader; ANSI/CP437 decoder → grid (`row, col, codepoint, fg, bg, blink, t`) in Parquet; property tests (no input crashes a decoder)
+- [x] Golden artifact #1: Horizon, an ANSI made for the project (CC0), with its SAUCE record; also the README showcase
+- [x] `tm_render`: SAUCE reader; ANSI/CP437 decoder → grid (`row, col, codepoint, fg, bg, blink, t`) in Parquet; property tests (no input crashes a decoder)
 - [ ] `tm ingest` for the golden source → `source`, `work`, `version`, `artifact` rows; `tm decode` → `decoding` rows
 - [ ] Conservation renderer (Python → PNG, integer scale, 9th column, blink / iCE) with recipe; determinism test; comparison with ansilove
 - [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`; refuses a shown file without credit (ADR 0009)
@@ -61,7 +61,9 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 
 ## M0 tasks that need a person (Nicolas)
 
-- [ ] Branch protection on `main`: require the CI jobs (python, web, licenses, secrets, commits), no required review (ADR 0008)
+- [x] Branch protection on `main`: ruleset with the CI jobs required, no review (ADR 0008)
+- [ ] Add `devcontainer` to the required checks of the `main` ruleset
+- [ ] Repository description and topics (the Codespaces token cannot set them)
 
 - [ ] Before M4: contacts with 16colo.rs, Demozoo, IF Archive (access, API limits, terms); not needed before, packs and API are public
 - [ ] Radios: Nectarine, SLAY Radio, Ericade, Kohina, BitJam (agreement, HTTPS stream); until then the site links out to the station instead of embedding its stream
@@ -76,5 +78,8 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 | --- | --- | --- |
 | Paraglide fetches its inlang plugins from a CDN at build time | breaks the offline, reproducible build goal | spike 0003 |
 | Contact address is a personal Gmail | fine for now; should become a project address | move to the domain once chosen |
+| Vitest 5 and @vitest/browser-playwright 5 | must move together; the config fails at startup ("reading 'project'") | dedicated migration |
+| TypeScript 7 (Dependabot #11) | first CI run failed for an unrelated reason; rebase requested | merge if green after rebase |
+| deptry passed locally but failed in CI on first-party imports | local and CI environments differ | first-party packages are now declared explicitly; watch for other differences |
 | Embedding tables not in the schema | their dimension depends on models not chosen yet | add with research workstream 1 |
 | OpenTofu for staging / production not written | needed from M4 | after the host decision |
