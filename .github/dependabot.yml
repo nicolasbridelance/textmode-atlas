@@ -1,16 +1,35 @@
 # SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 # SPDX-License-Identifier: Apache-2.0
+#
+# Updates are grouped so that one pull request (and one CI run) covers each ecosystem's routine
+# bumps. Major versions come separately: they often need code changes.
 version: 2
 updates:
   - package-ecosystem: uv
     directory: /
     schedule: { interval: weekly }
+    groups:
+      python-minor:
+        update-types: [minor, patch]
+
   - package-ecosystem: npm
     directory: /
     schedule: { interval: weekly }
+    groups:
+      web-minor:
+        update-types: [minor, patch]
+    ignore:
+      # Types must match the Node version of the toolchain (24), not the latest Node.
+      - dependency-name: "@types/node"
+        update-types: [version-update:semver-major]
+
   - package-ecosystem: github-actions
     directory: /
     schedule: { interval: weekly }
+    groups:
+      actions:
+        patterns: ["*"]
+
   - package-ecosystem: docker
     directory: /.devcontainer
     schedule: { interval: monthly }
