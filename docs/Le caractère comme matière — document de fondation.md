@@ -41,7 +41,7 @@ La stack proposée tient en sept composants, tous standards et remplaçables.
 | Base | PostgreSQL 16 + pgvector | modèle, assertions, droits, embeddings |
 | Originaux et rendus | stockage objet compatible S3, clé = SHA-256 | fichiers, hors Git |
 | Ingestion et analyse | Python 3.12, un CLI unique `tm` | connecteurs, décodeurs, features |
-| Rendu ANSI, XBIN, ASCII | ansilove, version épinglée | PNG de conservation et profils |
+| Rendu ANSI, XBIN, ASCII | `tm_render`, à partir de la grille ; ansilove épinglé comme référence | PNG de conservation et profils |
 | Rendu PETSCII, ATASCII, télétexte | moteurs maison à partir de la grille | un module par système |
 | API | FastAPI, service minimal | formulaires, recherche, modération |
 | Site | SvelteKit, lecteur ANSI en JavaScript | timeline, fiches, lecture temporisée |
@@ -260,7 +260,7 @@ Garanties propres au projet :
 - **Idempotence.** Chaque commande `tm` est exécutée deux fois en test ; l'état final doit être identique.
 - **Fichiers de test.** Les artefacts de référence sont des œuvres créées pour le projet, sous CC0.
 - **Branche protégée.** `main` exige une revue et une CI verte ; les dépendances sont verrouillées (`uv.lock`, `pnpm-lock.yaml`).
-- **Reproductibilité.** L'image de conteneur fixe les versions d'ansilove et des polices ; son digest figure dans chaque recette de rendu.
+- **Reproductibilité.** Chaque recette de rendu porte la version de `tm_render` et les empreintes de la grille, de la police et de l'image ; l'image de conteneur fixe la version d'ansilove, qui sert de référence de comparaison.
 
 ## Scaffold
 
@@ -322,7 +322,7 @@ Les décisions qui précisent ou modifient ce document sont consignées en ADR d
 - **Garage** remplace MinIO pour le stockage S3 local ([ADR 0003](adr/0003-garage-for-local-object-storage.md)).
 - **SvelteKit 3** déclare ses variables d'environnement dans `src/env.ts` et les expose par `$app/env/public`.
 - Le site est créé par `sv create` avec les modules officiels : TypeScript, Prettier, ESLint, Vitest, Playwright, `adapter-static`, Paraglide.
-- Langues : [ADR 0004](adr/0004-english-repository-multilingual-museum.md) ; police de référence : [ADR 0005](adr/0005-reference-font-from-libansilove.md) ; affichage : [ADR 0006](adr/0006-display-requires-permission.md).
+- Langues : [ADR 0004](adr/0004-english-repository-multilingual-museum.md) ; police de référence : [ADR 0005](adr/0005-reference-font-from-libansilove.md) ; rendu depuis la grille, ansilove en référence : [ADR 0010](adr/0010-render-from-the-grid.md) ; affichage : [ADR 0006](adr/0006-display-requires-permission.md).
 
 ## Schéma : œuvres et fichiers
 
@@ -514,8 +514,8 @@ Il existe plusieurs profils par système (carte, police, clignotement ou couleur
 
 ```json
 {
-  "renderer": "ansilove", "renderer_version": "<x.y.z>",
-  "container_digest": "sha256:...",
+  "renderer": "tm_render", "renderer_version": "<x.y.z>",
+  "grid_sha256": "...", "output_sha256": "...",
   "profile": "pc-vga-bbs-1994", "font_sha256": "...",
   "scale": 4, "interpolation": "none"
 }

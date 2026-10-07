@@ -38,3 +38,4 @@ And the ADR it leads to, if any.
 
 | Spike | Question | Outcome |
 | --- | --- | --- |
+| [0001](0001-ansilove-parity.md) | Does our grid renderer match ansilove pixel for pixel? | yes, 96 of 99 VGA files; the rest explained → [ADR 0010](../adr/0010-render-from-the-grid.md) |
