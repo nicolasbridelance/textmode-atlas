@@ -72,6 +72,22 @@ jobs:
           done
           exit $status
 
+  devcontainer:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v3
+      - name: Build the development image and check its tools
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .devcontainer/Dockerfile
+          tags: tm-dev:ci
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - run: docker run --rm tm-dev:ci sh -c "ansilove -v && uv --version && just --version"
+
   licenses:
     runs-on: ubuntu-24.04
     steps:

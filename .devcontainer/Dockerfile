@@ -18,7 +18,7 @@ RUN apt-get update \
 
 # uv and just
 COPY --from=ghcr.io/astral-sh/uv:0.12.23 /uv /uvx /usr/local/bin/
-RUN uv tool install --tool-dir /opt/uv-tools --bin-dir /usr/local/bin "rust-just==${JUST_VERSION}"
+RUN UV_TOOL_DIR=/opt/uv-tools UV_TOOL_BIN_DIR=/usr/local/bin uv tool install "rust-just==${JUST_VERSION}"
 
 # ansilove, built from pinned releases (libansilove, then ansilove)
 RUN set -eux; cd /tmp; \
