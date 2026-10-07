@@ -44,6 +44,6 @@ SPDX-License-Identifier = "CC-BY-4.0"
 
 # Golden artifacts: works made for the project, dedicated to the public domain.
 [[annotations]]
-path = ["tests/golden/**/*.ans", "docs/assets/*.png"]
+path = ["tests/golden/**/*.ans", "tests/golden/renderings.json", "docs/assets/*.png"]
 SPDX-FileCopyrightText = "2026 textmode-atlas contributors"
 SPDX-License-Identifier = "CC0-1.0"
