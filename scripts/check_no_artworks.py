@@ -53,7 +53,8 @@ ARTWORK_EXTENSIONS = {
     ".jpg",
     ".jpeg",
 }
-ALLOWED_PREFIXES = ("tests/golden/", "apps/museum/static/favicon")
+# Golden artifacts and their renderings are made for the project (CC0, see REUSE.toml).
+ALLOWED_PREFIXES = ("tests/golden/", "docs/assets/", "apps/museum/static/favicon")
 MAX_BYTES = 512 * 1024
 
 
