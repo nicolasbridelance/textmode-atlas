@@ -7,12 +7,53 @@ SPDX-License-Identifier: CC-BY-4.0
 Digital Museum of Character Arts. The reference specification is the
 [foundation document](docs/Le%20caractère%20comme%20matière%20—%20document%20de%20fondation.md)
 (French). When in doubt it is authoritative; if code must depart from it, change the document
-first.
+first, in the same pull request.
 
-## Status
+## Working protocol
 
-Milestone M0 (framing) and scaffold. Preliminary reports in `docs/research/` are Deep Research
-output: leads to verify at the primary source, never sources themselves.
+**Session start.** Read [docs/roadmap.md](docs/roadmap.md), the latest entry in
+[docs/journal/](docs/journal/), `git log --oneline -15` and `git status`. Take the next unchecked
+task of the current focus unless the owner asks otherwise.
+
+**During the session.**
+- One topic per branch (`feat/work-screen`, `fix/…`), merged into `main` by pull request.
+- Visible changes are checked in rendering, not only in code: `just shots [path…]`, then look at
+  the images (desktop and mobile, every locale).
+- Commits follow the rules below; `just check` must be green before a push (the pre-push hook
+  runs it).
+
+**After each functional commit** (post-commit protocol, docs/vibe-coding-rules.md):
+1. Run `just hygiene`. Remove what the commit made obsolete: dead code, temporary files, debug
+   output, orphan fixtures, stale TODOs. Run the tests first. Up to ~30 lines or 3 files, do it;
+   beyond that, or when unsure (dynamic use, documented skip, TODO linked to an issue), list the
+   candidates and ask. Separate commit: `chore(hygiene): …`.
+2. Audit the touched area. If friction, special cases or duplication grew (rule of three),
+   propose a refactor: target, warning signal, expected gain, 2–3 step plan. Never execute it
+   without approval.
+
+**Session end.** Write `docs/journal/YYYY-MM-DD.md` (goal, done, decisions, problems, state,
+next). Update the roadmap checkboxes and known debt. Update this file if a convention changed.
+
+## Commit rules
+
+- Conventional Commits, enforced by the `commit-msg` hook: `type(scope): summary`, type in
+  feat, fix, refactor, perf, test, docs, build, ci, chore, revert; subject ≤ 72 characters,
+  imperative, no final period; the body says why.
+- Two stages, two commits: the functional change (`feat`/`fix`), then pruning
+  (`chore(hygiene)`). Never mix behavior, cleanup and formatting in one commit.
+- End every message with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+
+## Code rules
+
+[docs/vibe-coding-rules.md](docs/vibe-coding-rules.md) (French). What a tool can decide is
+enforced by tools, so it is not repeated here: complexity ≤ 8, nesting depth, magic numbers,
+print / console, commented-out code, TODO without issue link (ruff, ESLint); unused code and
+dependencies (vulture, deptry, knip); duplication (jscpd). What stays judgment: single
+responsibility, YAGNI, KISS, dependency injection, law of Demeter, fail fast with a useful
+message, names that make comments unnecessary.
+
+Logging: `logging.getLogger(__name__)` in library code, configured once by the CLI; user-facing
+output through `typer.echo`; `print` only in `scripts/`.
 
 ## Invariants (enforced by code)
 
@@ -43,19 +84,22 @@ output: leads to verify at the primary source, never sources themselves.
 - **Target architecture from the first line.** No throwaway prototype: each piece goes where the
   spec puts it (the site reads grids exported by the Python pipeline, it never decodes ANSI itself).
 - Python 3.12, `uv` workspace (`ingest/` → `tm`, `renderers/` → `tm_render`, `analysis/` →
-  `tm_analysis`, `api/` → `tm_api`); `ruff`, `pyright` strict.
+  `tm_analysis`, `api/` → `tm_api`); dependencies are added with the code that uses them.
 - Every `tm` command is idempotent. Decoders never crash: unreadable input yields a classified error.
 - Schema changes are Alembic migrations in raw SQL; invariants live in constraints and triggers,
   each with a test that makes it fail.
 - REUSE: SPDX header on every file (code Apache-2.0; data CC0-1.0; texts CC-BY-4.0).
 - Secrets come from the environment (`TM_*`), never from files in the repository.
+- Preliminary reports in `docs/research/` are leads to verify at the primary source.
 
 ## Commands
 
 ```sh
-just setup        # deps, services (PostgreSQL + Garage), migrations, storage
+just setup        # deps, services (PostgreSQL + Garage), migrations, storage, git hooks
 just check        # everything CI runs
 just test -k foo  # pytest with args
+just hygiene      # post-commit pruning candidates
+just shots /fr    # screenshots of the built site
 uv run tm --help  # corpus check|schema, dev storage-init
 ```
 
