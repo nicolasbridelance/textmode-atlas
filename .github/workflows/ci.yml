@@ -37,7 +37,7 @@ jobs:
       - uses: astral-sh/setup-uv@v7
         with:
           version: "0.12.23"
-      - uses: extractions/setup-just@v3
+      - uses: extractions/setup-just@v4
       - run: uv sync --all-groups --locked
       - name: Style and format
         run: just lint
