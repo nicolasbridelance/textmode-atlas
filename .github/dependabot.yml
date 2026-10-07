@@ -22,6 +22,10 @@ updates:
       # Types must match the Node version of the toolchain (24), not the latest Node.
       - dependency-name: "@types/node"
         update-types: [version-update:semver-major]
+      # TypeScript 7 (the native compiler) drops the JS API that svelte-kit sync, svelte-check,
+      # ESLint and knip call (#11). Lift this once they support it.
+      - dependency-name: typescript
+        versions: [">=7"]
 
   - package-ecosystem: github-actions
     directory: /

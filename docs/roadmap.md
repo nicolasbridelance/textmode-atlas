@@ -79,7 +79,7 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 | Paraglide fetches its inlang plugins from a CDN at build time | breaks the offline, reproducible build goal | spike 0003 |
 | Contact address is a personal Gmail | fine for now; should become a project address | move to the domain once chosen |
 | Vitest 5 and @vitest/browser-playwright 5 | must move together; the config fails at startup ("reading 'project'") | dedicated migration |
-| TypeScript 7 (Dependabot #11) | first CI run failed for an unrelated reason; rebase requested | merge if green after rebase |
+| TypeScript 7 held back (#11 closed) | the native compiler drops the JS API used by svelte-kit sync, svelte-check, ESLint and knip | lift the Dependabot ignore once those tools support it |
 | deptry passed locally but failed in CI on first-party imports | local and CI environments differ | first-party packages are now declared explicitly; watch for other differences |
 | Embedding tables not in the schema | their dimension depends on models not chosen yet | add with research workstream 1 |
 | OpenTofu for staging / production not written | needed from M4 | after the host decision |
