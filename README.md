@@ -41,8 +41,8 @@ The project is dedicated to the people who made the textmode scene.
 
 ## Where it stands
 
-Under construction, in the open. The repository runs on its target architecture: content-
-addressed storage, a database whose invariants are enforced by constraints, a static bilingual
+Under construction, in the open. The repository runs on its target architecture:
+content-addressed storage, a database whose invariants are enforced by constraints, a static bilingual
 site. The first work screen is being built now. Follow along in the
 [roadmap](docs/roadmap.md) and the [session journal](docs/journal/).
 
