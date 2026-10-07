@@ -7,11 +7,9 @@ version = "0.0.0"
 description = "Minimal API: forms, search, moderation"
 requires-python = ">=3.12,<3.13"
 license = "Apache-2.0"
-dependencies = ["fastapi>=0.115", "uvicorn>=0.32", "tm"]
+dependencies = []
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv.sources]
-tm = { workspace = true }

@@ -21,6 +21,10 @@ if TYPE_CHECKING:
     from mypy_boto3_s3 import S3Client
 
 
+SHA256_HEX_LENGTH = 64
+HEX_DIGITS = frozenset("0123456789abcdef")
+
+
 class IntegrityError(Exception):
     """A stored object does not match its hash."""
 
@@ -31,7 +35,7 @@ def sha256_hex(data: bytes) -> str:
 
 def original_key(sha256: str) -> str:
     """Key of an original: `sha256/ab/cd/abcd…`, fanned out to avoid huge prefixes."""
-    if len(sha256) != 64 or any(c not in "0123456789abcdef" for c in sha256):
+    if len(sha256) != SHA256_HEX_LENGTH or not HEX_DIGITS.issuperset(sha256):
         raise ValueError(f"invalid SHA-256 hash: {sha256!r}")
     return f"sha256/{sha256[:2]}/{sha256[2:4]}/{sha256}"
 

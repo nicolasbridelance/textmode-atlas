@@ -11,7 +11,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 from pathlib import Path
-from typing import Annotated, Any, Literal, get_args
+from typing import Annotated, Any, Literal
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
@@ -33,7 +33,6 @@ System = Literal[
     "amiga-latin1",
     "unicode",
 ]
-SYSTEMS: tuple[str, ...] = get_args(System)
 
 
 class Font(BaseModel):
@@ -88,7 +87,7 @@ class Radio(BaseModel):
 
     @field_validator("stream")
     @classmethod
-    def _https_only(cls, v: HttpUrl | None) -> HttpUrl | None:
+    def _https_only(_cls, v: HttpUrl | None) -> HttpUrl | None:
         if v is not None and v.scheme != "https":
             raise ValueError("a stream must use HTTPS to be playable by the site")
         return v
