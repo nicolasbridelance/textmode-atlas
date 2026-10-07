@@ -33,8 +33,8 @@ The first thing a visitor sees, built in pipeline order so that nothing is throw
 - [ ] `tm_render`: SAUCE reader; ANSI/CP437 decoder → grid (`row, col, codepoint, fg, bg, blink, t`) in Parquet; property tests (no input crashes a decoder)
 - [ ] `tm ingest` for the golden source → `source`, `work`, `version`, `artifact` rows; `tm decode` → `decoding` rows
 - [ ] Conservation renderer (Python → PNG, integer scale, 9th column, blink / iCE) with recipe; determinism test; comparison with ansilove
-- [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`
-- [ ] Work screen: canvas renderer from the grid and the bitmap font, profile switch, modem-speed playback, zoom to the cell, draw-order layer (honest about file order versus gesture)
+- [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`; refuses a shown file without credit (ADR 0009)
+- [ ] Work screen: credit as signed, source link and "withdraw or claim" on every record (ADR 0009); canvas renderer from the grid and the bitmap font, profile switch, modem-speed playback, zoom to the cell, draw-order layer (honest about file order versus gesture)
 - [ ] Visual regression screenshots of the golden artifacts
 
 ## Spikes to run
@@ -49,9 +49,11 @@ The first thing a visitor sees, built in pipeline order so that nothing is throw
 
 - [ ] Branch protection on `main`: require the CI jobs (python, web, licenses, secrets, commits), no required review (ADR 0008)
 
-- [ ] Contacts: 16colo.rs, Demozoo, IF Archive (access, API limits, terms)
-- [ ] Radios: Nectarine, SLAY Radio, Ericade, Kohina, BitJam (agreement, HTTPS stream)
+- [ ] Before M4: contacts with 16colo.rs, Demozoo, IF Archive (access, API limits, terms); not needed before, packs and API are public
+- [ ] Radios: Nectarine, SLAY Radio, Ericade, Kohina, BitJam (agreement, HTTPS stream); until then the site links out to the station instead of embedding its stream
 - [ ] First artists and groups for display permission
+- [ ] Before M3: inform 16colo and Demozoo of the project (Claude drafts, Nicolas sends)
+- [ ] Before M4: lawyer review of ADR 0009
 - [ ] Decisions: legal structure, host, domain name, lawyer, partner radios
 
 ## Known debt

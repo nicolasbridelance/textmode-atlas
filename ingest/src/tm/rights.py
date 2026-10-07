@@ -4,6 +4,10 @@
 
 `can_display()` is called by `tm export` and by the API, never by the frontend. It covers images
 and sound alike. This module is held at 100% branch coverage.
+
+Display rule (ADR 0009): a work is shown with the permission of its author, or, failing that,
+when the scene itself released it freely and a scene archive still holds it, credited as signed
+and withdrawn on request.
 """
 
 from __future__ import annotations
@@ -11,9 +15,12 @@ from __future__ import annotations
 import datetime as dt
 from typing import Literal, Protocol
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, HttpUrl
 
 Display = Literal["none", "metadata", "file"]
+
+# Archives kept by the scene itself, where works were released for free distribution.
+SceneArchive = Literal["16colo", "demozoo", "scene.org", "textfiles"]
 
 
 class Permission(BaseModel):
@@ -27,10 +34,20 @@ class Permission(BaseModel):
     evidence_note: str | None = None
 
 
+class ScenePublication(BaseModel):
+    """Where the scene released a work for free distribution, as found today."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    archive: SceneArchive
+    url: HttpUrl
+
+
 class Rights(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     permission: Permission = Permission()
+    scene_publication: ScenePublication | None = None
     # License declared by the author, if any (CC0 for the project's golden artifacts).
     license: str | None = None
 
@@ -55,26 +72,26 @@ class Displayable(Protocol):
 
 
 class Policy(Protocol):
-    """Written policy for display without explicit permission (orphan works, etc.)."""
+    """Rule for display without explicit permission."""
 
     def allows(self, work: Displayable) -> bool: ...
 
 
-class ClosedPolicy:
-    """Default policy: nothing is shown without permission.
-
-    It stays in place until a written rule has been approved by a lawyer.
-    """
+class ScenePublishedPolicy:
+    """ADR 0009: show what the scene already released freely and still distributes."""
 
     def allows(self, work: Displayable) -> bool:
-        return False
+        return work.rights.scene_publication is not None
 
 
-def can_display(work: Displayable, policy: Policy | None = None) -> Display:
+SCENE_PUBLISHED = ScenePublishedPolicy()
+
+
+def can_display(work: Displayable, policy: Policy = SCENE_PUBLISHED) -> Display:
     if work.privacy.withdrawn:
         return "none"  # record hidden
     if work.rights.permission.display:
         return "file"  # file and renderings
-    if (policy or ClosedPolicy()).allows(work):
+    if policy.allows(work):
         return "file"
     return "metadata"  # record, relations, link to the source archive

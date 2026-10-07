@@ -4,7 +4,7 @@ SPDX-License-Identifier: CC-BY-4.0
 -->
 # 0006. Show a file only with permission; metadata otherwise
 
-- Status: Accepted
+- Status: Superseded by [0009](0009-show-what-the-scene-released.md)
 - Date: 2026-10-07
 - Deciders: Nicolas Bridelance, Claude
 

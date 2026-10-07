@@ -713,19 +713,20 @@ Le rapport préalable ([docs/research/03_juridique.md](research/03_juridique.md)
 
 **L'affichage est la question qui conditionne tout le reste.** Le rapport recommande le statut d'hébergeur (LCEN, DSA), qui protège jusqu'à notification. Ce bouclier ne couvre que ce que des tiers déposent, dans un rôle neutre et passif. Or le musée ingère lui-même ses sources, écrit des parcours, choisit l'œuvre du jour et calcule des sorties : c'est un travail d'éditeur, et la requalification est probable pour tout ce que `tm ingest` a rapatrié. Le statut d'hébergeur ne vaut donc que pour les dépôts faits par les auteurs ou par des archivistes, sous des conditions d'utilisation qui leur font accorder une licence non exclusive.
 
-L'affichage suit donc trois voies, dans cet ordre :
+L'affichage suit la règle de l'[ADR 0009](adr/0009-show-what-the-scene-released.md), qui remplace la permission seule de l'ADR 0006 :
 
-1. **La permission.** La scène est vivante : beaucoup d'artistes et de groupes sont joignables. Une campagne de prise de contact commence en M0 et ne s'arrête pas. Un artiste qui revendique ses œuvres peut accorder l'affichage en un geste ; c'est aussi la meilleure façon d'entrer dans la communauté.
-2. **Le dépôt.** Un auteur ou un archiviste verse lui-même des fichiers ; le musée agit alors en hébergeur, avec procédure de retrait.
-3. **La fiche sans fichier.** Pour tout le reste, `can_display()` renvoie `metadata` : cartel, mesures, relations et lien vers l'archive source (16colo.rs, Demozoo). L'œuvre existe dans le musée, et on la voit chez ceux qui l'hébergent déjà.
+1. **La permission.** Un artiste qui revendique ses œuvres peut accorder l'affichage en un geste. La prise de contact avec la scène commence en M0 et ne s'arrête pas.
+2. **Ce que la scène a diffusé librement** et qu'une archive de la scène conserve (16colo, Demozoo, scene.org, textfiles) est montré par défaut, **crédité tel que signé** (pseudonyme, groupe, pack, lien vers l'archive source), avec sur chaque fiche **« C'est votre œuvre ? Retirer ou revendiquer »**. Le retrait est immédiat, sans justification. Rien de commercial, rien de privé, pas de posts Usenet personnels ; aucune génération ; les modèles entraînés sur les œuvres ne sont pas distribués.
+3. **Le dépôt.** Un auteur ou un archiviste verse lui-même des fichiers ; le musée agit alors en hébergeur.
+4. **La fiche sans fichier.** Pour tout le reste, `can_display()` renvoie `metadata` : cartel, mesures, relations et lien vers l'archive source.
 
-`policy.allows()` renvoie `False` tant qu'une règle écrite n'a pas été validée par un juriste. Le site doit être beau même quand une majorité de fiches est en `metadata` ; c'est une contrainte de conception, pas un cas d'erreur.
+Ce modèle est celui des archives de la scène. Il ne rend pas l'affichage licite en droit français : il en limite les conséquences, et le risque est assumé par le porteur du projet (ADR 0009). 16colo et Demozoo sont informés avant l'ouverture publique ; un juriste est consulté avant le passage à l'échelle (M4).
 
 Questions à poser au juriste, en plus des dix du rapport :
 
 - La curation (parcours, œuvre du jour, sorties calculées) fait-elle perdre le statut d'hébergeur pour les dépôts de tiers, ou seulement pour les contenus ingérés par le projet ?
 - Intégrer dans le lecteur du musée le flux d'une radio tierce est-il une simple mise en lien au sens de la jurisprudence européenne (Svensson, BestWater), ou une communication au public propre au musée ?
-- La règle `policy.allows()` pour les œuvres orphelines, le traitement des pseudonymes au regard du RGPD (registre, article 89), et la réutilisation des métadonnées de Demozoo (droit des producteurs de bases de données).
+- La règle de l'ADR 0009 (affichage par défaut de ce que la scène a diffusé, retrait sur demande), le traitement des pseudonymes au regard du RGPD (registre, article 89), et la réutilisation des métadonnées de Demozoo (droit des producteurs de bases de données).
 
 ## Jalons
 
