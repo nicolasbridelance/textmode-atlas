@@ -51,6 +51,26 @@ jobs:
         run: just corpus
       - name: No artwork committed
         run: just no-artworks
+      - name: Unused Python code and dependencies
+        run: |
+          uv run vulture
+          for package in ingest renderers analysis api; do (cd $package && uv run deptry .); done
+
+  commits:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Commit messages follow the rules
+        run: |
+          status=0
+          for sha in $(git rev-list --no-merges origin/${{ github.base_ref }}..${{ github.event.pull_request.head.sha }}); do
+            git log -1 --format=%B "$sha" > /tmp/msg
+            python3 scripts/check_commit_msg.py /tmp/msg || { echo "  in $sha"; status=1; }
+          done
+          exit $status
 
   licenses:
     runs-on: ubuntu-24.04
@@ -78,6 +98,10 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Unused TypeScript code and dependencies, duplication
+        run: |
+          pnpm run hygiene:unused
+          pnpm run hygiene:duplicates
       - working-directory: apps/museum
         run: |
           pnpm run lint

@@ -17,6 +17,11 @@ setup:
     just services
     just migrate
     uv run tm dev storage-init
+    just hooks
+
+# Install git hooks: fast checks on commit, message rules, full check on push
+hooks:
+    uv run pre-commit install
 
 # Start PostgreSQL and Garage, and wait until they are ready
 services:
@@ -27,7 +32,7 @@ migrate:
     uv run alembic upgrade head
 
 # Everything CI checks
-check: lint typecheck test corpus licenses no-artworks web-check
+check: lint typecheck test corpus licenses no-artworks unused duplicates web-check
 
 lint:
     uv run ruff check .
@@ -50,6 +55,25 @@ licenses:
 no-artworks:
     uv run python scripts/check_no_artworks.py
 
+# Unused code and dependencies (Python and TypeScript)
+unused:
+    uv run vulture
+    for package in ingest renderers analysis api; do (cd $package && uv run deptry .); done
+    pnpm run hygiene:unused
+
+# Copy-pasted blocks
+duplicates:
+    pnpm run hygiene:duplicates
+
+# Post-commit pruning candidates (report only; see CLAUDE.md, post-commit protocol)
+hygiene: unused duplicates
+    @echo "── TODO / FIXME (each must link an issue)"
+    @git grep -n -E "TODO|FIXME" -- . ':!docs' ':!justfile' ':!*.lock' ':!pnpm-lock.yaml' || echo "none"
+    @echo "── Skipped or expected-to-fail tests"
+    @git grep -n -E "pytest\.skip|mark\.skip|xfail|\.skip\(" -- '*.py' '*.ts' || echo "none"
+    @echo "── Scaffolding leftovers"
+    @git ls-files | grep -E "_v[0-9]+\.|\.spike\.|\.tmp\.|\.bak$|_old\." || echo "none"
+
 # Site: lint, types, tests
 web-check:
     pnpm --filter museum lint
@@ -59,6 +83,11 @@ web-check:
 # Run the site in development mode
 web:
     pnpm --filter museum dev --host
+
+# Screenshots of the built site (desktop, mobile, every locale) into apps/museum/test-results/
+shots *paths:
+    pnpm --filter museum run build
+    pnpm --filter museum run screenshots {{paths}}
 
 # Research notebooks (marimo)
 notebook path="research":

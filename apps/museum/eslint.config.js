@@ -34,8 +34,21 @@ export default defineConfig(
 		}
 	},
 	{
-		// Override or add rule settings here, such as:
-		// 'svelte/button-has-type': 'error'
-		rules: {}
+		// Mechanizable code rules (docs/vibe-coding-rules.md).
+		rules: {
+			complexity: ['error', 8],
+			'max-depth': ['error', 3],
+			'no-console': 'error',
+			'no-param-reassign': 'error',
+			'no-magic-numbers': 'off',
+			'@typescript-eslint/no-magic-numbers': [
+				'error',
+				{ ignore: [-1, 0, 1, 2], ignoreEnums: true, ignoreReadonlyClassProperties: true }
+			]
+		}
+	},
+	{
+		files: ['**/*.spec.ts', '**/*.e2e.ts', '*.config.ts', '*.config.js'],
+		rules: { '@typescript-eslint/no-magic-numbers': 'off' }
 	}
 );

@@ -1,0 +1,42 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# Fast checks on every commit, the full suite on every push. Installed by `just hooks`.
+default_install_hook_types: [pre-commit, commit-msg, pre-push]
+default_stages: [pre-commit]
+
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-format
+        name: ruff format
+        entry: uv run --no-sync ruff format
+        language: system
+        types: [python]
+      - id: ruff-check
+        name: ruff check
+        entry: uv run --no-sync ruff check --fix
+        language: system
+        types: [python]
+      - id: prettier
+        name: prettier
+        # Prettier lives in apps/museum: run it there, with paths relative to it.
+        entry: bash -c 'cd apps/museum && pnpm exec prettier --write --ignore-unknown "${@#apps/museum/}"' --
+        language: system
+        files: ^apps/museum/
+      - id: no-artworks
+        name: no artwork committed
+        entry: uv run --no-sync python scripts/check_no_artworks.py
+        language: system
+        pass_filenames: false
+      - id: commit-msg
+        name: commit message rules
+        entry: uv run --no-sync python scripts/check_commit_msg.py
+        language: system
+        stages: [commit-msg]
+      - id: full-check
+        name: just check
+        entry: just check
+        language: system
+        pass_filenames: false
+        stages: [pre-push]

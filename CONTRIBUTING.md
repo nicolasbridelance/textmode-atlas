@@ -24,7 +24,13 @@ identity without that person's consent.
 ## Method
 
 - One branch per topic, a reviewed pull request, a green CI. `main` is protected.
-- Run `just check` before pushing: it runs what CI runs.
+- `just hooks` installs git hooks: fast checks on commit, message rules, `just check` on push.
+- Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/):
+  `type(scope): summary`, subject of 72 characters at most, a body that says why. A functional
+  change and the cleanup it allows go in two separate commits (`feat`/`fix`, then
+  `chore(hygiene)`).
+- Code rules: [docs/vibe-coding-rules.md](docs/vibe-coding-rules.md). Linters enforce what can be
+  decided mechanically; reviews look after the rest.
 - `tm` commands are idempotent: run twice, they leave the same state. Tests run them twice.
 - Code, comments, commit messages and contributor docs are in English. Everything a visitor reads
   goes through localization, with English and French required.
