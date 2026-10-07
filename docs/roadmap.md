@@ -28,7 +28,7 @@ Status: ✅ done · 🔨 in progress · ⏳ next · 💤 later
 
 The first thing a visitor sees, built in pipeline order so that nothing is throwaway.
 
-- [ ] Push `scaffold`, open the pull request, get the first CI run green
+- [x] Push `scaffold`, open the pull request, get the first CI run green ([#1](https://github.com/nicolasbridelance/textmode-atlas/pull/1))
 - [ ] Golden artifact #1: an ANSI made for the project (CC0), with its SAUCE record
 - [ ] `tm_render`: SAUCE reader; ANSI/CP437 decoder → grid (`row, col, codepoint, fg, bg, blink, t`) in Parquet; property tests (no input crashes a decoder)
 - [ ] `tm ingest` for the golden source → `source`, `work`, `version`, `artifact` rows; `tm decode` → `decoding` rows
