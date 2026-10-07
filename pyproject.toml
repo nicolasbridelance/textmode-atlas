@@ -33,6 +33,7 @@ dev = [
   "pre-commit>=4.0",
   "vulture>=2.14",
   "deptry>=0.21",
+  "pyarrow-stubs>=20.0.0.20260819",
 ]
 # Data science and research notebooks (research/). Heavy learning dependencies (PyTorch,
 # umap-learn) come in with the workstreams that need them.
