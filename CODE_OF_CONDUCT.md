@@ -16,4 +16,4 @@ Three project-specific rules are added:
 - **The scene is told without mockery.** You may analyse, compare and contradict an account; you
   do not ridicule anyone's teenage work.
 
-Reports: to the address given in [TAKEDOWN.md](TAKEDOWN.md), handled confidentially.
+Reports: to ennead.studio@gmail.com, handled confidentially.
