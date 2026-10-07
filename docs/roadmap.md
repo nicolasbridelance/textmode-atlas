@@ -32,7 +32,9 @@ The first thing a visitor sees, built in pipeline order so that nothing is throw
 - [x] Golden artifact #1: Horizon, an ANSI made for the project (CC0), with its SAUCE record; also the README showcase
 - [x] `tm_render`: SAUCE reader; ANSI/CP437 decoder → grid (`row, col, codepoint, fg, bg, blink, t`) in Parquet; property tests (no input crashes a decoder)
 - [ ] `tm ingest` for the golden source → `source`, `work`, `version`, `artifact` rows; `tm decode` → `decoding` rows
-- [ ] Conservation renderer (Python → PNG, integer scale, 9th column, blink / iCE) with recipe; determinism test; comparison with ansilove
+- [x] Spike 0001: grid rendering matches ansilove on 96 of 99 VGA files ([report](spikes/0001-ansilove-parity.md), [ADR 0010](adr/0010-render-from-the-grid.md))
+- [ ] Decoder: canvas height is the last written row + 1, not the SAUCE height (spike 0001)
+- [ ] Conservation renderer (grid → PNG, integer scale, 9th column, blink / iCE) with recipe; determinism test; ansilove parity on the golden artifacts in CI
 - [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`; refuses a shown file without credit (ADR 0009)
 - [ ] Work screen: credit as signed, source link and "withdraw or claim" on every record (ADR 0009); canvas renderer from the grid and the bitmap font, profile switch, modem-speed playback, zoom to the cell, draw-order layer (honest about file order versus gesture)
 - [ ] Visual regression screenshots of the golden artifacts
@@ -55,7 +57,6 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 
 | Spike | Question | Time box | Before |
 | --- | --- | --- | --- |
-| 0001 | Does our grid renderer match ansilove pixel for pixel on real packs (blink, iCE, 9th column, SAUCE flags)? Files stay local. | 3 h | conservation renderer |
 | 0002 | Can a canvas draw a 500-line ANSI at cell zoom and modem speed at 60 fps on a mid-range phone? | 2 h | work screen |
 | 0003 | Can Paraglide build offline (vendored inlang plugins)? | 1 h | known debt below |
 
@@ -81,5 +82,7 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 | Vitest 5 and @vitest/browser-playwright 5 | must move together; the config fails at startup ("reading 'project'") | dedicated migration |
 | TypeScript 7 held back (#11 closed) | the native compiler drops the JS API used by svelte-kit sync, svelte-check, ESLint and knip | lift the Dependabot ignore once those tools support it |
 | deptry passed locally but failed in CI on first-party imports | local and CI environments differ | first-party packages are now declared explicitly; watch for other differences |
+| PabloDraw 24-bit colour (`ESC[1;R;G;Bt`) skipped by the decoder | recent packs use it; colours and sometimes layout differ (spike 0001) | decoder extension before M4 |
+| No golden artifact with blink, iCE or 8 px cells | Horizon covers 9 px only; renderer paths stay untested on golden files | golden artifact #2 |
 | Embedding tables not in the schema | their dimension depends on models not chosen yet | add with research workstream 1 |
 | OpenTofu for staging / production not written | needed from M4 | after the host decision |
