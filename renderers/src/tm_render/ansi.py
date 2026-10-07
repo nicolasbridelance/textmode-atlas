@@ -219,5 +219,6 @@ def decode(data: bytes) -> Decoded:
         if not _control(state, byte):
             state.put(byte, offset)
         offset += 1
-    rows = max(state.max_row + 1, sauce.height if sauce else 0)
-    return Decoded(Grid(width, rows, dict(state.cells)), sauce, state.skipped)
+    # The canvas ends at the last written row, as ansilove draws it: SAUCE heights often count a
+    # trailing CR LF as a row (spike 0001). The record itself stays in `Decoded.sauce`.
+    return Decoded(Grid(width, state.max_row + 1, dict(state.cells)), sauce, state.skipped)

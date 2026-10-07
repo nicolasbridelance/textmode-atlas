@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 # SPDX-License-Identifier: Apache-2.0
 import pytest
+from conftest import SauceRecord
 from tm_render.ansi import DecodeError, decode
 
 ESC = b"\x1b["
@@ -60,6 +61,17 @@ def test_full_row_wraps_without_crlf() -> None:
     grid = decode(b"x" * 80 + b"y").grid
     assert grid.cell(1, 0) is not None
     assert grid.rows == 2
+
+
+def test_canvas_ends_at_the_last_written_row(sauce_record: SauceRecord) -> None:
+    decoded = decode(b"a\r\nb\r\n\x1a" + sauce_record(height=25))
+    assert decoded.grid.rows == 2
+    assert decoded.sauce is not None
+    assert decoded.sauce.height == 25
+
+
+def test_sauce_without_eof_byte_is_not_drawn(sauce_record: SauceRecord) -> None:
+    assert len(decode(b"art" + sauce_record()).grid.cells) == len(b"art")
 
 
 def test_crlf_after_a_full_row_skips_a_row() -> None:
