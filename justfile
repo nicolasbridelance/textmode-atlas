@@ -68,7 +68,7 @@ duplicates:
 # Post-commit pruning candidates (report only; see CLAUDE.md, post-commit protocol)
 hygiene: unused duplicates
     @echo "── TODO / FIXME (each must link an issue)"
-    @git grep -n -E "TODO|FIXME" -- . ':!docs' ':!justfile' ':!*.lock' ':!pnpm-lock.yaml' || echo "none"
+    @git grep -n -E "(TODO|FIXME)[(:]" -- . ':!docs' ':!*.lock' ':!pnpm-lock.yaml' || echo "none"
     @echo "── Skipped or expected-to-fail tests"
     @git grep -n -E "pytest\.skip|mark\.skip|xfail|\.skip\(" -- '*.py' '*.ts' || echo "none"
     @echo "── Scaffolding leftovers"
