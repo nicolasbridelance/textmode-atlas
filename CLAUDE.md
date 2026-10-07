@@ -110,6 +110,7 @@ just check        # everything CI runs
 just test -k foo  # pytest with args
 just hygiene      # post-commit pruning candidates
 just shots /fr    # screenshots of the built site
+just parity       # ansilove draws the golden artifacts as we do (needs ansilove)
 uv run tm --help  # corpus check|schema, dev storage-init
 ```
 

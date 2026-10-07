@@ -31,10 +31,10 @@ The first thing a visitor sees, built in pipeline order so that nothing is throw
 - [x] Push `scaffold`, open the pull request, get the first CI run green ([#1](https://github.com/nicolasbridelance/textmode-atlas/pull/1))
 - [x] Golden artifact #1: Horizon, an ANSI made for the project (CC0), with its SAUCE record; also the README showcase
 - [x] `tm_render`: SAUCE reader; ANSI/CP437 decoder → grid (`row, col, codepoint, fg, bg, blink, t`) in Parquet; property tests (no input crashes a decoder)
-- [ ] `tm ingest` for the golden source → `source`, `work`, `version`, `artifact` rows; `tm decode` → `decoding` rows
 - [x] Spike 0001: grid rendering matches ansilove on 96 of 99 VGA files ([report](spikes/0001-ansilove-parity.md), [ADR 0010](adr/0010-render-from-the-grid.md))
-- [ ] Decoder: canvas height is the last written row + 1, not the SAUCE height (spike 0001)
-- [ ] Conservation renderer (grid → PNG, integer scale, 9th column, blink / iCE) with recipe; determinism test; ansilove parity on the golden artifacts in CI
+- [x] Decoder: canvas height is the last written row + 1, not the SAUCE height (spike 0001)
+- [x] Conservation renderer (grid → PNG, integer scale, 9th column, blink / iCE) with recipe; determinism test; ansilove parity on the golden artifacts in CI (`just parity`)
+- [ ] `tm ingest` for the golden source → `source`, `work`, `version`, `artifact` rows; `tm decode` → `decoding` rows; `tm render` → `representation` rows with the recipe
 - [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`; refuses a shown file without credit (ADR 0009)
 - [ ] Work screen: credit as signed, source link and "withdraw or claim" on every record (ADR 0009); canvas renderer from the grid and the bitmap font, profile switch, modem-speed playback, zoom to the cell, draw-order layer (honest about file order versus gesture)
 - [ ] Visual regression screenshots of the golden artifacts
