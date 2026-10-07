@@ -1,0 +1,134 @@
+{
+  "$defs": {
+    "Font": {
+      "additionalProperties": false,
+      "properties": {
+        "file": {
+          "title": "File",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file",
+        "sha256"
+      ],
+      "title": "Font",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Display parameters of one system at one time. No profile is \"the true one\".",
+  "properties": {
+    "title": {
+      "patternProperties": {
+        "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$": {
+          "type": "string"
+        }
+      },
+      "title": "Title",
+      "type": "object"
+    },
+    "system": {
+      "enum": [
+        "ansi-cp437",
+        "ascii",
+        "xbin",
+        "petscii",
+        "atascii",
+        "teletext",
+        "videotex",
+        "shift-jis",
+        "amiga-latin1",
+        "unicode"
+      ],
+      "title": "System",
+      "type": "string"
+    },
+    "grid": {
+      "pattern": "^\\d+x\\d+$",
+      "title": "Grid",
+      "type": "string"
+    },
+    "cell": {
+      "pattern": "^\\d+x\\d+$",
+      "title": "Cell",
+      "type": "string"
+    },
+    "font": {
+      "$ref": "#/$defs/Font"
+    },
+    "palette": {
+      "default": "vga",
+      "enum": [
+        "vga",
+        "ega",
+        "c64-pepto",
+        "atari-ntsc",
+        "teletext"
+      ],
+      "title": "Palette",
+      "type": "string"
+    },
+    "high_bg": {
+      "default": "blink",
+      "enum": [
+        "blink",
+        "ice"
+      ],
+      "title": "High Bg",
+      "type": "string"
+    },
+    "letter_spacing": {
+      "default": 9,
+      "enum": [
+        8,
+        9
+      ],
+      "title": "Letter Spacing",
+      "type": "integer"
+    },
+    "pixel_aspect": {
+      "default": 1.0,
+      "exclusiveMaximum": 2.5,
+      "exclusiveMinimum": 0.5,
+      "title": "Pixel Aspect",
+      "type": "number"
+    },
+    "baud": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Baud"
+    },
+    "sources": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Sources",
+      "type": "array"
+    }
+  },
+  "required": [
+    "title",
+    "system",
+    "grid",
+    "cell",
+    "font",
+    "sources"
+  ],
+  "title": "Profile",
+  "type": "object"
+}

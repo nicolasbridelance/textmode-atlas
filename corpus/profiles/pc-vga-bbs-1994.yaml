@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+title:
+  en: PC VGA, 80×25 text mode, BBS at 2400 baud (around 1994)
+  fr: PC VGA, mode texte 80×25, BBS en 2400 bauds (vers 1994)
+system: ansi-cp437
+grid: 80x25
+cell: 9x16
+font: { file: ibm-vga-8x16.f16, sha256: ff3640ffffdd774ec56ee7ecacf7bce8324a67071155ade07f4c6380fa879025 }
+palette: vga
+high_bg: blink
+letter_spacing: 9          # column 8 of glyphs C0–DF is repeated into column 9
+pixel_aspect: 1.35         # 720×400 shown at 4:3
+baud: 2400
+sources:
+  - "IBM VGA Technical Reference (1987): mode 3, 720×400, 9×16 cell"
+  - "libansilove, src/fonts/font_pc_80x25.h: VGA 8×16 ROM font"

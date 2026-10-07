@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+#
+# Scene radio stations. A station is played only with `agreement: granted` and an HTTPS stream
+# (enforced by the model). `stream` stays empty until the address has been verified.
+# To add once its address is verified: BitJam.
+radios:
+  - id: nectarine
+    name: Nectarine Demoscene Radio
+    homepage: https://scenestream.net/demovibes/
+    agreement: none
+    notes: the reference for demoscene music; public play queue
+  - id: slay-radio
+    name: SLAY Radio
+    homepage: https://www.slayradio.org/
+    agreement: none
+    notes: Commodore 64 oriented
+  - id: ericade
+    name: Ericade Radio
+    homepage: https://ericade.radio/
+    agreement: none
+    notes: tracker music (MOD, XM, S3M, IT), Amiga era
+  - id: kohina
+    name: Kohina
+    homepage: https://www.kohina.com/
+    agreement: none
+    notes: 8- and 16-bit game and demo music; station looks little maintained

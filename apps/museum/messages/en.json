@@ -1,0 +1,8 @@
+{
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"museum_name": "Digital Museum of Character Arts",
+	"dedication": "Dedicated to the people who made the textmode scene.",
+	"language_switch": "Language",
+	"locale_name_en": "English",
+	"locale_name_fr": "Français"
+}

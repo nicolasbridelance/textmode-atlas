@@ -1,0 +1,16 @@
+{
+	"name": "textmode-atlas",
+	"private": true,
+	"packageManager": "pnpm@12.3.4",
+	"engines": {
+		"node": ">=24"
+	},
+	"devDependencies": {
+		"jscpd": "^5.4.0",
+		"knip": "^6.39.0"
+	},
+	"scripts": {
+		"hygiene:unused": "knip",
+		"hygiene:duplicates": "jscpd ."
+	}
+}

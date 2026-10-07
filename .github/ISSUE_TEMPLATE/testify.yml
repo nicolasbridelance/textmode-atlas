@@ -1,0 +1,16 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+name: Testify / Témoigner
+description: You were there and would like to tell. / Vous y étiez et souhaitez raconter.
+labels: [moderation, testimony]
+body:
+  - type: textarea
+    id: about
+    attributes:
+      label: What would you like to tell about? / De quoi souhaitez-vous parler ?
+    validations: { required: true }
+  - type: markdown
+    attributes:
+      value: |
+        We will get in touch to agree on the form (written, recorded) and on consent.
+        Nous vous contacterons pour convenir de la forme (écrit, enregistrement) et de l'accord.

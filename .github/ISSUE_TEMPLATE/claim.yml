@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+name: Claim a work / Revendiquer une œuvre
+description: This work is mine (under this handle). / Cette œuvre est de moi (sous ce pseudonyme).
+labels: [moderation, claim]
+body:
+  - type: input
+    id: work
+    attributes:
+      label: Work (link or title) / Œuvre (lien ou titre)
+    validations: { required: true }
+  - type: input
+    id: handle
+    attributes:
+      label: Your handle at the time / Votre pseudonyme à l'époque
+    validations: { required: true }
+  - type: dropdown
+    id: display
+    attributes:
+      label: May the museum show it? / Le musée peut-il la montrer ?
+      options:
+        - "Yes / Oui"
+        - "No, metadata only / Non, métadonnées seulement"
+        - "Let's talk / À discuter"
+    validations: { required: true }
+  - type: markdown
+    attributes:
+      value: |
+        Do not write your civil name here: this issue is public. We will contact you to verify.
+        N'écrivez pas votre nom civil ici : ce ticket est public. Nous vous contacterons pour vérifier.

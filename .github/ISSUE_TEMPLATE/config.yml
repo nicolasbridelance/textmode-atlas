@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+blank_issues_enabled: true
+contact_links:
+  - name: Withdraw a work / Retirer une œuvre
+    url: https://github.com/nicolasbridelance/textmode-atlas/blob/main/TAKEDOWN.md
+    about: Withdrawals are handled privately, not in public issues. / Les retraits se traitent en privé, pas dans un ticket public.

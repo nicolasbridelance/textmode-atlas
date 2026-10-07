@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+title:
+  en: ANSI and the BBS artscene
+  fr: ANSI et artscene BBS
+description:
+  en: ANSI and XBIN works distributed through bulletin board systems and artpacks.
+  fr: Les œuvres en ANSI et XBIN diffusées par les BBS et les artpacks.
+where:
+  system: [ansi-cp437, xbin]
+  channel: [bbs, artpack]
+order_by: date_min

@@ -1,0 +1,43 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+#
+# Licenses of files that cannot carry an SPDX header. Every other file declares its own.
+version = 1
+
+[[annotations]]
+path = ["uv.lock", "pnpm-lock.yaml", "package.json", ".python-version", "**/.gitkeep",
+        "knip.json", ".jscpd.json",
+        "apps/museum/package.json", "apps/museum/tsconfig.json", "apps/museum/.npmrc",
+        "apps/museum/.gitignore", "apps/museum/.prettierignore", "apps/museum/.vscode/**",
+        "apps/museum/project.inlang/**", "apps/museum/static/robots.txt",
+        "apps/museum/eslint.config.js", "apps/museum/prettier.config.js",
+        "apps/museum/vite.config.ts", "apps/museum/src/app.d.ts", "apps/museum/src/app.html",
+        "apps/museum/src/hooks.ts", "apps/museum/src/hooks.server.ts"]
+SPDX-FileCopyrightText = "2026 textmode-atlas contributors"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["apps/museum/src/lib/assets/favicon.svg"]
+SPDX-FileCopyrightText = "Svelte contributors"
+SPDX-License-Identifier = "MIT"
+
+# Visitor-facing interface texts.
+[[annotations]]
+path = ["apps/museum/messages/**"]
+SPDX-FileCopyrightText = "2026 textmode-atlas contributors"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = ["corpus/schema/**"]
+SPDX-FileCopyrightText = "2026 textmode-atlas contributors"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["corpus/fonts/*.f16"]
+SPDX-FileCopyrightText = "2011-2026 Stefan Vogt, Brian Cassidy, and Frederic Cambus (libansilove)"
+SPDX-License-Identifier = "BSD-2-Clause"
+
+[[annotations]]
+path = ["docs/**"]
+SPDX-FileCopyrightText = "2026 Nicolas Bridelance and textmode-atlas contributors"
+SPDX-License-Identifier = "CC-BY-4.0"

@@ -1,0 +1,67 @@
+{
+  "additionalProperties": false,
+  "description": "A collection is a saved query over the facets of works.",
+  "properties": {
+    "title": {
+      "patternProperties": {
+        "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$": {
+          "type": "string"
+        }
+      },
+      "title": "Title",
+      "type": "object"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "patternProperties": {
+            "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "where": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "propertyNames": {
+        "enum": [
+          "usage",
+          "system",
+          "scene",
+          "channel",
+          "function"
+        ]
+      },
+      "title": "Where",
+      "type": "object"
+    },
+    "order_by": {
+      "default": "date_min",
+      "enum": [
+        "date_min",
+        "date_max",
+        "title"
+      ],
+      "title": "Order By",
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "where"
+  ],
+  "title": "Collection",
+  "type": "object"
+}

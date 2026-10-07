@@ -1,0 +1,7 @@
+{
+	"threshold": 3,
+	"minTokens": 60,
+	"reporters": ["console"],
+	"gitignore": true,
+	"ignore": ["**/node_modules/**", "**/.venv/**", "**/*.lock", "**/pnpm-lock.yaml", "corpus/schema/**", "docs/**", "LICENSES/**", "apps/museum/src/lib/paraglide/**"]
+}

@@ -1,0 +1,23 @@
+// SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+// SPDX-License-Identifier: Apache-2.0
+{
+  "name": "textmode-atlas",
+  "dockerComposeFile": ["../compose.yaml", "compose.dev.yaml"],
+  "service": "dev",
+  "workspaceFolder": "/workspaces/textmode-atlas",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "24" },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "just setup",
+  "forwardPorts": [5173, 8000],
+  "portsAttributes": {
+    "5173": { "label": "museum (site)" },
+    "8000": { "label": "API" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["anthropic.claude-code", "charliermarsh.ruff", "ms-python.python", "svelte.svelte-vscode"]
+    }
+  }
+}

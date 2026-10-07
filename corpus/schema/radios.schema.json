@@ -1,0 +1,114 @@
+{
+  "$defs": {
+    "Radio": {
+      "additionalProperties": false,
+      "description": "A scene radio station whose stream the museum may play.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "homepage": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Homepage",
+          "type": "string"
+        },
+        "stream": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stream"
+        },
+        "agreement": {
+          "default": "none",
+          "enum": [
+            "none",
+            "requested",
+            "granted",
+            "refused"
+          ],
+          "title": "Agreement",
+          "type": "string"
+        },
+        "verified_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Verified At"
+        },
+        "now_playing": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Now Playing"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "homepage"
+      ],
+      "title": "Radio",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "radios": {
+      "items": {
+        "$ref": "#/$defs/Radio"
+      },
+      "title": "Radios",
+      "type": "array"
+    }
+  },
+  "required": [
+    "radios"
+  ],
+  "title": "Radios",
+  "type": "object"
+}
