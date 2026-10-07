@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+title:
+  en: PC VGA, iCE colors, square pixels (modern editors and viewers)
+  fr: PC VGA, couleurs iCE, pixels carrés (éditeurs et visionneuses modernes)
+system: ansi-cp437
+grid: 80x25
+cell: 8x16
+font: { file: ibm-vga-8x16.f16, sha256: ff3640ffffdd774ec56ee7ecacf7bce8324a67071155ade07f4c6380fa879025 }
+palette: vga
+high_bg: ice
+letter_spacing: 8
+pixel_aspect: 1.0
+sources:
+  - "Convention of current viewers (ansilove, 16colo.rs): 8-pixel cells, square pixels"

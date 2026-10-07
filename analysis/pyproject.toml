@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: Apache-2.0
+
+[project]
+name = "tm-analysis"
+version = "0.0.0"
+description = "Features, embeddings and research workstreams"
+requires-python = ">=3.12,<3.13"
+license = "Apache-2.0"
+dependencies = ["polars>=1.17", "pyarrow>=18", "tm-render"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv.sources]
+tm-render = { workspace = true }

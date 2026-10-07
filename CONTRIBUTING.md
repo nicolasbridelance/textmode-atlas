@@ -1,0 +1,38 @@
+<!--
+SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+SPDX-License-Identifier: CC-BY-4.0
+-->
+# Contributing
+
+Thank you. This project deals with the work of real people, often under a handle: it asks for a
+little more care than an ordinary code repository.
+
+## Four prohibitions
+
+1. **Never commit an artwork file** (ANSI, XBIN, pack archive, module, rendering of a third-party
+   work). Works live in object storage, addressed by their hash. CI refuses the matching
+   extensions.
+2. **Never modify an original.** An original is written once; a correction is new data.
+3. **Never write an assertion without `nature` and `asserted_by`.** Every relation says who
+   asserts it and on what evidence. The database refuses it anyway.
+4. **Never bypass `can_display()`.** It is the only function that decides what may be shown or
+   played.
+
+And a fifth, which follows from the others: never publish a link between a handle and a civil
+identity without that person's consent.
+
+## Method
+
+- One branch per topic, a reviewed pull request, a green CI. `main` is protected.
+- Run `just check` before pushing: it runs what CI runs.
+- `tm` commands are idempotent: run twice, they leave the same state. Tests run them twice.
+- Code, comments, commit messages and contributor docs are in English. Everything a visitor reads
+  goes through localization, with English and French required.
+- Every new file carries an SPDX header (`reuse annotate` helps). CI runs `reuse lint`.
+- A research hypothesis is filed in `research/` **before** looking at the data.
+
+## Where to start
+
+The [foundation document](docs/Le%20caractère%20comme%20matière%20—%20document%20de%20fondation.md)
+is authoritative. If the code must depart from it, the document is changed first, in the same
+pull request.

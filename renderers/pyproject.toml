@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: Apache-2.0
+
+[project]
+name = "tm-render"
+version = "0.0.0"
+description = "Decoders (ANSI, ASCII, XBIN, SAUCE) and renderers"
+requires-python = ">=3.12,<3.13"
+license = "Apache-2.0"
+dependencies = ["pyarrow>=18", "pillow>=11"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

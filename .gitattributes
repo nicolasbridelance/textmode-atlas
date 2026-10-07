@@ -1,0 +1,6 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+* text=auto eol=lf
+*.f16 binary
+# Golden artifacts are bytes, not text: no line-ending conversion.
+tests/golden/** binary

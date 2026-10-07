@@ -1,0 +1,8 @@
+{
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"museum_name": "Musée numérique des arts du caractère",
+	"dedication": "Dédié à celles et ceux qui ont fait la scène textmode.",
+	"language_switch": "Langue",
+	"locale_name_en": "English",
+	"locale_name_fr": "Français"
+}

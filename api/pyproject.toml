@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: Apache-2.0
+
+[project]
+name = "tm-api"
+version = "0.0.0"
+description = "Minimal API: forms, search, moderation"
+requires-python = ">=3.12,<3.13"
+license = "Apache-2.0"
+dependencies = ["fastapi>=0.115", "uvicorn>=0.32", "tm"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv.sources]
+tm = { workspace = true }

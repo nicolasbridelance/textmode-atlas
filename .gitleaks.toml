@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+#
+# Dummy credentials of the local environment are public on purpose. Nothing else is allowed.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Local-only dummy credentials (compose, Garage, devcontainer)"
+paths = [
+  '''^\.env\.example$''',
+  '''^infra/local/garage\.toml$''',
+  '''^\.devcontainer/compose\.dev\.yaml$''',
+  '''^ingest/src/tm/dev\.py$''',
+]

@@ -1,0 +1,29 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+.ruff_cache/
+.hypothesis/
+
+# Node, SvelteKit
+node_modules/
+.svelte-kit/
+build/
+apps/museum/static/data/
+
+# Working data: never in Git (originals, grids, renderings, built datasets)
+/data/
+/datasets/build/
+*.parquet
+
+# Local environment
+.env
+.env.*
+!.env.example

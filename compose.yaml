@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# Complete offline local environment: PostgreSQL + pgvector, S3 object storage (Garage).
+# Credentials below are for local use only; production reads its secrets elsewhere.
+# Buckets and the access key are created by `tm dev storage-init` (Garage admin API).
+
+name: textmode-atlas
+
+services:
+  db:
+    image: pgvector/pgvector:0.8.1-pg16-bookworm
+    environment:
+      POSTGRES_USER: tm
+      POSTGRES_PASSWORD: tm
+      POSTGRES_DB: tm
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: [db-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tm -d tm"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  storage:
+    image: dxflrs/garage:v2.1.0
+    # 3900: S3 API (signed requests); 3902: public reads of bucket tm-public;
+    # 3903: administration. Garage has no web console.
+    ports: ["127.0.0.1:3900:3900", "127.0.0.1:3902:3902", "127.0.0.1:3903:3903"]
+    volumes:
+      - ./infra/local/garage.toml:/etc/garage.toml:ro
+      - storage-meta:/var/lib/garage/meta
+      - storage-data:/var/lib/garage/data
+
+volumes:
+  db-data:
+  storage-meta:
+  storage-data:

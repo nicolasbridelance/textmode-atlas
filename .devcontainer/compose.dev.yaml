@@ -1,0 +1,20 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: Apache-2.0
+
+services:
+  dev:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    command: sleep infinity
+    volumes: ["..:/workspaces/textmode-atlas:cached"]
+    environment:
+      TM_DATABASE_URL: postgresql+psycopg://tm:tm@db:5432/tm
+      TM_STORAGE_ENDPOINT: http://storage:3900
+      TM_STORAGE_KEY: GK746d6c6f63616c6f6e6c7900
+      TM_STORAGE_SECRET: 746d2d6c6f63616c2d6f6e6c792d6e6f742d612d7265616c2d7365637265742e
+      TM_GARAGE_ADMIN_URL: http://storage:3903
+      TM_PUBLIC_FILES_ORIGIN: http://storage:3902
+    depends_on:
+      db: { condition: service_healthy }
+      storage: { condition: service_healthy }

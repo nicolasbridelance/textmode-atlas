@@ -1,0 +1,67 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: Apache-2.0
+
+[project]
+name = "textmode-atlas"
+version = "0.0.0"
+description = "Digital Museum of Character Arts — workspace"
+requires-python = ">=3.12,<3.13"
+dependencies = ["tm", "tm-render", "tm-analysis", "tm-api"]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["ingest", "renderers", "analysis", "api"]
+
+[tool.uv.sources]
+tm = { workspace = true }
+tm-render = { workspace = true }
+tm-analysis = { workspace = true }
+tm-api = { workspace = true }
+
+[dependency-groups]
+dev = [
+  "ruff>=0.8",
+  "pyright>=1.1.390",
+  "pytest>=8.3",
+  "pytest-cov>=6.0",
+  "hypothesis>=6.120",
+  "reuse>=5.0",
+  "jsonschema>=4.23",
+  "boto3-stubs[s3]>=1.35",
+]
+# Data science and research notebooks (research/). Heavy learning dependencies (PyTorch,
+# umap-learn) come in with the workstreams that need them.
+research = [
+  "marimo>=0.10",
+  "duckdb>=1.1",
+  "altair>=5.5",
+  "scikit-learn>=1.6",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["docs"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "PL", "PT"]
+ignore = ["PLR2004", "PLR0913", "RUF001", "RUF002", "RUF003"]
+
+[tool.pyright]
+include = ["ingest/src", "renderers/src", "analysis/src", "api/src", "scripts"]
+pythonVersion = "3.12"
+typeCheckingMode = "strict"
+
+[tool.pytest.ini_options]
+testpaths = ["ingest/tests", "renderers/tests", "analysis/tests", "api/tests", "tests"]
+addopts = "-ra --strict-markers"
+markers = [
+  "db: needs PostgreSQL (TM_DATABASE_URL)",
+  "storage: needs local S3 storage (TM_STORAGE_KEY)",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["tm", "tm_render", "tm_analysis", "tm_api"]

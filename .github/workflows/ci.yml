@@ -1,0 +1,90 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# Every check is blocking. `just check` runs the same commands locally.
+
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    runs-on: ubuntu-24.04
+    services:
+      db:
+        image: pgvector/pgvector:0.8.1-pg16-bookworm
+        env:
+          POSTGRES_USER: tm
+          POSTGRES_PASSWORD: tm
+          POSTGRES_DB: tm
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U tm -d tm" --health-interval 2s --health-retries 30
+    env:
+      TM_DATABASE_URL: postgresql+psycopg://tm:tm@localhost:5432/tm
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.12.23"
+      - uses: extractions/setup-just@v3
+      - run: uv sync --all-groups --locked
+      - name: Style and format
+        run: just lint
+      - name: Strict typing
+        run: just typecheck
+      - name: Migrations up, down and up again on a blank PostgreSQL
+        run: uv run alembic upgrade head && uv run alembic downgrade base && uv run alembic upgrade head
+      - name: Tests, coverage, SQL constraints
+        run: just test
+      - name: Corpus YAML against JSON Schema
+        run: just corpus
+      - name: No artwork committed
+        run: just no-artworks
+
+  licenses:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: fsfe/reuse-action@v5
+
+  secrets:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  web:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - working-directory: apps/museum
+        run: |
+          pnpm run lint
+          pnpm run check
+          pnpm test
+      - working-directory: apps/museum
+        run: pnpm exec playwright install --with-deps chromium
+      - name: End-to-end
+        working-directory: apps/museum
+        run: pnpm run test:e2e

@@ -1,0 +1,20 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+name: Correct a record / Corriger une fiche
+description: Wrong attribution, date, group or credit. / Attribution, date, groupe ou crédit faux.
+labels: [moderation, correction]
+body:
+  - type: input
+    id: work
+    attributes:
+      label: Work (link or title) / Œuvre (lien ou titre)
+    validations: { required: true }
+  - type: textarea
+    id: correction
+    attributes:
+      label: What is wrong, and what is right? / Qu'est-ce qui est faux, et qu'est-ce qui est juste ?
+    validations: { required: true }
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence (file, NFO, message, memory) / Preuve (fichier, NFO, message, souvenir)
