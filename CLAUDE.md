@@ -80,7 +80,9 @@ output through `typer.echo`; `print` only in `scripts/`.
 - Never commit an artwork file. Only project-made golden artifacts (`tests/golden/`, CC0) are in Git.
 - Never modify an original.
 - Never write an assertion without `nature` and `asserted_by`.
-- Never bypass `can_display()`; `policy.allows()` returns `False` until a lawyer approves a rule.
+- Never bypass `can_display()`. Without the author's permission, a file is shown only under
+  [ADR 0009](docs/adr/0009-show-what-the-scene-released.md): released freely by the scene, held
+  by a scene archive, credited as signed, withdrawable on request.
 - Never link a handle to a civil person publicly.
 
 ## Conventions

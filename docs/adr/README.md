@@ -44,6 +44,7 @@ What becomes easier, what becomes harder, what we must now do.
 | [0003](0003-garage-for-local-object-storage.md) | Use Garage for local S3 storage | Accepted |
 | [0004](0004-english-repository-multilingual-museum.md) | English repository, multilingual museum | Accepted |
 | [0005](0005-reference-font-from-libansilove.md) | Take the reference VGA font from libansilove | Accepted |
-| [0006](0006-display-requires-permission.md) | Show a file only with permission; metadata otherwise | Accepted |
+| [0006](0006-display-requires-permission.md) | Show a file only with permission; metadata otherwise | Superseded by 0009 |
 | [0007](0007-mechanize-code-and-commit-rules.md) | Mechanize code and commit rules | Accepted |
 | [0008](0008-autonomous-development.md) | Develop in autonomous mode: green CI is the merge gate | Accepted |
+| [0009](0009-show-what-the-scene-released.md) | Show what the scene released freely, credit it, withdraw on request | Accepted |

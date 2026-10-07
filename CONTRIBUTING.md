@@ -16,7 +16,7 @@ little more care than an ordinary code repository.
 3. **Never write an assertion without `nature` and `asserted_by`.** Every relation says who
    asserts it and on what evidence. The database refuses it anyway.
 4. **Never bypass `can_display()`.** It is the only function that decides what may be shown or
-   played.
+   played ([ADR 0009](docs/adr/0009-show-what-the-scene-released.md)).
 
 And a fifth, which follows from the others: never publish a link between a handle and a civil
 identity without that person's consent.
