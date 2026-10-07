@@ -41,3 +41,9 @@ SPDX-License-Identifier = "BSD-2-Clause"
 path = ["docs/**"]
 SPDX-FileCopyrightText = "2026 Nicolas Bridelance and textmode-atlas contributors"
 SPDX-License-Identifier = "CC-BY-4.0"
+
+# Golden artifacts: works made for the project, dedicated to the public domain.
+[[annotations]]
+path = ["tests/golden/**/*.ans", "docs/assets/*.png"]
+SPDX-FileCopyrightText = "2026 textmode-atlas contributors"
+SPDX-License-Identifier = "CC0-1.0"
