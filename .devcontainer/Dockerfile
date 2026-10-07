@@ -4,7 +4,7 @@
 # Image shared by development (Codespaces) and CI. Versions are pinned: this image's digest is
 # written into every rendering recipe.
 
-FROM mcr.microsoft.com/devcontainers/base:1-bookworm
+FROM mcr.microsoft.com/devcontainers/base:2-bookworm
 
 ARG UV_VERSION=0.12.23
 ARG JUST_VERSION=1.58.0
