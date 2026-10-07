@@ -37,6 +37,20 @@ The first thing a visitor sees, built in pipeline order so that nothing is throw
 - [ ] Work screen: credit as signed, source link and "withdraw or claim" on every record (ADR 0009); canvas renderer from the grid and the bitmap font, profile switch, modem-speed playback, zoom to the cell, draw-order layer (honest about file order versus gesture)
 - [ ] Visual regression screenshots of the golden artifacts
 
+## Research track
+
+Detailed in [research-program.md](research-program.md). Phases run alongside the milestones.
+
+| Phase | Milestone | Status | Exit criterion |
+| --- | --- | --- | --- |
+| R0 Instruments: features v1, datasets D0–D1, notebook and pre-registration templates | M2 | ⏳ | features reproducible; D1 datasheet |
+| R1 Linkage v1: credits, greetings, BBS ads, dating, provenance; gold set D2 | M2–M3 | 💤 | precision and recall published on D2 |
+| R2 Atlas: description of all of 16colo, capture–recapture coverage, graph D5 | M4 | 💤 | coverage estimate with intervals |
+| R3 Style: W1 representation, W2 attribution | M4 | 💤 | W1 beats baselines on held-out packs, or negative result published |
+| R4 Change: W3 resonance, W6 ruptures | after R3 | 💤 | pre-registered tests published |
+| R5 Mechanisms: W4 diffusion, W5 transfers, W7 reading the art | after R1–R3 | 💤 | pre-registered tests published |
+| R6 Platforms: PC, Amiga, C64, teletext | M5 | 💤 | cross-platform distances with coverage |
+
 ## Spikes to run
 
 | Spike | Question | Time box | Before |

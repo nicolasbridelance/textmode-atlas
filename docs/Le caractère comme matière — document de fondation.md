@@ -557,7 +557,7 @@ Les entretiens avec les anciens de la scène sont stockés comme `trace` de type
 
 ## Programme de recherche
 
-Six chantiers, chacun avec une méthode établie et un test qui peut échouer.
+Six chantiers, chacun avec une méthode établie et un test qui peut échouer. Le [programme de recherche détaillé](research-program.md) les place sur leurs fondations (couche de liens, description du corpus, estimation de ce qui est perdu), ajoute un septième chantier (lire le lettrage dessiné dans les œuvres) et les phase selon les jalons.
 
 | Chantier | Méthode | Test de validité |
 | --- | --- | --- |
