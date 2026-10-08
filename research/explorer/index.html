@@ -1,0 +1,271 @@
+<!doctype html>
+<!--
+SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+SPDX-License-Identifier: Apache-2.0
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>16colo explorer</title>
+<style>
+  :root {
+    --bg: #0b0b0d; --panel: #15151a; --line: #2a2a33; --text: #d8d8de; --dim: #8a8a96;
+    --accent: #55ffff; --warn: #ffff55;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 14px/1.4 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--bg);
+    border-bottom: 1px solid var(--line); padding: 10px 16px; display: flex; flex-wrap: wrap;
+    gap: 10px 16px; align-items: center; }
+  header h1 { font-size: 15px; margin: 0; color: var(--accent); font-weight: normal; }
+  header .note { color: var(--dim); font-size: 12px; flex-basis: 100%; }
+  select, input { background: var(--panel); color: var(--text); border: 1px solid var(--line);
+    padding: 4px 6px; font: inherit; border-radius: 3px; }
+  input { width: 200px; }
+  #count { color: var(--dim); margin-left: auto; }
+  #wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px; padding: 16px; }
+  .card { cursor: pointer; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 3px; overflow: hidden; }
+  .card:hover, .card:focus { border-color: var(--accent); outline: none; }
+  .card .thumb { aspect-ratio: 320 / 200; background: #000; display: flex;
+    align-items: flex-start; justify-content: center; overflow: hidden; }
+  .card img { width: 100%; image-rendering: pixelated; display: block; }
+  .card .none { color: var(--dim); align-self: center; font-size: 12px; }
+  .card .meta { padding: 6px 8px; font-size: 12px; }
+  .card .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card .who { color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #more { height: 40px; }
+  #detail { position: fixed; inset: 0; z-index: 10; background: rgba(0,0,0,.92);
+    display: none; grid-template-columns: minmax(0, 1fr) 420px; }
+  #detail.open { display: grid; }
+  #art { overflow: auto; padding: 20px; text-align: center; }
+  #art img { image-rendering: pixelated; }
+  #side { background: var(--panel); border-left: 1px solid var(--line); overflow: auto;
+    padding: 16px; }
+  #side h2 { font-size: 15px; margin: 0 0 4px; color: var(--accent); font-weight: normal;
+    word-break: break-all; }
+  #side h3 { font-size: 12px; color: var(--dim); font-weight: normal; margin: 18px 0 6px;
+    text-transform: uppercase; letter-spacing: .08em; }
+  dl { display: grid; grid-template-columns: 120px 1fr; gap: 2px 10px; margin: 0; font-size: 13px; }
+  dt { color: var(--dim); } dd { margin: 0; word-break: break-word; }
+  .warn { color: var(--warn); }
+  .bar { display: flex; height: 18px; border: 1px solid var(--line); }
+  .bar span { display: block; height: 100%; }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 11px; color: var(--dim);
+    margin-top: 4px; }
+  .legend i { display: inline-block; width: 9px; height: 9px; margin-right: 4px; }
+  .hist { display: flex; align-items: flex-end; gap: 2px; height: 50px; }
+  .hist span { flex: 1; min-height: 1px; border: 1px solid #333; }
+  .bigrams { display: flex; flex-wrap: wrap; gap: 6px; font-size: 18px; }
+  .bigrams span { background: #000; padding: 0 4px; border: 1px solid var(--line); }
+  .bigrams small { font-size: 10px; color: var(--dim); }
+  .neighbours { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .neighbours img { width: 100%; image-rendering: pixelated; cursor: pointer;
+    border: 1px solid var(--line); }
+  .tools { display: flex; gap: 8px; margin-bottom: 10px; }
+  button { background: var(--panel); color: var(--text); border: 1px solid var(--line);
+    font: inherit; padding: 3px 10px; cursor: pointer; border-radius: 3px; }
+  button:hover { border-color: var(--accent); }
+  @media (max-width: 900px) {
+    #detail { grid-template-columns: 1fr; grid-template-rows: 55vh auto; }
+    #side { border-left: 0; border-top: 1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>16colo · explorer</h1>
+  <select id="year"><option value="">all years</option></select>
+  <select id="format"><option value="">all formats</option></select>
+  <input id="q" type="search" placeholder="group, author, pack, file">
+  <select id="order"></select>
+  <span id="count"></span>
+  <div class="note" id="note"></div>
+</header>
+<main id="wall"></main>
+<div id="more"></div>
+<div id="detail">
+  <div id="art"></div>
+  <aside id="side"></aside>
+</div>
+<script>
+"use strict";
+const VGA = ["#000000","#0000aa","#00aa00","#00aaaa","#aa0000","#aa00aa","#aa5500","#aaaaaa",
+  "#555555","#5555ff","#55ff55","#55ffff","#ff5555","#ff55ff","#ffff55","#ffffff"];
+// CP437 as Unicode: control glyphs, ASCII, then the upper half.
+const CP437 = " ☺☻♥♦♣♠•◘○◙♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼" +
+  Array.from({length: 95}, (_, i) => String.fromCharCode(32 + i)).join("") + "⌂" +
+  "ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■ ";
+const CLASSES = [["block","#5555ff"],["half_block","#ff5555"],["shade","#55ff55"],
+  ["box","#55ffff"],["alphanumeric","#ffff55"],["punctuation","#ff55ff"],["other","#aaaaaa"]];
+const ORDER_LABELS = {random: "random (fixed)", year: "year, pack", colours: "most colours",
+  entropy: "most glyph entropy", shade: "most shades", half_block: "most half blocks",
+  letters: "most letters", drawn: "least linear drawing", tall: "tallest", wide: "widest",
+  fill: "most filled"};
+
+const $ = (id) => document.getElementById(id);
+// `generation` changes with the filters: a page that arrives for older filters is dropped.
+const state = {offset: 0, total: 0, loading: false, shown: [], generation: 0, ready: false};
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pct = (x) => x == null ? "–" : (100 * x).toFixed(1) + " %";
+const num = (x, d = 2) => x == null ? "–" : Number(x).toFixed(d);
+
+function filters() {
+  return {year: $("year").value, format: $("format").value, q: $("q").value, order: $("order").value};
+}
+function saveHash(work) {
+  const params = new URLSearchParams(Object.entries(filters()).filter(([, v]) => v));
+  if (work) params.set("work", work);
+  history.replaceState(null, "", "#" + params);
+}
+
+async function facets() {
+  const f = await (await fetch("api/facets")).json();
+  for (const y of f.years) $("year").add(new Option(`${y.year} (${y.works})`, y.year));
+  for (const x of f.formats) $("format").add(new Option(`${x.format} (${x.works})`, x.format));
+  for (const o of f.orders) $("order").add(new Option(ORDER_LABELS[o] || o, o));
+  const d = f.dataset;
+  $("note").textContent = `Dataset works v${d.version}: ${d.works.toLocaleString()} art files of`
+    + ` the train packs, ${d.measured.toLocaleString()} measured. Exploratory: the test packs`
+    + ` are not here. Extractors ${JSON.stringify(d.extractors)}.`;
+  const hash = new URLSearchParams(location.hash.slice(1));
+  for (const k of ["year", "format", "q", "order"]) if (hash.get(k)) $(k).value = hash.get(k);
+  state.ready = true;
+  await reload();
+  if (hash.get("work")) open(hash.get("work"));
+}
+
+async function reload() {
+  state.generation += 1;
+  state.offset = 0; state.total = 0; state.shown = []; state.loading = false;
+  $("wall").innerHTML = "";
+  saveHash();
+  await more();
+}
+
+async function more() {
+  if (!state.ready || state.loading || (state.offset && state.offset >= state.total)) return;
+  state.loading = true;
+  const generation = state.generation;
+  const params = new URLSearchParams({...filters(), offset: state.offset});
+  const page = await (await fetch("api/works?" + params)).json();
+  if (generation !== state.generation) return;
+  state.total = page.total;
+  state.offset += page.works.length;
+  $("count").textContent = `${state.total.toLocaleString()} works`;
+  for (const w of page.works) {
+    state.shown.push(w.sha256);
+    $("wall").append(card(w));
+  }
+  state.loading = false;
+}
+
+function card(w) {
+  const el = document.createElement("div");
+  el.className = "card"; el.tabIndex = 0;
+  const thumb = w.decoding === "ok"
+    ? `<img loading="lazy" src="image/screen/${w.sha256}" alt="">`
+    : `<span class="none">${esc(w.format)} · not decoded</span>`;
+  const file = w.path.split("/").pop();
+  el.innerHTML = `<div class="thumb">${thumb}</div><div class="meta">
+    <div class="name" title="${esc(w.path)}">${esc(file)}</div>
+    <div class="who">${esc(w.sauce_author || "?")} / ${esc(w.sauce_group || "?")}</div>
+    <div class="who">${esc(w.pack)} · ${w.year ?? "?"}${w.cols ? ` · ${w.cols}×${w.rows}` : ""}</div></div>`;
+  el.onclick = () => open(w.sha256);
+  el.onkeydown = (e) => { if (e.key === "Enter") open(w.sha256); };
+  return el;
+}
+
+let zoom = 1, current = null;
+async function open(sha) {
+  current = sha;
+  const w = await (await fetch("api/work/" + sha)).json();
+  saveHash(sha);
+  $("detail").classList.add("open");
+  drawArt(w);
+  $("side").innerHTML = side(w);
+  for (const img of $("side").querySelectorAll("[data-sha]")) img.onclick = () => open(img.dataset.sha);
+}
+function drawArt(w) {
+  const tools = `<div class="tools"><button onclick="setZoom(1)">1×</button>
+    <button onclick="setZoom(2)">2×</button><button onclick="closeDetail()">close (Esc)</button>
+    <span style="color:var(--dim)">← → previous / next</span></div>`;
+  const art = w.decoding === "ok"
+    ? `<img id="full" src="image/full/${w.sha256}" style="zoom:${zoom}" alt="">`
+    : `<p>No grid: ${esc(w.decoding_error || "not decoded")}.</p>`;
+  $("art").innerHTML = tools + art;
+}
+function setZoom(z) { zoom = z; const img = $("full"); if (img) img.style.zoom = z; }
+function closeDetail() { $("detail").classList.remove("open"); current = null; saveHash(); }
+
+function side(w) {
+  const problems = (w.sauce_problems || []).length
+    ? `<dt>SAUCE</dt><dd class="warn">set aside: ${esc(w.sauce_problems.join(", "))}</dd>` : "";
+  const preview = w.decoding === "ok" && !w.rendering_sha256
+    ? `<p class="warn">Preview drawn from the grid: no stored rendering yet (8-pixel letters).</p>` : "";
+  return `<h2>${esc(w.path.split("/").pop())}</h2>
+  <div style="color:var(--dim)">${esc(w.pack)} · ${w.year ?? "?"}</div>${preview}
+  <h3>Record</h3><dl>
+    <dt>title</dt><dd>${esc(w.sauce_title || "–")}</dd>
+    <dt>author</dt><dd>${esc(w.sauce_author || "–")}</dd>
+    <dt>group</dt><dd>${esc(w.sauce_group || "–")}</dd>
+    <dt>SAUCE date</dt><dd>${esc(w.sauce_date || "–")}</dd>
+    <dt>font</dt><dd>${esc(w.sauce_font || "–")}${w.sauce_ice ? " · iCE" : ""}</dd>${problems}
+    <dt>path</dt><dd>${esc(w.path)}</dd>
+    <dt>format</dt><dd>${esc(w.format)} · ${Number(w.bytes).toLocaleString()} bytes</dd>
+    <dt>grid</dt><dd>${w.cols ?? "–"} × ${w.rows ?? "–"}${w.cells ? ` · ${w.cells.toLocaleString()} cells` : ""}
+      ${w.cols ? ` · ${num(w.bytes / (w.cols * w.rows), 1)} bytes/cell` : ""}</dd>
+    <dt>packs</dt><dd>${w.packs}</dd>
+    <dt>sha256</dt><dd style="font-size:11px">${w.sha256}</dd>
+  </dl>${w.fill_ratio == null ? "" : features(w)}`;
+}
+
+function features(w) {
+  const shares = CLASSES.map(([name, colour]) => [name, colour, w["class_" + name] || 0]);
+  const classBar = shares.map(([n, c, s]) => `<span title="${n} ${pct(s)}" style="width:${100 * s}%;background:${c}"></span>`).join("");
+  const legend = shares.map(([n, c, s]) => `<span><i style="background:${c}"></i>${n} ${pct(s)}</span>`).join("");
+  const hist = (values, offset = 0) => {
+    const max = Math.max(1, ...values);
+    return values.map((v, i) => `<span title="${v}" style="height:${100 * v / max}%;background:${VGA[i + offset]}"></span>`).join("");
+  };
+  const bigrams = (w.bigram_codes || []).map((code, i) =>
+    `<span title="${(code >> 8).toString(16)} ${(code & 255).toString(16)}">${esc(CP437[code >> 8] + CP437[code & 255])} <small>${w.bigram_counts[i]}</small></span>`).join("");
+  const neighbours = (w.neighbours || []).map((n) =>
+    `<img loading="lazy" data-sha="${n.sha256}" src="image/screen/${n.sha256}" title="${esc(n.path)} · ${esc(n.sauce_group || "?")} · ${n.year}" alt="">`).join("");
+  return `<h3>Glyphs (visible)</h3><div class="bar">${classBar}</div><div class="legend">${legend}</div>
+  <dl style="margin-top:6px"><dt>entropy</dt><dd>${num(w.glyph_entropy)} bits</dd></dl>
+  <h3>Top pairs, side by side</h3><div class="bigrams">${bigrams || "–"}</div>
+  <h3>Foreground colours</h3><div class="hist">${hist(w.fg_hist)}</div>
+  <h3>Backgrounds (ink cells)</h3><div class="hist">${hist(w.bg_hist)}</div>
+  <h3>Measures</h3><dl>
+    <dt>fill</dt><dd>${pct(w.fill_ratio)}</dd>
+    <dt>colours</dt><dd>${w.n_colors} · ${w.fg_bg_pairs} fg/bg pairs</dd>
+    <dt>bright bg</dt><dd>${pct(w.high_bg_ratio)} of ink cells</dd>
+    <dt>symmetry</dt><dd>left–right ${num(w.symmetry_h)} · top–bottom ${num(w.symmetry_v)}</dd>
+    <dt>centre</dt><dd>row ${num(w.center_row)} · col ${num(w.center_col)}</dd>
+    <dt>draw order</dt><dd>${num(w.draw_order)} · ${pct(w.cursor_jumps)} cursor jumps</dd>
+  </dl>
+  <h3>Nearest by features (exploratory)</h3><div class="neighbours">${neighbours || "–"}</div>`;
+}
+
+function step(delta) {
+  const i = state.shown.indexOf(current);
+  if (i >= 0 && state.shown[i + delta]) open(state.shown[i + delta]);
+}
+document.addEventListener("keydown", (e) => {
+  if (!current) return;
+  if (e.key === "Escape") closeDetail();
+  if (e.key === "ArrowRight") step(1);
+  if (e.key === "ArrowLeft") step(-1);
+});
+for (const id of ["year", "format", "order"]) $(id).onchange = reload;
+let typing;
+$("q").oninput = () => { clearTimeout(typing); typing = setTimeout(reload, 350); };
+new IntersectionObserver((e) => { if (e[0].isIntersecting) more(); }, {rootMargin: "800px"}).observe($("more"));
+facets();
+</script>
+</body>
+</html>
