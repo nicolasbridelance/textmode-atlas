@@ -24,9 +24,14 @@ Status: ✅ done · 🔨 in progress · ⏳ next · 💤 later
 | M4 Scale | 💤 | all of 16colo in metadata; NFO credit extraction precision measured |
 | M5 Extensions | 💤 | one decoder, profile and collection per added system |
 
-## Current focus: the work screen, end to end (M2, started early)
+## Current focus: real packs, the pilot dataset, then the work screen (M2)
 
-The first thing a visitor sees, built in pipeline order so that nothing is throwaway.
+Order set on 2026-10-08: the pipeline runs end to end on the golden source, so real packs come
+next. They unlock research phase R0 (the first exploratory look needs grids and features of real
+work) and give the work screen real works to show. Nothing below is throwaway: each step is
+where the foundation document puts it.
+
+Done, pipeline on the golden source:
 
 - [x] Push `scaffold`, open the pull request, get the first CI run green ([#1](https://github.com/nicolasbridelance/textmode-atlas/pull/1))
 - [x] Golden artifact #1: Horizon, an ANSI made for the project (CC0), with its SAUCE record; also the README showcase
@@ -36,10 +41,25 @@ The first thing a visitor sees, built in pipeline order so that nothing is throw
 - [x] Conservation renderer (grid → PNG, integer scale, 9th column, blink / iCE) with recipe; determinism test; ansilove parity on the golden artifacts in CI (`just parity`)
 - [x] `tm ingest golden` → `source`, `work`, `version`, `artifact` rows, original stored write-once
 - [x] `tm decode` → `decoding` rows (grid or classified error); grids in the private `tm-derived` bucket ([ADR 0011](adr/0011-a-private-bucket-for-derived-data.md))
-- [x] `tm render` → conservation `representation` rows with the recipe, PNGs in `tm-derived` (the authentic level comes with the profiles, on the work screen)
-- [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`; refuses a shown file without credit (ADR 0009)
-- [ ] Work screen: credit as signed, source link and "withdraw or claim" on every record (ADR 0009); canvas renderer from the grid and the bitmap font, profile switch, modem-speed playback, zoom to the cell, draw-order layer (honest about file order versus gesture)
-- [ ] Visual regression screenshots of the golden artifacts
+- [x] Explicit decoder and renderer versions, guarded by a source digest ([ADR 0012](adr/0012-explicit-versions-for-decoders-and-renderers.md))
+- [x] `tm render` → conservation `representation` rows with the recipe, PNGs in `tm-derived`
+
+Next, in this order:
+
+1. [ ] `tm ingest pack <zip>`: a local 16colo pack as a `set` work with its `set_member` files (NFO and DIZ included), scene publication recorded for ADR 0009; no 16colo crawler before M4
+2. [ ] Feature extractor v1 in `analysis/` (geometry, glyphs, colour, sequence, from the foundation document) and `tm features` → `features.parquet`, reproducible bit for bit
+3. [ ] D1 pilot: 20 packs spread over years and groups, frozen with its datasheet; marimo notebook template; first exploratory look (labelled exploratory)
+4. [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`; refuses a shown file without credit (ADR 0009)
+5. [ ] Work screen, first version: canvas renderer from the grid and the bitmap font, credit as signed, source link, "withdraw or claim" on every record (ADR 0009)
+
+Later, deliberately (nothing depends on them yet):
+
+| Item | When | Why it can wait |
+| --- | --- | --- |
+| Work screen: profile switch and authentic level, modem-speed playback, zoom to the cell, draw-order layer | after the first version; spike 0002 before the playback | the first version stands without them |
+| Visual regression screenshots of the golden artifacts | after the first work screen | the golden pixels are already pinned in CI |
+| Golden artifact #2 (blink, iCE, 8 px cells) | next renderer change | spike 0001 checked these paths on real packs |
+| M1 schema test by hand | after D1 | real packs test the schema first; M1 then covers what they do not (BBS, radios, testimonies) |
 
 ## Research track
 
@@ -47,7 +67,7 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 
 | Phase | Milestone | Status | Exit criterion |
 | --- | --- | --- | --- |
-| R0 Instruments: features v1, datasets D0–D1, notebook and pre-registration templates | M2 | ⏳ | features reproducible; D1 datasheet |
+| R0 Instruments: features v1, datasets D0–D1, notebook and pre-registration templates | M2 | 🔨 | features reproducible; D1 datasheet |
 | R1 Linkage v1: credits, greetings, BBS ads, dating, provenance; gold set D2 | M2–M3 | 💤 | precision and recall published on D2 |
 | R2 Atlas: description of all of 16colo, capture–recapture coverage, graph D5 | M4 | 💤 | coverage estimate with intervals |
 | R3 Style: W1 representation, W2 attribution | M4 | 💤 | W1 beats baselines on held-out packs, or negative result published |
@@ -59,7 +79,7 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 
 | Spike | Question | Time box | Before |
 | --- | --- | --- | --- |
-| 0002 | Can a canvas draw a 500-line ANSI at cell zoom and modem speed at 60 fps on a mid-range phone? | 2 h | work screen |
+| 0002 | Can a canvas draw a 500-line ANSI at cell zoom and modem speed at 60 fps on a mid-range phone? | 2 h | modem-speed playback |
 | 0003 | Can Paraglide build offline (vendored inlang plugins)? | 1 h | known debt below |
 
 ## M0 tasks that need a person (Nicolas)
