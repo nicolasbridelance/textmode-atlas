@@ -63,6 +63,8 @@ max-complexity = 8
 "tests/**" = ["PLR2004"]
 "scripts/**" = ["T201"]
 "migrations/**" = ["ERA001"]
+# marimo notebooks: each cell is a function that imports what it uses and returns its names.
+"research/**" = ["PLC0415", "PLR1711"]
 
 [tool.vulture]
 paths = ["ingest/src", "renderers/src", "analysis/src", "api/src", "scripts"]
