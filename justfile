@@ -26,7 +26,17 @@ hooks:
 
 # Start PostgreSQL and Garage, and wait until they are ready
 services:
-    docker compose up -d --wait
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if command -v docker >/dev/null; then exec docker compose up -d --wait; fi
+    # Inside the dev container, compose has already started them next to it
+    for _ in $(seq 60); do
+        pg_isready -q -d "${TM_DATABASE_URL/+psycopg/}" \
+            && curl -fs -o /dev/null "$TM_GARAGE_ADMIN_URL/health" && exit 0
+        sleep 1
+    done
+    echo "services unreachable: $TM_DATABASE_URL, $TM_GARAGE_ADMIN_URL" >&2
+    exit 1
 
 # Apply database migrations
 migrate:
