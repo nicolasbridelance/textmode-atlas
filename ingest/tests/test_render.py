@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pytest
 from PIL import Image
+from samples import CORRUPT_SAUCE_ART
 from sqlalchemy import Connection, text
 from stores import Stores
 from tm.decode import DECODER, decode_pending
@@ -61,6 +62,18 @@ def test_another_scale_is_another_rendering(db: Connection, stores: Stores) -> N
     render_pending(db, stores.derived, FONT, scale=1)
     [item] = render_pending(db, stores.derived, FONT, scale=2)
     assert (item.recipe["scale"], item.recipe["width"]) == (2, 2 * 80 * 9)
+
+
+def test_the_flags_of_a_corrupt_sauce_are_not_used(
+    db: Connection, stores: Stores, tmp_path: Path
+) -> None:
+    root = tmp_path / "golden"
+    root.mkdir()
+    (root / "padded.ans").write_bytes(CORRUPT_SAUCE_ART)
+    decoded(db, stores, root)
+    [item] = render_pending(db, stores.derived, FONT, scale=1)
+    assert (item.recipe["letter_spacing"], item.recipe["width"]) == (8, 80 * 8)
+    assert item.recipe["high_bg"] == "blink"
 
 
 def test_a_failed_decoding_is_not_rendered(db: Connection, stores: Stores, tmp_path: Path) -> None:

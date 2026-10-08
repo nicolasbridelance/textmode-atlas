@@ -59,6 +59,7 @@ class Decoded:
     grid: Grid
     sauce: Sauce | None
     skipped_sequences: int
+    sauce_problems: tuple[str, ...] = ()
 
 
 @dataclass
@@ -208,7 +209,10 @@ def decode(data: bytes) -> Decoded:
     content, sauce = split(data)
     if not content:
         raise DecodeError("empty", "no content before the end of file")
-    width = sauce.width if sauce and sauce.width else DEFAULT_WIDTH
+    # A record with corrupt binary fields gives no width: its numbers are text or shifted bytes
+    # (20,480 or 26,912 columns), and drawing at that width would put the art on one row.
+    problems = sauce.problems(len(data)) if sauce else ()
+    width = sauce.width if sauce and sauce.width and not problems else DEFAULT_WIDTH
     state = _State(width=width)
     offset = 0
     while offset < len(content):
@@ -221,4 +225,5 @@ def decode(data: bytes) -> Decoded:
         offset += 1
     # The canvas ends at the last written row, as ansilove draws it: SAUCE heights often count a
     # trailing CR LF as a row (spike 0001). The record itself stays in `Decoded.sauce`.
-    return Decoded(Grid(width, state.max_row + 1, dict(state.cells)), sauce, state.skipped)
+    grid = Grid(width, state.max_row + 1, dict(state.cells))
+    return Decoded(grid, sauce, state.skipped, problems)

@@ -1,5 +1,8 @@
 # SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 # SPDX-License-Identifier: Apache-2.0
+from typing import Any
+
+import pytest
 from conftest import SauceRecord
 from tm_render.sauce import split
 
@@ -49,3 +52,37 @@ def test_announced_comments_that_are_missing_are_ignored(sauce_record: SauceReco
     assert content == b"art"
     assert sauce is not None
     assert sauce.comments == ()
+
+
+def test_a_well_formed_record_has_no_problems(sauce_record: SauceRecord) -> None:
+    data = b"art\x1a" + sauce_record()
+    sauce = split(data)[1]
+    assert sauce is not None
+    assert sauce.problems(len(data)) == ()
+
+
+def test_binary_text_puts_any_value_in_the_file_type(sauce_record: SauceRecord) -> None:
+    data = b"art" + sauce_record(types=(5, 80))
+    sauce = split(data)[1]
+    assert sauce is not None
+    assert sauce.problems(len(data)) == ()
+
+
+@pytest.mark.parametrize(
+    ("fields", "expected"),
+    [
+        # Polyester, 1996–97: the group text overflows into the binary fields ("by").
+        ({"types": (98, 121)}, ("type_out_of_spec",)),
+        # Spaces as padding: 0x2020xxxx bytes declared for a file of a few hundred.
+        ({"file_size": 0x2020_02D0}, ("size_exceeds_file",)),
+        # RiSE, 1995: a field one byte too long shifts the rest of the record.
+        ({"file_size": 1 << 24, "types": (1, 80)}, ("type_out_of_spec", "size_exceeds_file")),
+    ],
+)
+def test_corrupt_binary_fields_are_named(
+    sauce_record: SauceRecord, fields: dict[str, Any], expected: tuple[str, ...]
+) -> None:
+    data = b"art\x1a" + sauce_record(**fields)
+    sauce = split(data)[1]
+    assert sauce is not None
+    assert sauce.problems(len(data)) == expected

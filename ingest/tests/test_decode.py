@@ -6,6 +6,7 @@ import zipfile
 from pathlib import Path
 
 import pytest
+from samples import CORRUPT_SAUCE_ART
 from sqlalchemy import Connection, text
 from stores import Stores
 from tm.decode import DECODER, NO_DECODER, decode_pending
@@ -66,6 +67,19 @@ def test_an_unreadable_file_gets_a_classified_error_and_no_grid(
     row = db.execute(text("select * from decoding where sha256 = :sha"), {"sha": sha}).one()
     assert (row.status, row.error_class, row.grid_sha256) == ("error", "empty", None)
     assert not stores.derived.exists(grid_key(sha, DECODER, DECODER_VERSION))
+
+
+def test_a_corrupt_sauce_is_set_aside_and_named(
+    db: Connection, tmp_path: Path, stores: Stores
+) -> None:
+    root = tmp_path / "golden"
+    root.mkdir()
+    (root / "padded.ans").write_bytes(CORRUPT_SAUCE_ART)
+    sha = ingest_golden(db, stores.originals, root)[0].sha256
+    [item] = decode_pending(db, stores.originals, stores.derived)
+    assert (item.cols, item.rows, item.sauce_problems) == (80, 2, ("size_exceeds_file",))
+    row = db.execute(text("select * from decoding where sha256 = :sha"), {"sha": sha}).one()
+    assert row.sauce_problems == ["size_exceeds_file"]
 
 
 def test_a_new_decoder_version_decodes_again(

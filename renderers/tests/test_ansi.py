@@ -70,6 +70,20 @@ def test_canvas_ends_at_the_last_written_row(sauce_record: SauceRecord) -> None:
     assert decoded.sauce.height == 25
 
 
+def test_a_wide_canvas_comes_from_a_coherent_sauce(sauce_record: SauceRecord) -> None:
+    decoded = decode(b"x" * 100 + b"\x1a" + sauce_record(width=160))
+    assert (decoded.grid.cols, decoded.grid.rows) == (160, 1)
+    assert decoded.sauce_problems == ()
+
+
+def test_a_corrupt_sauce_gives_no_width(sauce_record: SauceRecord) -> None:
+    decoded = decode(b"x" * 100 + b"\x1a" + sauce_record(width=0x2050, file_size=0x2020_0064))
+    assert (decoded.grid.cols, decoded.grid.rows) == (80, 2)
+    assert decoded.sauce_problems == ("size_exceeds_file",)
+    assert decoded.sauce is not None
+    assert decoded.sauce.width == 0x2050
+
+
 def test_sauce_without_eof_byte_is_not_drawn(sauce_record: SauceRecord) -> None:
     assert len(decode(b"art" + sauce_record()).grid.cells) == len(b"art")
 
