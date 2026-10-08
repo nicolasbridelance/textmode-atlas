@@ -21,6 +21,7 @@ from PIL import Image
 
 from tm_render.grid import Cell, Grid
 from tm_render.sauce import Sauce
+from tm_render.versions import RENDERER_VERSION
 
 GLYPHS = 256
 GLYPH_HEIGHT = 16
@@ -100,7 +101,7 @@ def render(grid: Grid, font: BitmapFont, settings: Settings) -> Rendering:
     png = _encode(image)
     recipe = {
         "renderer": "tm_render",
-        "renderer_version": version("tm-render"),
+        "renderer_version": RENDERER_VERSION,
         "encoder": f"Pillow {version('pillow')}",
         "grid_sha256": grid.digest(),
         "font": {"file": font.name, "sha256": font.sha256},

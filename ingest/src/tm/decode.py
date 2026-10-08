@@ -10,12 +10,12 @@ decodes nothing the second time.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from importlib.metadata import version
 from typing import Any
 
 from sqlalchemy import Connection, Row, text
 from tm_render.ansi import DecodeError, decode
 from tm_render.grid import Grid, from_parquet, to_parquet
+from tm_render.versions import DECODER_VERSION
 
 from tm.storage import IntegrityError, ObjectStore, get_original, grid_key
 
@@ -32,7 +32,6 @@ class Decoded:
 
 def decode_pending(conn: Connection, originals: ObjectStore, derived: ObjectStore) -> list[Decoded]:
     """Decode every ANSI artifact that has no result yet for the current decoder version."""
-    decoder_version = version("tm-render")
     pending = conn.execute(
         text(
             "select a.sha256, a.source_path from artifact a where a.format = 'ansi'"
@@ -40,9 +39,9 @@ def decode_pending(conn: Connection, originals: ObjectStore, derived: ObjectStor
             " and d.decoder = :decoder and d.decoder_version = :version)"
             " order by a.source_path, a.sha256"
         ),
-        {"decoder": DECODER, "version": decoder_version},
+        {"decoder": DECODER, "version": DECODER_VERSION},
     ).all()
-    return [_decode_one(conn, originals, derived, row, decoder_version) for row in pending]
+    return [_decode_one(conn, originals, derived, row) for row in pending]
 
 
 def _decode_one(
@@ -50,10 +49,9 @@ def _decode_one(
     originals: ObjectStore,
     derived: ObjectStore,
     artifact: Row[Any],
-    decoder_version: str,
 ) -> Decoded:
     sha256, path = artifact.sha256, artifact.source_path
-    row = {"sha256": sha256, "decoder": DECODER, "version": decoder_version}
+    row = {"sha256": sha256, "decoder": DECODER, "version": DECODER_VERSION}
     try:
         grid = decode(get_original(originals, sha256)).grid
     except DecodeError as err:
@@ -65,7 +63,7 @@ def _decode_one(
             {**row, "error_class": err.kind},
         )
         return Decoded(path, sha256, err.kind, None)
-    _put_grid(derived, grid_key(sha256, DECODER, decoder_version), grid)
+    _put_grid(derived, grid_key(sha256, DECODER, DECODER_VERSION), grid)
     conn.execute(
         text(
             "insert into decoding (sha256, decoder, decoder_version, status, grid_sha256, cols,"
