@@ -18,6 +18,7 @@ from tm.config import settings
 from tm.decode import decode_pending
 from tm.dev import storage_init
 from tm.ingest import ingest_golden
+from tm.packs import PackIngested, ingest_pack, pack_archives
 from tm.render import render_pending
 from tm.storage import S3Store, s3_client
 
@@ -125,3 +126,29 @@ def render_command(
         recipe = item.recipe
         typer.echo(f"{item.path} {recipe['width']}x{recipe['height']} {recipe['pixels_sha256']}")
     typer.echo(f"{len(results)} rendered")
+
+
+@ingest_app.command("pack")
+def ingest_pack_command(
+    paths: Annotated[list[Path], typer.Argument(help="Pack archives, or directories of them.")],
+) -> None:
+    """Store 16colo packs from the local mirror and record them: the set, its files, the art."""
+    cfg = settings()
+    store = S3Store(s3_client(), cfg.originals_bucket)
+    engine = create_engine(cfg.database_url)
+    archives = pack_archives(paths)
+    for archive in archives:
+        with engine.begin() as conn:  # one transaction per pack
+            typer.echo(_pack_summary(ingest_pack(conn, store, archive)))
+    typer.echo(f"{len(archives)} packs")
+
+
+def _pack_summary(item: PackIngested) -> str:
+    if not item.new:
+        return f"already known {item.path}"
+    parts = [f"ingested {item.path} {item.members} members"]
+    if item.error_class:
+        parts.append(f"error {item.error_class}")
+    if item.unreadable:
+        parts.append(f"{len(item.unreadable)} unreadable: {', '.join(item.unreadable)}")
+    return "; ".join(parts)
