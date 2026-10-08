@@ -50,3 +50,4 @@ What becomes easier, what becomes harder, what we must now do.
 | [0009](0009-show-what-the-scene-released.md) | Show what the scene released freely, credit it, withdraw on request | Accepted |
 | [0010](0010-render-from-the-grid.md) | Render conservation PNGs from the grid; ansilove is the reference | Accepted |
 | [0011](0011-a-private-bucket-for-derived-data.md) | Keep derived data in a third, private bucket | Accepted |
+| [0012](0012-explicit-versions-for-decoders-and-renderers.md) | Version decoders and renderers explicitly, guarded by a source digest | Accepted |
