@@ -49,11 +49,11 @@ Next, in this order:
 
 1. [x] `tm ingest pack`: 16colo packs from the local mirror as `set` works with their `set_member` files, art found by extension, SAUCE or content, scene publication recorded (ADR 0009); archives read by Python, Info-ZIP, 7-Zip and arj ([ADR 0013](adr/0013-archive-readers-for-artpacks.md)); a rerun completes what an earlier one could not read
 2. [x] Catalogue exploration (exploratory): describe all of 16colo from the local mirror (years, groups, formats, SAUCE presence, widths, iCE, fonts, NFO and DIZ) before choosing anything; D1 strata come out of it ([source note](sources/16colo.md), [findings](../research/exploration/catalogue.md), dataset `catalogue`); 16colo's own tags (API v1) not used yet
-3. [ ] Conservation renderings of the whole corpus (`tm render --shard`, private bucket), to look at; about 80,000 of 111,453 done on 2026-10-08
+3. [x] Conservation renderings of the whole corpus (`tm render --shard`, private bucket): 111,453 on 2026-10-08
 4. [x] Feature extractor v1 in `analysis/` (geometry, glyphs, colour, sequence, from the foundation document) and `tm features` → `features.parquet`, reproducible bit for bit
 5. [x] Visual and statistical exploration of the `train` packs: a `works` dataset (metadata, features, rendering keys), marimo notebook, local corpus explorer (`just explore`), first note ([works.md](../research/exploration/works.md)) with the constraints it puts on later steps
    - [x] Content kind of each work (colours, block share), since the extension does not say it (constraint 1): `works` v2, explorer filter
-   - [ ] Decoder counts overwritten cells; features of animation-like works are flagged (constraint 3)
+   - [ ] Decoder counts overwritten cells (done, decoder v3); animation rule chosen on their distribution and flagged in features and notebook (constraint 3)
 6. [ ] D1 pilot: 20 packs drawn by stratum with a fixed seed, strata revised after step 5 (eras bounded by the mass, equal allocation so thin years are over-represented, inclusion weights recorded, content kind: constraints 1–2 of the works note, leads I19), rare cases added by hand with a reason; frozen with its datasheet; marimo notebook template
 7. [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`; refuses a shown file without credit (ADR 0009)
 8. [ ] Work screen, first version: canvas renderer from the grid and the bitmap font, credit as signed, source link, "withdraw or claim" on every record (ADR 0009)
