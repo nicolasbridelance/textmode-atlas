@@ -11,15 +11,14 @@ import typer
 from pydantic import ValidationError
 from sqlalchemy import create_engine
 from tm_render.conservation import MAX_SCALE, BitmapFont
-from tm_render.grid import Grid
 
 from tm import corpus as corpus_mod
 from tm.config import settings
-from tm.decode import decode_pending
+from tm.decode import decode_artifact, pending_artifacts
 from tm.dev import storage_init
 from tm.ingest import ingest_golden
 from tm.packs import PackIngested, ingest_pack, pack_archives
-from tm.render import render_pending
+from tm.render import pending_renderings, render_artifact
 from tm.storage import S3Store, s3_client
 
 app = typer.Typer(help="Digital Museum of Character Arts.", no_args_is_help=True)
@@ -74,10 +73,6 @@ def dev_storage_init() -> None:
         typer.echo(line)
 
 
-def _grid_summary(grid: Grid) -> str:
-    return f"ok {grid.cols}x{grid.rows} {grid.digest()}"
-
-
 @ingest_app.command("golden")
 def ingest_golden_command(
     root: Annotated[Path, typer.Option(help="Directory of golden artifacts.")] = Path(
@@ -101,12 +96,18 @@ def decode_command() -> None:
     originals = S3Store(client, cfg.originals_bucket)
     derived = S3Store(client, cfg.derived_bucket)
     engine = create_engine(cfg.database_url)
-    with engine.begin() as conn:
-        results = decode_pending(conn, originals, derived)
-    for item in results:
-        outcome = f"error {item.error_class}" if item.grid is None else _grid_summary(item.grid)
+    with engine.connect() as conn:
+        todo = pending_artifacts(conn)
+    for artifact in todo:
+        with engine.begin() as conn:  # one transaction per artifact: a long run keeps its work
+            item = decode_artifact(conn, originals, derived, artifact)
+        outcome = (
+            f"error {item.error_class}"
+            if item.error_class
+            else f"ok {item.cols}x{item.rows} {item.grid_sha256}"
+        )
         typer.echo(f"{item.path} {outcome}")
-    typer.echo(f"{len(results)} decoded")
+    typer.echo(f"{len(todo)} decoded")
 
 
 @app.command("render")
@@ -119,13 +120,16 @@ def render_command(
     """Draw a conservation PNG of every decoded grid not yet rendered with these settings."""
     cfg = settings()
     derived = S3Store(s3_client(), cfg.derived_bucket)
+    bitmap = BitmapFont.load(font)
     engine = create_engine(cfg.database_url)
-    with engine.begin() as conn:
-        results = render_pending(conn, derived, BitmapFont.load(font), scale)
-    for item in results:
+    with engine.connect() as conn:
+        todo = pending_renderings(conn, bitmap, scale)
+    for row in todo:
+        with engine.begin() as conn:  # one transaction per rendering
+            item = render_artifact(conn, derived, bitmap, scale, row)
         recipe = item.recipe
         typer.echo(f"{item.path} {recipe['width']}x{recipe['height']} {recipe['pixels_sha256']}")
-    typer.echo(f"{len(results)} rendered")
+    typer.echo(f"{len(todo)} rendered")
 
 
 @ingest_app.command("pack")

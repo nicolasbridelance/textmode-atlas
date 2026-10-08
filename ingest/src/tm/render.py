@@ -10,6 +10,7 @@ the same scale and with the same font, is skipped.
 from __future__ import annotations
 
 import json
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -35,8 +36,16 @@ class Rendered:
 def render_pending(
     conn: Connection, derived: ObjectStore, font: BitmapFont, scale: int
 ) -> list[Rendered]:
-    """Render every decoded grid that has no conservation rendering with these settings yet."""
-    pending = conn.execute(
+    """Render every pending grid in one transaction (tests, small runs)."""
+    return [
+        render_artifact(conn, derived, font, scale, row)
+        for row in pending_renderings(conn, font, scale)
+    ]
+
+
+def pending_renderings(conn: Connection, font: BitmapFont, scale: int) -> Sequence[Row[Any]]:
+    """Decoded grids with no conservation rendering by this renderer, scale and font yet."""
+    return conn.execute(
         text(
             "select a.sha256, a.source_path, a.sauce, d.grid_sha256 from decoding d"
             " join artifact a on a.sha256 = d.sha256"
@@ -57,10 +66,9 @@ def render_pending(
             "font": font.sha256,
         },
     ).all()
-    return [_render_one(conn, derived, font, scale, row) for row in pending]
 
 
-def _render_one(
+def render_artifact(
     conn: Connection, derived: ObjectStore, font: BitmapFont, scale: int, row: Row[Any]
 ) -> Rendered:
     grid = from_parquet(derived.get(grid_key(row.sha256, DECODER, DECODER_VERSION)))
