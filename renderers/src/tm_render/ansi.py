@@ -17,8 +17,6 @@ from dataclasses import dataclass, field
 from tm_render.grid import Cell, Grid
 from tm_render.sauce import Sauce, split
 
-DECODER = "ansi"
-DECODER_VERSION = "1"
 DEFAULT_WIDTH = 80
 MAX_ROWS = 10_000  # far beyond any real artwork; stops runaway cursor movement
 ESC, CSI_START = 0x1B, ord("[")
