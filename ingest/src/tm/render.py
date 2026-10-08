@@ -21,6 +21,7 @@ from tm_render.sauce import Sauce
 from tm_render.versions import DECODER_VERSION, RENDERER_VERSION
 
 from tm.decode import DECODER
+from tm.shards import EVERYTHING, FILTER, Shard
 from tm.storage import IntegrityError, ObjectStore, grid_key, rendering_key, sha256_hex
 
 LEVEL = "conservation"
@@ -43,7 +44,9 @@ def render_pending(
     ]
 
 
-def pending_renderings(conn: Connection, font: BitmapFont, scale: int) -> Sequence[Row[Any]]:
+def pending_renderings(
+    conn: Connection, font: BitmapFont, scale: int, shard: Shard = EVERYTHING
+) -> Sequence[Row[Any]]:
     """Decoded grids with no conservation rendering by this renderer, scale and font yet."""
     return conn.execute(
         text(
@@ -56,7 +59,7 @@ def pending_renderings(conn: Connection, font: BitmapFont, scale: int) -> Sequen
             " and r.level = :level and r.recipe->>'renderer_version' = :renderer_version"
             " and r.recipe->>'grid_sha256' = d.grid_sha256"
             " and (r.recipe->>'scale')::int = :scale and r.recipe#>>'{font,sha256}' = :font)"
-            " order by a.source_path, a.sha256"
+            f"{FILTER} order by a.source_path, a.sha256"
         ),
         {
             "decoder": DECODER,
@@ -65,6 +68,7 @@ def pending_renderings(conn: Connection, font: BitmapFont, scale: int) -> Sequen
             "renderer_version": RENDERER_VERSION,
             "scale": scale,
             "font": font.sha256,
+            **shard.params(),
         },
     ).all()
 

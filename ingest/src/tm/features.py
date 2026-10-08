@@ -20,12 +20,13 @@ from tm_render.grid import from_parquet
 from tm_render.versions import DECODER_VERSION
 
 from tm.decode import DECODER
+from tm.shards import EVERYTHING, FILTER, Shard
 from tm.storage import IntegrityError, ObjectStore, grid_key
 
 COLUMNS = [field.name for field in dataclasses.fields(Features)]
 
 
-def pending_features(conn: Connection) -> Sequence[Row[Any]]:
+def pending_features(conn: Connection, shard: Shard = EVERYTHING) -> Sequence[Row[Any]]:
     """Grids of the current decoder with no features from the current extractor yet."""
     return conn.execute(
         text(
@@ -35,9 +36,14 @@ def pending_features(conn: Connection) -> Sequence[Row[Any]]:
             " and d.decoder_version = :decoder_version"
             " and not exists (select 1 from features f where f.sha256 = d.sha256"
             " and f.extractor_version = :version)"
-            " order by a.source_path, d.sha256"
+            f"{FILTER} order by a.source_path, d.sha256"
         ),
-        {"decoder": DECODER, "decoder_version": DECODER_VERSION, "version": FEATURES_VERSION},
+        {
+            "decoder": DECODER,
+            "decoder_version": DECODER_VERSION,
+            "version": FEATURES_VERSION,
+            **shard.params(),
+        },
     ).all()
 
 
