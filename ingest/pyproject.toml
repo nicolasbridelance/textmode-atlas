@@ -7,7 +7,7 @@ version = "0.0.0"
 description = "The tm CLI: connectors, storage, rights, export"
 requires-python = ">=3.12,<3.13"
 license = "Apache-2.0"
-dependencies = ["typer>=0.15", "pydantic>=2.10", "pyyaml>=6.0", "sqlalchemy>=2.0", "psycopg[binary]>=3.2", "alembic>=1.14", "boto3>=1.35", "botocore>=1.35"]
+dependencies = ["typer>=0.15", "pydantic>=2.10", "pyyaml>=6.0", "sqlalchemy>=2.0", "psycopg[binary]>=3.2", "alembic>=1.14", "boto3>=1.35", "botocore>=1.35", "tm-render"]
 
 [project.scripts]
 tm = "tm.cli:app"
