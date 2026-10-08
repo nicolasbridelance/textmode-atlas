@@ -16,6 +16,15 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-08 — Ingesting all of 16colo
+
+**A pack can hold the same file twice in one archive.** `2004/cro-dskmg0604-nomp3.rar` lists
+`cro-dskmg0604-nomp3/cro.nfo` twice, with the same size, date and CRC, among 255 entries; it
+also has a `cro.nfo` at its root. The packer most likely added the folder's NFO twice when
+building the archive. Nothing is lost, but a tool that expects one entry per name stops: the
+museum's ingestion did, after 5,200 packs. How often this happens in the rest of the mirror is
+not measured yet. *Evidence: `7zz l -slt` on the archive; PR fixing `tm.packs`.*
+
 ## 2026-10-08 — Pack ingestion and the 16colo mirror
 
 **Before SAUCE, groups signed their files with the extension.** In 1990–1993 packs, files named
