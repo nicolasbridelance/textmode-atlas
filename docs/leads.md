@@ -23,7 +23,7 @@ Rules:
 | Id | Question | From | What would answer it | Status |
 | --- | --- | --- | --- | --- |
 | Q1 | Which editor writes `ESC[?7h` (line wrap on) in 15% of the ANSI of 1994–99? | works note, byte scan | byte habits of files whose tool is known (SAUCE comments, NFO, tool release dates) | open |
-| Q2 | Is the fall of shades and the rise of punctuation (1994 → 2004) one shift in style, or text-heavy files (NFO-like ANSI, ASCII in ANSI) growing in the packs? | works note | the same measure by content kind (I1), and within artists over time | open |
+| Q2 | Is the fall of shades and the rise of punctuation (1994 → 2004) one shift in style, or text-heavy files (NFO-like ANSI, ASCII in ANSI) growing in the packs? | works note | the same measure by content kind (I1), and within artists over time | answered for exploration: composition; within coloured block art shades stay 22–28% (works note) |
 | Q3 | Why does the median height double after 2005? The end of the 25-line BBS screen as reading frame, web viewers, or a change in what packs hold? | works note | heights by content kind and by pack type; scroll works vs logos | open |
 | Q4 | What are the 5.8% of ANSI of 1990–93 written out of reading order: animations, BBS menus, editors that saved by blocks? | works note | contact sheet sorted by draw order; overwrite counts (I3) | open |
 | Q5 | Are the 2005–12 years thin because the scene was, or because 16colo holds less of them? | catalogue, works note | other archives (Demozoo, textfiles.com) for the same years; `lost_item` | open |
@@ -42,6 +42,8 @@ Rules:
 | Q18 | Is the scene's iCE turn (after 2013) one tool (PabloDraw's default?) or a choice of artists? | works note | iCE flag and blink use by tool fingerprint and group | open |
 | Q19 | Are the empty and near-empty works (fill near 0) blank pages, file-list art, or decoding faults? | works dataset | contact sheet of the least filled works | open |
 | Q21 | Is 1996 the peak of the scene, or of 16colo? The archive holds what was submitted to it, and its submitters may favour the years they lived. | owner, works note | artpacks by year in other sources (Demozoo has 1,519 artpacks, type 51; its API ignores date filters and blocks the codespace, so a paging script from elsewhere or a dump is needed), textfiles.com, Defacto2; capture–recapture (R2), knowing that Demozoo imported part of 16colo, so the sources are not independent | open |
+| Q22 | What is the colourless block art of 2000–04, as common then as coloured block art (2,419 against 2,536)? A style (block ASCII), a medium (IRC, web, e-mail without colour codes), or one prolific group? | works note | contact sheet of `blocks` 2000–04, by group and pack; first look (explorer, 2002): `.asc` files drawn in grey blocks (BAFH, sac, spr, mfn), most with no SAUCE author, so a style rather than a fault | open |
+| Q23 | Simpson's traps elsewhere: which other trends over time are mixtures of content kinds, packs or groups changing weight? | works note (Q2) | every trend shown by content kind and with pack and group weights | open |
 | Q20 | How alike are the works of one pack? Do packs have a house style, a template header or footer? | explorer | within-pack distances against between-pack | open |
 
 ## Hypotheses (to pre-register before a confirmatory test)
@@ -61,7 +63,7 @@ Rules:
 
 | Id | Idea | Why | Status |
 | --- | --- | --- | --- |
-| I1 | Content kind of each work: escape sequences or not, colours, block share; plain text art, coloured text art, colourless block art, ANSI | the extension does not say it (works note, constraint 1) | taken (roadmap step 5) |
+| I1 | Content kind of each work: escape sequences or not, colours, block share; plain text art, coloured text art, colourless block art, ANSI | the extension does not say it (works note, constraint 1) | done: `works` v2, `content_kind` |
 | I2 | Extract text runs from grids (letters and punctuation in rows) | search inside works, signatures (Q12), greetings, languages (Q10) | open |
 | I3 | Decoder counts overwritten cells; keep frames of animations | the grid is not the work for animations (constraint 3) | taken (roadmap step 5) |
 | I4 | Lettering fingerprints: glyph n-grams of logos, to find shared or copied letterforms | diffusion and borrowing (W4, W5) | open |
