@@ -9,7 +9,10 @@ Zenodo with a DOI.
 
 - A dataset is **defined** here (one `<name>/dataset.yaml` plus its datasheet,
   `<name>/DATASHEET.md`) and **built** by `tm` from the database into `datasets/build/`
-  (ignored by Git, published to storage).
+  (ignored by Git, published to storage): `uv run tm dataset build <name>`.
+- `dataset.yaml` names each table's SQL query (a file beside it), the key that orders and
+  identifies its rows, and its columns with a type and a description. A build fails when the
+  query returns other columns or the key repeats.
 - Each build records the database migration, the extractor versions, the query, and the SHA-256
   of every output file. Building twice gives byte-identical files.
 - Train / test splits are made **by pack**, never by file, and ship with the dataset.
