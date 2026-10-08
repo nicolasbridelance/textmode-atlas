@@ -68,7 +68,7 @@ Rules:
 | I3 | Decoder counts overwritten cells; keep frames of animations | the grid is not the work for animations (constraint 3) | taken (roadmap step 5) |
 | I4 | Lettering fingerprints: glyph n-grams of logos, to find shared or copied letterforms | diffusion and borrowing (W4, W5) | open |
 | I5 | Colour ramps: the sequences of colours along rows and down columns | shading schools (Q15), house palettes (H7) | open |
-| I6 | "Time to arrive": bytes / (baud / 10) at 2400 and 14400 baud, on each record | a cartel fact for visitors; also a measure of byte economy | open |
+| I6 | "Time to arrive": bytes / (baud / 10) at 2400 and 14400 baud, on each record | a cartel fact for visitors; also a measure of byte economy | taken: explorer detail; the museum record later |
 | I7 | Tool fingerprints from byte habits (SGR order, `ESC[?7h`, cursor-forward, line ends, SAUCE quirks) | dating by tool (rule 6), Q1, Q14, Q18 | open |
 | I8 | Explorer: filters by group and author, pack view in archive order (with drawn listings), side-by-side comparison | looking together | open |
 | I9 | Explorer: byte-stream playback at modem speed, zoom to the cell, the grid's text layer | see animations and drawing order (Q4) | open |
