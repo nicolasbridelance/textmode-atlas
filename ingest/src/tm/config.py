@@ -17,6 +17,7 @@ class Settings(BaseModel):
     storage_key: str = ""
     storage_secret: str = ""
     originals_bucket: str = "tm-originals"
+    derived_bucket: str = "tm-derived"
     public_bucket: str = "tm-public"
     # Garage administration: local environment only.
     garage_admin_url: str = "http://localhost:3903"

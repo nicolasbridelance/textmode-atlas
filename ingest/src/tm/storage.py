@@ -40,6 +40,13 @@ def original_key(sha256: str) -> str:
     return f"sha256/{sha256[:2]}/{sha256[2:4]}/{sha256}"
 
 
+def grid_key(sha256: str, decoder: str, decoder_version: str) -> str:
+    """Key of a grid in the derived bucket: the primary key of its `decoding` row (ADR 0011)."""
+    return (
+        f"grids/{original_key(sha256).removeprefix('sha256/')}/{decoder}@{decoder_version}.parquet"
+    )
+
+
 class ObjectStore(Protocol):
     def exists(self, key: str) -> bool: ...
     def get(self, key: str) -> bytes: ...

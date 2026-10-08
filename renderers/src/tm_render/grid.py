@@ -13,7 +13,6 @@ from __future__ import annotations
 import hashlib
 import struct
 from dataclasses import dataclass
-from pathlib import Path
 
 import pyarrow as pa
 import pyarrow.parquet as pq
@@ -79,9 +78,11 @@ def from_table(table: pa.Table) -> Grid:
     return Grid(int(metadata[b"cols"]), int(metadata[b"rows"]), cells)
 
 
-def write_parquet(grid: Grid, path: Path) -> None:
-    pq.write_table(to_table(grid), path, compression="zstd")  # pyright: ignore[reportUnknownMemberType]
+def to_parquet(grid: Grid) -> bytes:
+    sink = pa.BufferOutputStream()
+    pq.write_table(to_table(grid), sink, compression="zstd")  # pyright: ignore[reportUnknownMemberType]
+    return sink.getvalue().to_pybytes()
 
 
-def read_parquet(path: Path) -> Grid:
-    return from_table(pq.read_table(path))  # pyright: ignore[reportUnknownMemberType]
+def from_parquet(data: bytes) -> Grid:
+    return from_table(pq.read_table(pa.BufferReader(data)))  # pyright: ignore[reportUnknownMemberType]
