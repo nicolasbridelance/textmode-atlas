@@ -101,7 +101,7 @@ Le site public est statique. C'est le choix qui le rend rapide, peu coûteux et 
             PRIVÉ                                   PUBLIC
   ┌──────────────────────────┐          ┌───────────────────────────┐
   │ PostgreSQL + pgvector    │  export  │ bucket public + CDN       │
-  │ bucket des originaux     │ ───────► │  site statique            │
+  │ originaux, dérivés (S3)  │ ───────► │  site statique            │
   │ jobs tm (conteneur)      │          │  grilles, PNG, JSON       │
   └──────────────────────────┘          └───────────────────────────┘
                ▲                                     │
@@ -112,13 +112,13 @@ Le site public est statique. C'est le choix qui le rend rapide, peu coûteux et 
                         └──────────────────┘
 ```
 
-La commande `tm export` applique `can_display()` et ne copie vers le bucket public que ce qui peut être montré. Un retrait supprime l'objet, purge le cache du CDN et relance l'export de la fiche.
+Les grilles et les rendus calculés sont gardés dans un bucket privé de dérivés, distinct des originaux : ils se recalculent, les originaux non ([ADR 0011](adr/0011-a-private-bucket-for-derived-data.md)). La commande `tm export` applique `can_display()` et ne copie, du bucket des dérivés vers le bucket public, que ce qui peut être montré. Un retrait supprime l'objet, purge le cache du CDN et relance l'export de la fiche.
 
 Hébergement cible, à partir de M4 : tout chez Scaleway, région Paris. Un seul fournisseur français simplifie le dossier RGPD.
 
 | Besoin | Service | Remarque |
 | --- | --- | --- |
-| Originaux (privé) et fichiers publics | Object Storage, deux buckets | compatible S3 ; versionnement activé sur les originaux |
+| Originaux (privé), dérivés (privé) et fichiers publics | Object Storage, trois buckets | compatible S3 ; versionnement activé sur les originaux ; les dérivés se recalculent et ne sont pas répliqués |
 | Base | Managed Database for PostgreSQL | l'extension pgvector est proposée par le service ([Scaleway](https://www.scaleway.com/en/managed-postgresql-mysql/)) |
 | API | Serverless Containers | s'éteint sans trafic |
 | Jobs `tm` | Serverless Jobs, ou une instance lancée à la demande | même image que la CI, référencée par digest |
@@ -136,7 +136,7 @@ Services annexes :
 
 Sauvegarde et pérennité :
 
-- Les originaux existent en trois copies : bucket principal, bucket chez un second fournisseur, copie hors ligne.
+- Les originaux existent en trois copies : bucket principal, bucket chez un second fournisseur, copie hors ligne. Les dérivés (grilles, rendus) ne sont pas sauvegardés : `tm decode` et `tm render` les refont, c'est la reproductibilité de l'invariant 3.
 - La base est sauvegardée chaque jour par le service géré, avec un export SQL hebdomadaire vers le second fournisseur.
 - Le code est archivé par Software Heritage, et chaque version du jeu de métadonnées est déposée sur Zenodo avec un DOI.
 
