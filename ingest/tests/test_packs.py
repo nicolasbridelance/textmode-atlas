@@ -221,3 +221,20 @@ def test_an_entry_listed_twice_is_one_member(
     result = ingest_pack(db, stores.originals, pack)
     assert result.members == 1
     assert rows(db, "select path, position from set_member") == [("CRO.NFO", 0)]
+
+
+def test_a_picture_stamped_as_ansi_is_not_art(
+    db: Connection, stores: Stores, tmp_path: Path
+) -> None:
+    sauce_ansi = HORIZON[-128:]  # Character / ANSI
+    files = {
+        "WZ-FUNK.JPG": b"\xff\xd8\xff\xe0\x00\x10JFIF\x00" + b"\x00" * 64 + b"\x1a" + sauce_ansi,
+        "LOGO.GR": LOGO,
+    }
+    ingest_pack(db, stores.originals, make_pack(tmp_path / "1996" / "bdp-0396.zip", files))
+    assert rows(
+        db,
+        "select m.path, a.format, v.id is not null from set_member m"
+        " join artifact a on a.sha256 = m.sha256 left join version v on v.id = a.version_id"
+        " order by m.position",
+    ) == [("WZ-FUNK.JPG", "jpg", False), ("LOGO.GR", "ansi", True)]

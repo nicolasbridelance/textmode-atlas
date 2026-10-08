@@ -6,5 +6,5 @@ Bump one when the code it covers changes; `tests/test_versions.py` fails until y
 how. The `decoding` rows, the grid keys and the rendering recipes record them.
 """
 
-DECODER_VERSION = "3"
+DECODER_VERSION = "4"
 RENDERER_VERSION = "1"

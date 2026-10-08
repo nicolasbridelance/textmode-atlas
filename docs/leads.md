@@ -93,4 +93,5 @@ Rules:
 | C2 | The 64 KB cut download (`1994/itr-9401.zip`): what was the last file, the one lost? | field notes | open |
 | C3 | Packs whose archive listing is a drawing (`TOTAL CHAOS`, 1993): how many groups did it, and did it spread? | field notes | open |
 | C4 | Ninety-two archives are copies under another name: who renamed them, and when? | field notes | open |
+| C6 | `DD-ICE.ICE` (pack dd-ice) is a ProTracker module, "agony intro", named like an iCE artwork; about 1,600 pictures, programs, archives and modules carry a SAUCE record of type ANSI. Which tool stamped them all? | decoder signatures | open |
 | C5 | A `.ANS` of 1996 with 605 rows of grey line drawing (`02-STEPS.ANS`, swap07): line art in ANSI, how common? | explorer | open |
