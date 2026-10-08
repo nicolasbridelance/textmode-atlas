@@ -13,7 +13,7 @@ ARG LIBANSILOVE_VERSION=1.4.2
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-      build-essential cmake libgd-dev postgresql-client curl ca-certificates \
+      build-essential cmake libgd-dev postgresql-client curl ca-certificates libmagic1 \
  && rm -rf /var/lib/apt/lists/*
 
 # uv and just
