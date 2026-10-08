@@ -38,6 +38,8 @@ jobs:
         with:
           version: "0.12.23"
       - uses: extractions/setup-just@v4
+      - name: Archive readers (ADR 0013)
+        run: sudo sh scripts/install-archive-readers.sh
       - run: uv sync --all-groups --locked
       - name: Style and format
         run: just lint
@@ -86,7 +88,7 @@ jobs:
           load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - run: docker run --rm tm-dev:ci sh -c "ansilove -v && uv --version && just --version"
+      - run: docker run --rm tm-dev:ci sh -c "ansilove -v && uv --version && just --version && unzip -v | head -n 1 && arj | head -n 1 && 7zz i | head -n 2"
       - name: ansilove draws the golden artifacts with the recorded pixels (ADR 0010)
         run: docker run --rm -v "$PWD:/w" -w /w tm-dev:ci just parity
 
