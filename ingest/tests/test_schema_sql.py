@@ -155,6 +155,26 @@ def test_expansion_says_why_a_pack_is_empty_or_partial(db: Connection) -> None:
     db.execute(sql, {"s": SHA, "st": "partial", "e": None, "u": ["TUNE.XM"]})
 
 
+def test_features_histograms_have_their_size(db: Connection) -> None:
+    insert_artifact(db)
+    sql = text(
+        "insert into features (sha256, extractor_version, grid_sha256, cols, rows, cells,"
+        " fill_ratio, center_row, center_col, symmetry_h, symmetry_v, glyph_hist, glyph_entropy,"
+        " class_block, class_half_block, class_shade, class_box, class_alphanumeric,"
+        " class_punctuation, class_other, bigram_codes, bigram_counts, n_colors, fg_hist,"
+        " bg_hist, high_bg_ratio, fg_bg_pairs, cursor_jumps, draw_order) values (:s, :v,"
+        " :s, 80, 1, 0, 0, 0.5, 0.5, 0, 0, cast(:glyphs as integer[]), 0, 0, 0, 0, 0, 0, 0, 0,"
+        " '{}', :counts, 0, cast(:fg as integer[]), cast(:bg as integer[]), 0, 0, 0, 1)"
+    )
+    good = {"s": SHA, "glyphs": [0] * 256, "counts": [], "fg": [0] * 16, "bg": [0] * 8}
+    for version, wrong in enumerate(
+        [{"glyphs": [0] * 255}, {"fg": [0] * 8}, {"bg": [0] * 16}, {"counts": [1]}]
+    ):
+        values = {**good, **wrong, "v": str(version)}
+        fails(db, "check", lambda values=values: db.execute(sql, values))
+    db.execute(sql, {**good, "v": "ok"})
+
+
 def test_authentic_representation_needs_profile(db: Connection) -> None:
     insert_artifact(db)
     sql = text(

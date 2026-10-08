@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pyarrow.parquet as pq
 import pytest
-from sqlalchemy import Connection
+from sqlalchemy import Connection, text
 from stores import Stores
 from tm.datasets import DatasetError, build
 from tm.packs import ingest_pack
@@ -68,7 +68,8 @@ def test_building_twice_gives_the_same_bytes(
     for name in names:
         assert (first / name).read_bytes() == (second / name).read_bytes()
     manifest = json.loads((first / "manifest.json").read_text())
-    assert manifest["migration"] == "0003"
+    head = db.execute(text("select version_num from alembic_version")).scalar_one()
+    assert manifest["migration"] == head
     assert manifest["extractors"]["decoder"] == f"tm_render.ansi@{DECODER_VERSION}"
 
 

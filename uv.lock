@@ -1330,6 +1330,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "pyyaml" },
     { name = "sqlalchemy" },
+    { name = "tm-analysis" },
     { name = "tm-render" },
     { name = "typer" },
 ]
@@ -1344,6 +1345,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.10" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "sqlalchemy", specifier = ">=2.0" },
+    { name = "tm-analysis", editable = "analysis" },
     { name = "tm-render", editable = "renderers" },
     { name = "typer", specifier = ">=0.15" },
 ]
@@ -1352,6 +1354,16 @@ requires-dist = [
 name = "tm-analysis"
 version = "0.0.0"
 source = { editable = "analysis" }
+dependencies = [
+    { name = "numpy" },
+    { name = "tm-render" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "numpy", specifier = ">=2.0" },
+    { name = "tm-render", editable = "renderers" },
+]
 
 [[package]]
 name = "tm-api"

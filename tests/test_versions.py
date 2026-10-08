@@ -1,9 +1,10 @@
 # SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 # SPDX-License-Identifier: Apache-2.0
-"""Guard for ADR 0012: the declared version of the decoder and renderer matches their code.
+"""Guard for ADR 0012: the declared version of the decoder, renderer and feature extractor
+matches their code.
 
 When this fails after a change to the code in COVERS:
-  1. raise the version in `tm_render/versions.py` by one;
+  1. raise the version in `tm_render/versions.py` (or `tm_analysis/versions.py`) by one;
   2. add the new digest (printed below) under that version in PINS;
   3. keep the old entries: they are the history of what each version was.
 """
@@ -15,21 +16,26 @@ import hashlib
 from pathlib import Path
 
 import pytest
+import tm_analysis
 import tm_render
+from tm_analysis.versions import FEATURES_VERSION
 from tm_render.versions import DECODER_VERSION, RENDERER_VERSION
 
-PACKAGE = Path(tm_render.__file__).parent
+RENDER = Path(tm_render.__file__).parent
+ANALYSIS = Path(tm_analysis.__file__).parent
 COVERS = {
-    "decoder": ("ansi.py", "sauce.py", "grid.py"),
-    "renderer": ("conservation.py",),
+    "decoder": (RENDER / "ansi.py", RENDER / "sauce.py", RENDER / "grid.py"),
+    "renderer": (RENDER / "conservation.py",),
+    "features": (ANALYSIS / "features.py",),
 }
-DECLARED = {"decoder": DECODER_VERSION, "renderer": RENDERER_VERSION}
+DECLARED = {"decoder": DECODER_VERSION, "renderer": RENDERER_VERSION, "features": FEATURES_VERSION}
 PINS = {
     "decoder": {
         "1": "44389ece653d37c069bc8bf98d8e4bdea16f8506ee4a5411cf83acbfbe8205eb",
         "2": "2d265d8cbef4796364a6523b815a21156f2573ef354eae5a811038fc4b64b574",
     },
     "renderer": {"1": "acf2f900bd645c61dac80da37121cceab3abb36ae5bbbc627da178422e6d5c28"},
+    "features": {"1": "6722aeabbaa4cbee87caa167ef6d32a9abb8adfea9aa36ecb889ffa357271079"},
 }
 
 
@@ -57,7 +63,7 @@ def _starts_with_docstring(body: list[ast.stmt]) -> bool:
 
 
 def covered_digest(kind: str) -> str:
-    return ast_digest(*(PACKAGE.joinpath(name).read_text("utf-8") for name in COVERS[kind]))
+    return ast_digest(*(path.read_text("utf-8") for path in COVERS[kind]))
 
 
 def test_digest_ignores_comments_docstrings_and_layout() -> None:
