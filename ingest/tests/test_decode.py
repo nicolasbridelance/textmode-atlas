@@ -35,7 +35,8 @@ def test_decode_records_the_grid_and_stores_it(db: Connection, stores: Stores) -
     sha = ingested(db, stores)
     [item] = decode_pending(db, stores.originals, stores.derived)
     expected = decode(HORIZON).grid
-    assert (item.path, item.error_class, item.grid) == ("ansi/horizon.ans", None, expected)
+    assert (item.path, item.error_class) == ("ansi/horizon.ans", None)
+    assert (item.cols, item.rows, item.grid_sha256) == (80, 40, expected.digest())
     row = db.execute(text("select * from decoding where sha256 = :sha"), {"sha": sha}).one()
     assert (row.decoder, row.decoder_version) == (DECODER, DECODER_VERSION)
     assert (row.status, row.error_class) == ("ok", None)
@@ -59,7 +60,7 @@ def test_an_unreadable_file_gets_a_classified_error_and_no_grid(
     (root / "empty.ans").write_bytes(b"")
     sha = ingest_golden(db, stores.originals, root)[0].sha256
     [item] = decode_pending(db, stores.originals, stores.derived)
-    assert (item.error_class, item.grid) == ("empty", None)
+    assert (item.error_class, item.grid_sha256) == ("empty", None)
     row = db.execute(text("select * from decoding where sha256 = :sha"), {"sha": sha}).one()
     assert (row.status, row.error_class, row.grid_sha256) == ("error", "empty", None)
     assert not stores.derived.exists(grid_key(sha, DECODER, DECODER_VERSION))

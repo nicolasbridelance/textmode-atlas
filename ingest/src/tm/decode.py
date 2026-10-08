@@ -9,6 +9,7 @@ decodes nothing the second time.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -24,15 +25,24 @@ DECODER = "tm_render.ansi"
 
 @dataclass(frozen=True)
 class Decoded:
+    """The outcome, without the grid: a run over the corpus must not hold every grid."""
+
     path: str
     sha256: str
     error_class: str | None
-    grid: Grid | None
+    cols: int | None = None
+    rows: int | None = None
+    grid_sha256: str | None = None
 
 
 def decode_pending(conn: Connection, originals: ObjectStore, derived: ObjectStore) -> list[Decoded]:
-    """Decode every ANSI artifact that has no result yet for the current decoder version."""
-    pending = conn.execute(
+    """Decode every pending artifact in one transaction (tests, small runs)."""
+    return [decode_artifact(conn, originals, derived, a) for a in pending_artifacts(conn)]
+
+
+def pending_artifacts(conn: Connection) -> Sequence[Row[Any]]:
+    """ANSI artifacts with no result yet for the current decoder version."""
+    return conn.execute(
         text(
             "select a.sha256, a.source_path from artifact a where a.format = 'ansi'"
             " and not exists (select 1 from decoding d where d.sha256 = a.sha256"
@@ -41,10 +51,9 @@ def decode_pending(conn: Connection, originals: ObjectStore, derived: ObjectStor
         ),
         {"decoder": DECODER, "version": DECODER_VERSION},
     ).all()
-    return [_decode_one(conn, originals, derived, row) for row in pending]
 
 
-def _decode_one(
+def decode_artifact(
     conn: Connection,
     originals: ObjectStore,
     derived: ObjectStore,
@@ -71,7 +80,7 @@ def _decode_one(
         ),
         {**row, "grid_sha256": grid.digest(), "cols": grid.cols, "rows": grid.rows},
     )
-    return Decoded(path, sha256, None, grid)
+    return Decoded(path, sha256, None, grid.cols, grid.rows, grid.digest())
 
 
 def _put_grid(store: ObjectStore, key: str, grid: Grid) -> None:
