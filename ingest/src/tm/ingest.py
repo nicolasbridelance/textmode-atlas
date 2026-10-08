@@ -9,15 +9,21 @@ already known is left alone.
 
 from __future__ import annotations
 
-import dataclasses
-import datetime as dt
-import json
 from dataclasses import dataclass
 from pathlib import Path
 
-from sqlalchemy import Connection, text
-from tm_render.sauce import Sauce, split
+from sqlalchemy import Connection
+from tm_render.sauce import split
 
+from tm.records import (
+    ArtifactRow,
+    Dating,
+    artifact_known,
+    ensure_source,
+    insert_artifact,
+    insert_work,
+    sauce_date,
+)
 from tm.rights import Permission, Rights
 from tm.storage import ObjectStore, put_original
 
@@ -41,26 +47,14 @@ def golden_files(root: Path) -> list[Path]:
 
 
 def ingest_golden(conn: Connection, store: ObjectStore, root: Path) -> list[Ingested]:
-    source_id = _golden_source(conn)
+    source_id = ensure_source(
+        conn,
+        "golden",
+        GOLDEN_SOURCE,
+        None,
+        f"Made for the project and dedicated to the public domain ({GOLDEN_LICENSE}).",
+    )
     return [_ingest_file(conn, store, source_id, root, path) for path in golden_files(root)]
-
-
-def _golden_source(conn: Connection) -> str:
-    conn.execute(
-        text(
-            "insert into source (kind, name, terms_note) values ('golden', :name, :note)"
-            " on conflict (name) do nothing"
-        ),
-        {
-            "name": GOLDEN_SOURCE,
-            "note": f"Made for the project and dedicated to the public domain ({GOLDEN_LICENSE}).",
-        },
-    )
-    return str(
-        conn.execute(
-            text("select id from source where name = :name"), {"name": GOLDEN_SOURCE}
-        ).scalar_one()
-    )
 
 
 def _ingest_file(
@@ -69,52 +63,31 @@ def _ingest_file(
     data = path.read_bytes()
     sha256, _ = put_original(store, data)
     relative = path.relative_to(root).as_posix()
-    known = conn.execute(
-        text("select 1 from artifact where sha256 = :sha256"), {"sha256": sha256}
-    ).first()
-    if known:
+    if artifact_known(conn, sha256):
         return Ingested(relative, sha256, new=False)
     sauce = split(data)[1]
-    version_id = _insert_work_and_version(conn, sauce, fallback_title=path.stem)
-    conn.execute(
-        text(
-            "insert into artifact (sha256, version_id, bytes, format, charset, sauce, source_id,"
-            " source_path) values (:sha256, :version_id, :bytes, :format, :charset,"
-            " cast(:sauce as jsonb), :source_id, :source_path)"
+    date = sauce_date(sauce)
+    version_id = insert_work(
+        conn,
+        "single",
+        sauce.title if sauce and sauce.title else path.stem,
+        _golden_rights(),
+        Dating(date, date, "sauce" if date else None),
+    )
+    insert_artifact(
+        conn,
+        ArtifactRow(
+            sha256=sha256,
+            bytes=len(data),
+            format=FORMATS[path.suffix.lower()],
+            charset=CHARSET,
+            sauce=sauce,
+            source_id=source_id,
+            source_path=relative,
+            version_id=version_id,
         ),
-        {
-            "sha256": sha256,
-            "version_id": version_id,
-            "bytes": len(data),
-            "format": FORMATS[path.suffix.lower()],
-            "charset": CHARSET,
-            "sauce": json.dumps(dataclasses.asdict(sauce)) if sauce else None,
-            "source_id": source_id,
-            "source_path": relative,
-        },
     )
     return Ingested(relative, sha256, new=True)
-
-
-def _insert_work_and_version(conn: Connection, sauce: Sauce | None, fallback_title: str) -> str:
-    title = sauce.title if sauce and sauce.title else fallback_title
-    work_id = conn.execute(
-        text(
-            "insert into work (kind, title, rights) values ('single', :title,"
-            " cast(:rights as jsonb)) returning id"
-        ),
-        {"title": title, "rights": _golden_rights().model_dump_json()},
-    ).scalar_one()
-    sauce_date = _sauce_date(sauce)
-    return str(
-        conn.execute(
-            text(
-                "insert into version (work_id, date_min, date_max, date_basis, behavior)"
-                " values (:work_id, :date, :date, :basis, 'static') returning id"
-            ),
-            {"work_id": work_id, "date": sauce_date, "basis": "sauce" if sauce_date else None},
-        ).scalar_one()
-    )
 
 
 def _golden_rights() -> Rights:
@@ -126,13 +99,3 @@ def _golden_rights() -> Rights:
         ),
         license=GOLDEN_LICENSE,
     )
-
-
-def _sauce_date(sauce: Sauce | None) -> dt.date | None:
-    """The SAUCE date (`YYYYMMDD`), or None when absent or not a real date."""
-    if sauce is None:
-        return None
-    try:
-        return dt.datetime.strptime(sauce.date, "%Y%m%d").replace(tzinfo=dt.UTC).date()
-    except ValueError:
-        return None
