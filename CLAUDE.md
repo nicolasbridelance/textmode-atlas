@@ -27,6 +27,9 @@ prepare anything sent on his behalf, never send it.
   `spike/NNNN-topic` branch, never merged, reported in [docs/spikes/](docs/spikes/).
 - Visible changes are checked in rendering, not only in code: `just shots [path…]`, then look at
   the images (desktop and mobile, every locale).
+- Every question, hypothesis, idea or curiosity the work raises → a line in
+  [docs/leads.md](docs/leads.md), when it comes, even when it would lead too far. The owner
+  wants all of them kept.
 - Something the work reveals about the scene's history (a habit in the files, a gap in the
   record, how works travelled) → an entry in [docs/field-notes.md](docs/field-notes.md), dated,
   with how it was found and its evidence. It feeds future visitor stories; write it when found,
