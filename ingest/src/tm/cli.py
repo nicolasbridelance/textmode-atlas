@@ -17,6 +17,7 @@ from tm.config import settings
 from tm.datasets import DatasetError, build
 from tm.decode import decode_artifact, pending_artifacts
 from tm.dev import storage_init
+from tm.features import extract_artifact, pending_features
 from tm.ingest import ingest_golden
 from tm.packs import PackIngested, ingest_pack, pack_archives
 from tm.render import pending_renderings, render_artifact
@@ -159,6 +160,21 @@ def render_command(
         recipe = item.recipe
         typer.echo(f"{item.path} {recipe['width']}x{recipe['height']} {recipe['pixels_sha256']}")
     typer.echo(f"{len(todo)} rendered")
+
+
+@app.command("features")
+def features_command() -> None:
+    """Measure every decoded grid that has no features from this extractor version yet."""
+    cfg = settings()
+    derived = S3Store(s3_client(), cfg.derived_bucket)
+    engine = create_engine(cfg.database_url)
+    with engine.connect() as conn:
+        todo = pending_features(conn)
+    for row in todo:
+        with engine.begin() as conn:  # one transaction per grid
+            features = extract_artifact(conn, derived, row)
+        typer.echo(f"{row.source_path} fill {features.fill_ratio:.2f} colours {features.n_colors}")
+    typer.echo(f"{len(todo)} measured")
 
 
 @ingest_app.command("pack")
