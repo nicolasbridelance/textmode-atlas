@@ -64,7 +64,7 @@ Rules:
 | Id | Idea | Why | Status |
 | --- | --- | --- | --- |
 | I1 | Content kind of each work: escape sequences or not, colours, block share; plain text art, coloured text art, colourless block art, ANSI | the extension does not say it (works note, constraint 1) | done: `works` v2, `content_kind` |
-| I2 | Extract text runs from grids (letters and punctuation in rows) | search inside works, signatures (Q12), greetings, languages (Q10) | open |
+| I2 | Extract text runs from grids (letters and punctuation in rows) | search inside works, signatures (Q12), greetings, languages (Q10) | taken: `tm_analysis.text`, explorer detail; next, corpus-wide with a search index. Short tags (`rs!`, two letters) escape the three-character word rule |
 | I3 | Decoder counts overwritten cells; keep frames of animations | the grid is not the work for animations (constraint 3) | taken (roadmap step 5) |
 | I4 | Lettering fingerprints: glyph n-grams of logos, to find shared or copied letterforms | diffusion and borrowing (W4, W5) | open |
 | I5 | Colour ramps: the sequences of colours along rows and down columns | shading schools (Q15), house palettes (H7) | open |
