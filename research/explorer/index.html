@@ -80,6 +80,7 @@ SPDX-License-Identifier: Apache-2.0
   <h1>16colo · explorer</h1>
   <select id="year"><option value="">all years</option></select>
   <select id="format"><option value="">all formats</option></select>
+  <select id="kind"><option value="">all contents</option></select>
   <input id="q" type="search" placeholder="group, author, pack, file">
   <select id="order"></select>
   <span id="count"></span>
@@ -114,7 +115,8 @@ const pct = (x) => x == null ? "–" : (100 * x).toFixed(1) + " %";
 const num = (x, d = 2) => x == null ? "–" : Number(x).toFixed(d);
 
 function filters() {
-  return {year: $("year").value, format: $("format").value, q: $("q").value, order: $("order").value};
+  return {year: $("year").value, format: $("format").value, kind: $("kind").value, q: $("q").value,
+    order: $("order").value};
 }
 function saveHash(work) {
   const params = new URLSearchParams(Object.entries(filters()).filter(([, v]) => v));
@@ -126,13 +128,14 @@ async function facets() {
   const f = await (await fetch("api/facets")).json();
   for (const y of f.years) $("year").add(new Option(`${y.year} (${y.works})`, y.year));
   for (const x of f.formats) $("format").add(new Option(`${x.format} (${x.works})`, x.format));
+  for (const x of f.kinds) $("kind").add(new Option(`${x.kind.replace("_", " ")} (${x.works})`, x.kind));
   for (const o of f.orders) $("order").add(new Option(ORDER_LABELS[o] || o, o));
   const d = f.dataset;
   $("note").textContent = `Dataset works v${d.version}: ${d.works.toLocaleString()} art files of`
     + ` the train packs, ${d.measured.toLocaleString()} measured. Exploratory: the test packs`
     + ` are not here. Extractors ${JSON.stringify(d.extractors)}.`;
   const hash = new URLSearchParams(location.hash.slice(1));
-  for (const k of ["year", "format", "q", "order"]) if (hash.get(k)) $(k).value = hash.get(k);
+  for (const k of ["year", "format", "kind", "q", "order"]) if (hash.get(k)) $(k).value = hash.get(k);
   state.ready = true;
   await reload();
   if (hash.get("work")) open(hash.get("work"));
@@ -215,7 +218,8 @@ function side(w) {
     <dt>SAUCE date</dt><dd>${esc(w.sauce_date || "–")}</dd>
     <dt>font</dt><dd>${esc(w.sauce_font || "–")}${w.sauce_ice ? " · iCE" : ""}</dd>${problems}
     <dt>path</dt><dd>${esc(w.path)}</dd>
-    <dt>format</dt><dd>${esc(w.format)} · ${Number(w.bytes).toLocaleString()} bytes</dd>
+    <dt>format</dt><dd>${esc(w.format)} · ${esc((w.content_kind || "not measured").replace("_", " "))}
+      · ${Number(w.bytes).toLocaleString()} bytes</dd>
     <dt>grid</dt><dd>${w.cols ?? "–"} × ${w.rows ?? "–"}${w.cells ? ` · ${w.cells.toLocaleString()} cells` : ""}
       ${w.cols ? ` · ${num(w.bytes / (w.cols * w.rows), 1)} bytes/cell` : ""}</dd>
     <dt>packs</dt><dd>${w.packs}</dd>
@@ -261,7 +265,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowRight") step(1);
   if (e.key === "ArrowLeft") step(-1);
 });
-for (const id of ["year", "format", "order"]) $(id).onchange = reload;
+for (const id of ["year", "format", "kind", "order"]) $(id).onchange = reload;
 let typing;
 $("q").oninput = () => { clearTimeout(typing); typing = setTimeout(reload, 350); };
 new IntersectionObserver((e) => { if (e[0].isIntersecting) more(); }, {rootMargin: "800px"}).observe($("more"));

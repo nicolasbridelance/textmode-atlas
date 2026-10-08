@@ -108,6 +108,7 @@ def test_works_hold_the_train_packs_only(db: Connection, stores: Stores, tmp_pat
     }
     [kept] = [w for w in works if w["path"] == "KEPT.ANS"]
     assert (kept["year"], kept["packs"], kept["sauce_problems"]) == (1995, 1, [])
+    assert kept["content_kind"] == "coloured_blocks"
     features = pq.read_table(built.directory / "features.parquet").to_pylist()
     assert [f["sha256"] for f in features] == [kept["sha256"]]
     assert len(features[0]["glyph_hist"]) == 256

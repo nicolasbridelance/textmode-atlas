@@ -7,8 +7,9 @@ SPDX-License-Identifier: CC-BY-4.0
 Roadmap step 5, exploratory: what the decoded grids of the **train** packs show, measured by
 feature extractor v1. Leads, not results; each one is to be tested later on the test packs,
 which nobody has examined. Notebook: [works.py](works.py); explorer:
-[../explorer/](../explorer/) (`just explore`). Dataset `works` v1 (migration 0006, decoder
-`tm_render.ansi@2`, features 1), built 2026-10-08: 88,951 art files, 85,977 measured grids.
+[../explorer/](../explorer/) (`just explore`). Dataset `works` v1, then v2 with the content kind
+(migration 0006, decoder `tm_render.ansi@2`, features 1), built 2026-10-08: 88,951 art files,
+85,977 measured grids.
 
 Eras are groups of 16colo's filing years, chosen to keep each one large enough to read; they are
 not periods of the scene.
@@ -27,10 +28,12 @@ not periods of the scene.
 
 Glyph classes are mean shares of the visible glyphs of each work (ADR 0016).
 
-- **Shades recede, punctuation rises.** Shades (░▒▓) fall from about a quarter of the glyphs in
-  1994–95 to 15% in 2000–04; punctuation grows from 2.5% to 23%. Box drawing, already rare,
-  halves after 1993. A lead for workstream W6 (ruptures): is it one shift, or several schools
-  mixing in the packs?
+- **Shades seem to recede, punctuation to rise, but the packs changed, not the drawing.** Over
+  all ANSI files, shades (░▒▓) fall from about a quarter of the glyphs in 1994–95 to 15% in
+  2000–04, and punctuation grows from 2.5% to 23%. Within coloured block art alone (content
+  kind, below), shades stay between 22% and 28% in every era and punctuation under 3.5%: the
+  shift came from text files, coloured or not, filling a growing share of the packs (Q2,
+  answered for exploration). Within block art, full blocks gain after 2000 (29% → 37%).
 - **One screen, then scrolls.** Until 2004 the median work is one screen high (26–30 rows),
   with a tail of long scrolls (90th percentile 124–148 rows). From 2005 the median doubles
   (50–60 rows).
@@ -41,6 +44,26 @@ Glyph classes are mean shares of the visible glyphs of each work (ADR 0016).
   cursor movements (menus, animations), against later editors that save line by line.
 - **Animation-like files.** About 3% of the ANSI of 1994–99 hold over 20 bytes of file per cell:
   the screen is redrawn, and the grid keeps only its last state.
+
+## What the files hold
+
+Content kind is read from the grid (`works` v2): **blocks** when a quarter of the visible glyphs
+or more are █▄▀▌▐░▒▓ (the share is bimodal, with its trough between 10% and 35%), **coloured**
+when the work uses more than two colours.
+
+| Era | coloured blocks | blocks | coloured text | text |
+| --- | ---: | ---: | ---: | ---: |
+| 1990–93 | 5,116 | 32 | 298 | 31 |
+| 1994–95 | 14,844 | 278 | 2,158 | 3,325 |
+| 1996–97 | 16,317 | 640 | 5,671 | 6,395 |
+| 1998–99 | 5,486 | 466 | 2,196 | 3,543 |
+| 2000–04 | 2,536 | 2,419 | 1,498 | 3,752 |
+| 2005–12 | 439 | 429 | 91 | 284 |
+| 2013–26 | 5,040 | 474 | 1,235 | 910 |
+
+Files named ANSI are 80% coloured block art, 14% coloured text and 6% plain text; files named
+ASCII are 63% text, 19% coloured text and 18% colourless block art. In 2000–04, colourless
+block art is as common as coloured block art (Q22).
 
 ## Bright backgrounds were rare, not unrecorded
 
@@ -77,9 +100,9 @@ least three things: plain text art, coloured text art, and colourless block art.
 
 These change the roadmap's later steps, as rule 3 of the program requires before D1:
 
-1. **Classify works by content, not extension.** A content kind (escape sequences or not,
-   colours, block share) is needed before any stratum or comparison by format. Feature
-   extractor v2 or a catalogue column; D1 strata use it.
+1. **Classify works by content, not extension.** Done in `works` v2 (content kind); every
+   comparison by format, and the D1 strata, use it. The shade lead shows why: a composition
+   effect looked like a change of style.
 2. **D1 strata are bounded by the mass, and sampled against it.** Three quarters of the works
    are filed 1994–98, so strata by era are unequal in width (1990–93, 1994–95, 1996–97,
    1998–2004, 2005–12, 2013–26). Each stratum gets the same number of packs (or a square-root
