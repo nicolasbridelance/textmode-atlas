@@ -1,0 +1,66 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+#
+# Built by `tm dataset build works`. Datasheet: DATASHEET.md.
+name: works
+version: "1"
+description: The art files of the 16colo train packs, with their decoding, rendering and grid features.
+
+tables:
+  works:
+    query: works.sql
+    key: [sha256]
+    columns:
+      - { name: sha256, type: string, description: SHA-256 of the art file }
+      - { name: pack_sha256, type: string, description: "The earliest pack holding the file (by year, then path)" }
+      - { name: pack, type: string, description: "Pack name: the archive name without extension" }
+      - { name: year, type: int32, description: "Year 16colo files that pack under; null outside a year directory" }
+      - { name: path, type: string, description: Path inside that pack }
+      - { name: packs, type: int32, description: Packs holding the same file }
+      - { name: format, type: string, description: "Art format: ansi, ascii, xbin, bin, rip…" }
+      - { name: bytes, type: int64, description: Size of the file }
+      - { name: sauce_title, type: string, description: SAUCE title }
+      - { name: sauce_author, type: string, description: "SAUCE author: a handle, as signed" }
+      - { name: sauce_group, type: string, description: SAUCE group }
+      - { name: sauce_date, type: string, description: "SAUCE date, raw YYYYMMDD text" }
+      - { name: sauce_width, type: int32, description: "SAUCE width (TInfo1), as recorded" }
+      - { name: sauce_ice, type: bool, description: "SAUCE flags bit 0, iCE colours, as recorded" }
+      - { name: sauce_font, type: string, description: SAUCE font name }
+      - { name: decoding, type: string, description: "ok or error; null for a file never decoded" }
+      - { name: decoding_error, type: string, description: "Classified error, including unsupported_format" }
+      - { name: cols, type: int32, description: Grid width }
+      - { name: rows, type: int32, description: Grid height (last written row + 1) }
+      - { name: sauce_problems, type: "list<string>", description: "Evidence for which the decoder set the SAUCE numbers aside (ADR 0015)" }
+      - { name: grid_sha256, type: string, description: Digest of the decoded grid }
+      - { name: rendering_sha256, type: string, description: "Conservation PNG at scale 1 (derived bucket, renderings/…); null until rendered" }
+  features:
+    query: features.sql
+    key: [sha256]
+    columns:
+      - { name: sha256, type: string, description: The art file (works.sha256) }
+      - { name: cols, type: int32, description: Grid width }
+      - { name: rows, type: int32, description: Grid height }
+      - { name: cells, type: int32, description: Written cells }
+      - { name: fill_ratio, type: float64, description: "Cells showing ink / canvas cells; ink = not black on black (ADR 0016)" }
+      - { name: center_row, type: float64, description: "Centre of mass of the ink, 0 top to 1 bottom" }
+      - { name: center_col, type: float64, description: "Centre of mass of the ink, 0 left to 1 right" }
+      - { name: symmetry_h, type: float64, description: "Ink against its left–right mirror in its bounding box (Jaccard)" }
+      - { name: symmetry_v, type: float64, description: "Ink against its top–bottom mirror (Jaccard)" }
+      - { name: glyph_hist, type: "list<int32>", description: "Written cells by CP437 code point, 256 entries" }
+      - { name: glyph_entropy, type: float64, description: Shannon entropy in bits of the visible glyphs }
+      - { name: class_block, type: float64, description: Share of visible glyphs that are the full block (DB) }
+      - { name: class_half_block, type: float64, description: "Share that are half blocks (DC–DF)" }
+      - { name: class_shade, type: float64, description: "Share that are shades (B0–B2)" }
+      - { name: class_box, type: float64, description: "Share that are box drawing (B3–DA)" }
+      - { name: class_alphanumeric, type: float64, description: Share that are letters or digits }
+      - { name: class_punctuation, type: float64, description: Share that are other printable ASCII }
+      - { name: class_other, type: float64, description: Share of every other glyph }
+      - { name: bigram_codes, type: "list<int32>", description: "Top 16 horizontal pairs of visible glyphs, left * 256 + right" }
+      - { name: bigram_counts, type: "list<int32>", description: Their counts }
+      - { name: n_colors, type: int32, description: Distinct colours seen (foregrounds and ink backgrounds) }
+      - { name: fg_hist, type: "list<int32>", description: "Visible glyphs by foreground, VGA order, 16 entries" }
+      - { name: bg_hist, type: "list<int32>", description: "Ink cells by background, 8 entries" }
+      - { name: high_bg_ratio, type: float64, description: "Ink cells with the blink bit: a bright background under iCE" }
+      - { name: fg_bg_pairs, type: int32, description: Distinct foreground–background pairs among visible glyphs }
+      - { name: cursor_jumps, type: float64, description: "Share of writes, in byte order, that do not follow the previous cell" }
+      - { name: draw_order, type: float64, description: "Spearman correlation of byte order with reading order; 1 = typed line by line" }
