@@ -93,7 +93,7 @@ In GitHub Codespaces the development container sets everything up. Locally you n
 [`uv`](https://docs.astral.sh/uv/), [`just`](https://just.systems/) and Node 24 with `pnpm`:
 
 ```sh
-just setup     # dependencies, services, migrations, storage, git hooks
+just setup     # dependencies, screenshot browser, services, migrations, storage, git hooks
 just check     # everything CI checks
 just --list    # other commands
 ```
