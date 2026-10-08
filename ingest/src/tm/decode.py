@@ -2,9 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 """Decoding of stored originals into grids, one `decoding` row per artifact and decoder version.
 
-An unreadable file is a result, not a crash: it gets a row with a classified error. The grid goes
-to the derived bucket (ADR 0011), under a key that follows the row's primary key. Run twice, it
-decodes nothing the second time.
+Every art file gets a result. An unreadable file is a result, not a crash: it gets a row with a
+classified error, and so does art in a format no decoder reads yet (`unsupported_format`, under
+the decoder name `none`). ASCII goes through the ANSI decoder, as ansilove draws it: width from
+SAUCE, else 80 columns. The grid goes to the derived bucket (ADR 0011), under a key that follows
+the row's primary key. Run twice, it decodes nothing the second time.
 """
 
 from __future__ import annotations
@@ -21,6 +23,9 @@ from tm_render.versions import DECODER_VERSION
 from tm.storage import IntegrityError, ObjectStore, get_original, grid_key
 
 DECODER = "tm_render.ansi"
+# Art formats the decoder reads; other art gets an `unsupported_format` row from NO_DECODER.
+DECODED_FORMATS = ["ansi", "ascii"]
+NO_DECODER = "none"
 
 
 @dataclass(frozen=True)
@@ -41,15 +46,24 @@ def decode_pending(conn: Connection, originals: ObjectStore, derived: ObjectStor
 
 
 def pending_artifacts(conn: Connection) -> Sequence[Row[Any]]:
-    """ANSI artifacts with no result yet for the current decoder version."""
+    """Art artifacts with no result yet from the decoder their format calls for, at the current
+    decoder version."""
     return conn.execute(
         text(
-            "select a.sha256, a.source_path from artifact a where a.format = 'ansi'"
-            " and not exists (select 1 from decoding d where d.sha256 = a.sha256"
-            " and d.decoder = :decoder and d.decoder_version = :version)"
+            "select a.sha256, a.source_path, a.format from artifact a"
+            " join version v on v.id = a.version_id"
+            " join work w on w.id = v.work_id and w.kind = 'single'"
+            " where not exists (select 1 from decoding d where d.sha256 = a.sha256"
+            " and d.decoder_version = :version and d.decoder ="
+            " case when a.format = any(:formats) then :decoder else :none end)"
             " order by a.source_path, a.sha256"
         ),
-        {"decoder": DECODER, "version": DECODER_VERSION},
+        {
+            "decoder": DECODER,
+            "none": NO_DECODER,
+            "formats": DECODED_FORMATS,
+            "version": DECODER_VERSION,
+        },
     ).all()
 
 
@@ -61,17 +75,12 @@ def decode_artifact(
 ) -> Decoded:
     sha256, path = artifact.sha256, artifact.source_path
     row = {"sha256": sha256, "decoder": DECODER, "version": DECODER_VERSION}
+    if artifact.format not in DECODED_FORMATS:
+        return _error(conn, {**row, "decoder": NO_DECODER}, path, "unsupported_format")
     try:
         grid = decode(get_original(originals, sha256)).grid
     except DecodeError as err:
-        conn.execute(
-            text(
-                "insert into decoding (sha256, decoder, decoder_version, status, error_class)"
-                " values (:sha256, :decoder, :version, 'error', :error_class)"
-            ),
-            {**row, "error_class": err.kind},
-        )
-        return Decoded(path, sha256, err.kind, None)
+        return _error(conn, row, path, err.kind)
     _put_grid(derived, grid_key(sha256, DECODER, DECODER_VERSION), grid)
     conn.execute(
         text(
@@ -81,6 +90,17 @@ def decode_artifact(
         {**row, "grid_sha256": grid.digest(), "cols": grid.cols, "rows": grid.rows},
     )
     return Decoded(path, sha256, None, grid.cols, grid.rows, grid.digest())
+
+
+def _error(conn: Connection, row: dict[str, str], path: str, error_class: str) -> Decoded:
+    conn.execute(
+        text(
+            "insert into decoding (sha256, decoder, decoder_version, status, error_class)"
+            " values (:sha256, :decoder, :version, 'error', :error_class)"
+        ),
+        {**row, "error_class": error_class},
+    )
+    return Decoded(path, row["sha256"], error_class)
 
 
 def _put_grid(store: ObjectStore, key: str, grid: Grid) -> None:

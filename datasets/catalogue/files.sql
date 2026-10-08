@@ -35,5 +35,6 @@ join source s on s.id = p.source_id and s.name = '16colo'
 join artifact a on a.sha256 = m.sha256
 left join version fv on fv.id = a.version_id
 left join work fw on fw.id = fv.work_id
-left join decoding d
-  on d.sha256 = a.sha256 and d.decoder = :decoder and d.decoder_version = :decoder_version
+-- Each art file has one decoder at the current version: the ANSI decoder, or `none` for a
+-- format no decoder reads yet (error `unsupported_format`).
+left join decoding d on d.sha256 = a.sha256 and d.decoder_version = :decoder_version

@@ -33,7 +33,8 @@ pilot are drawn from this description. It is the first form of D3 (16colo metada
 - A file is art when its extension, its SAUCE record or its content says so (`tm.packs`); other
   files keep their extension as format, NFO and DIZ files are named as such.
 - `decoding` and the canvas size come from the current ANSI decoder (`manifest.json` names its
-  version); only ANSI is decoded so far, other art formats are null there.
+  version); ANSI and ASCII are decoded, other art formats carry an `unsupported_format` error
+  until their decoders land.
 - Packs ingested before migration 0002 have a null `expansion` until `tm ingest pack` runs again.
 
 ## Known limits
