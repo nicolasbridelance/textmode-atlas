@@ -53,3 +53,4 @@ What becomes easier, what becomes harder, what we must now do.
 | [0012](0012-explicit-versions-for-decoders-and-renderers.md) | Version decoders and renderers explicitly, guarded by a source digest | Accepted |
 | [0013](0013-archive-readers-for-artpacks.md) | Read artpack archives with Python, Info-ZIP, 7-Zip and arj, checked by CRC | Accepted |
 | [0014](0014-recover-zips-without-central-directory.md) | Recover ZIP archives without a central directory with 7-Zip, checked by our CRC | Accepted |
+| [0015](0015-set-aside-corrupt-sauce-records.md) | Set aside SAUCE records whose binary fields are corrupt | Accepted |

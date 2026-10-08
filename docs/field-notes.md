@@ -16,6 +16,30 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-08 — Widths that were not widths
+
+**A broken SAUCE record is a tool's fingerprint.** 568 ANSI and ASCII files carry a SAUCE
+record whose binary fields cannot be true (ADR 0015); 138 of them declared widths of 8,224 to
+30,061 columns. 96% date from 1995 to 1999, and the faults come in families, each tied to a few
+groups:
+
+- *Text running over the numbers.* 84 files of cnc and Damage (1995), taura productions (1996)
+  and Polyester (1997) have, after the group, the text `-EnCrYptEd by iLL`, which overruns the
+  date, the size and the types. Four groups, two years, one signature: probably one tool, or one
+  person's tool, passed from group to group. Who or what "iLL" was is not known yet.
+- *A record shifted by one byte.* RiSE (1995, 28 files) wrote an author field of 21 bytes
+  instead of 20; every later field slides, and 80 columns reads as 20,480. MOZiCART's packs of
+  1996 show the same shift.
+- *Spaces where zeros belong.* .boogiE%Woogie., rune, sHADe, atb, BAFH and others (1995–2003)
+  padded the binary fields with spaces, as a text editor would: 80 columns reads `0x2050`, the
+  size `0x2020…`.
+
+The art in these files is intact; only the 128-byte record is wrong. Drawn at the declared width,
+a whole screen fell onto one row, which is how the fault showed. *How found: grids of 16colo
+sorted by width, after the whole corpus was decoded; raw records read byte by byte. Evidence:
+`decoding.sauce_problems` (decoder version 2); `artifact.sauce` of `1997/poly0197.zip`,
+`1995/rise0395.zip`, `1996/bdp-0396.zip`.*
+
 ## 2026-10-08 — Ingesting all of 16colo
 
 **Some packs survive only as cut downloads.** Four ZIP packs of the mirror end before their
