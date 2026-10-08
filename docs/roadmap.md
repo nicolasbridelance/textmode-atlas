@@ -46,7 +46,7 @@ Done, pipeline on the golden source:
 
 Next, in this order:
 
-1. [ ] `tm ingest pack <zip>`: a local 16colo pack as a `set` work with its `set_member` files (NFO and DIZ included), scene publication recorded for ADR 0009; no 16colo crawler before M4
+1. [x] `tm ingest pack`: 16colo packs from the local mirror as `set` works with their `set_member` files, art found by extension, SAUCE or content, scene publication recorded (ADR 0009); archives read by Python, Info-ZIP, 7-Zip and arj ([ADR 0013](adr/0013-archive-readers-for-artpacks.md)); a rerun completes what an earlier one could not read
 2. [ ] Catalogue exploration (exploratory): describe all of 16colo from the local mirror (years, groups, formats, SAUCE presence, widths, iCE, fonts, NFO and DIZ) before choosing anything; D1 strata come out of it ([source note](sources/16colo.md))
 3. [ ] Feature extractor v1 in `analysis/` (geometry, glyphs, colour, sequence, from the foundation document) and `tm features` → `features.parquet`, reproducible bit for bit
 4. [ ] D1 pilot: 20 packs drawn by stratum with a fixed seed from the catalogue exploration, rare cases added by hand with a reason; frozen with its datasheet; marimo notebook template; first exploratory look
