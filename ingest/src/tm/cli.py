@@ -21,6 +21,7 @@ from tm.features import extract_artifact, pending_features
 from tm.ingest import ingest_golden
 from tm.packs import PackIngested, ingest_pack, pack_archives
 from tm.render import pending_renderings, render_artifact
+from tm.shards import Shard
 from tm.storage import S3Store, s3_client
 
 app = typer.Typer(help="Digital Museum of Character Arts.", no_args_is_help=True)
@@ -140,12 +141,23 @@ def decode_command() -> None:
     typer.echo(f"{len(todo)} decoded")
 
 
+SHARD_HELP = "Take only shard i of n (i/n): run n processes, one per index, to share the work."
+
+
+def _shard(text: str) -> Shard:
+    try:
+        return Shard.parse(text)
+    except ValueError as err:
+        raise typer.BadParameter(str(err)) from err
+
+
 @app.command("render")
 def render_command(
     scale: Annotated[int, typer.Option(min=1, max=MAX_SCALE, help="Integer scale.")] = 1,
     font: Annotated[Path, typer.Option(help="Bitmap font (.f16).")] = Path(
         "corpus/fonts/ibm-vga-8x16.f16"
     ),
+    shard: Annotated[str, typer.Option(help=SHARD_HELP)] = "0/1",
 ) -> None:
     """Draw a conservation PNG of every decoded grid not yet rendered with these settings."""
     cfg = settings()
@@ -153,7 +165,7 @@ def render_command(
     bitmap = BitmapFont.load(font)
     engine = create_engine(cfg.database_url)
     with engine.connect() as conn:
-        todo = pending_renderings(conn, bitmap, scale)
+        todo = pending_renderings(conn, bitmap, scale, _shard(shard))
     for row in todo:
         with engine.begin() as conn:  # one transaction per rendering
             item = render_artifact(conn, derived, bitmap, scale, row)
@@ -163,13 +175,15 @@ def render_command(
 
 
 @app.command("features")
-def features_command() -> None:
+def features_command(
+    shard: Annotated[str, typer.Option(help=SHARD_HELP)] = "0/1",
+) -> None:
     """Measure every decoded grid that has no features from this extractor version yet."""
     cfg = settings()
     derived = S3Store(s3_client(), cfg.derived_bucket)
     engine = create_engine(cfg.database_url)
     with engine.connect() as conn:
-        todo = pending_features(conn)
+        todo = pending_features(conn, _shard(shard))
     for row in todo:
         with engine.begin() as conn:  # one transaction per grid
             features = extract_artifact(conn, derived, row)
