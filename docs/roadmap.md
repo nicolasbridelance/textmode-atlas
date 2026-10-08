@@ -109,6 +109,5 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 | No golden artifact with blink, iCE or 8 px cells | Horizon covers 9 px only; renderer paths stay untested on golden files | golden artifact #2 |
 | Embedding tables not in the schema | their dimension depends on models not chosen yet | add with research workstream 1 |
 | XBIN, BIN, RIP, ADF, IDF, PCBoard, Avatar and Tundra are recorded as `unsupported_format` | their works have no grid, so no rendering and no features | decoders by count of files in the catalogue; ASCII is read by the ANSI decoder, as ansilove does |
-| Six ZIP archives of the mirror do not open in Python | they are recorded as `bad_archive` with no members | look at them with 7-Zip and Info-ZIP during the catalogue exploration |
 | The `web` CI job sometimes spends 20 minutes installing Playwright's system packages | slows every merge | cache the browsers, or install without `--with-deps` on a runner that has them |
 | OpenTofu for staging / production not written | needed from M4 | after the host decision |

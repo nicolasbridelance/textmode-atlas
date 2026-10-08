@@ -72,6 +72,30 @@ def test_a_damaged_zip_is_a_classified_error(tmp_path: Path) -> None:
         expand(damaged, "zip")
 
 
+def without_central_directory(archive: Path) -> Path:
+    """Cut the archive where its central directory starts, as a truncated download does."""
+    data = archive.read_bytes()
+    archive.write_bytes(data[: data.index(b"PK\x01\x02")])
+    return archive
+
+
+def test_a_zip_without_central_directory_is_read_by_its_local_headers(tmp_path: Path) -> None:
+    result = expand(without_central_directory(make_zip(tmp_path / "p.zip")), "zip")
+    assert (result.members, result.unreadable) == (list(FILES.items()), [])
+
+
+def test_a_recovered_member_whose_crc_does_not_match_is_unreadable(tmp_path: Path) -> None:
+    archive = tmp_path / "p.zip"
+    with zipfile.ZipFile(archive, "w", zipfile.ZIP_STORED) as stored:
+        for name, data in FILES.items():
+            stored.writestr(name, data)
+    data = without_central_directory(archive).read_bytes()
+    archive.write_bytes(data.replace(b"logo", b"LOGO"))
+    result = expand(archive, "zip")
+    assert result.unreadable == ["LOGO.ANS"]
+    assert [name for name, _ in result.members] == ["SUB/FILE_ID.DIZ"]
+
+
 def test_sevenzip_reads_in_listing_order(tmp_path: Path) -> None:
     # 7-Zip detects the format from the bytes: a ZIP exercises the same path as RAR or LHA.
     result = expand(make_zip(tmp_path / "p.lzh"), "lzh")
