@@ -14,6 +14,7 @@ setup:
     test -f .env || cp .env.example .env
     uv sync --all-groups
     pnpm install
+    pnpm --filter museum exec playwright install --with-deps chromium-headless-shell
     just services
     just migrate
     uv run tm dev storage-init
