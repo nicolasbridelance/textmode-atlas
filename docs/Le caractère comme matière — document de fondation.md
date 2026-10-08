@@ -528,7 +528,7 @@ Il existe plusieurs profils par système (carte, police, clignotement ou couleur
 
 ## Pipeline d'analyse
 
-Les mesures sont calculées sur la grille, pas sur les pixels. Elles sont stockées dans `features.parquet`, avec pour clé le hash de l'artefact et la version de l'extracteur.
+Les mesures sont calculées sur la grille, pas sur les pixels. Elles sont stockées dans la table `features`, avec pour clé le hash de l'artefact et la version de l'extracteur, et publiées dans les datasets sous la forme `features.parquet` ([ADR 0016](adr/0016-features-in-the-database.md)).
 
 | Famille | Mesures | Calcul |
 | --- | --- | --- |
