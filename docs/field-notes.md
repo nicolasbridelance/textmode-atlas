@@ -18,6 +18,18 @@ session"). Newest first.
 
 ## 2026-10-08 — Ingesting all of 16colo
 
+**The same pack, released under several names.** 92 archives of the 16colo mirror are
+byte-for-byte copies of another one: 91 packs exist in two or three files. In 30 cases only the
+case of the name differs (`2002/017-Athanasia.zip`, `2002/017-athanasia.zip`); in 56 the name
+itself changes, often the group tag or the punctuation (`1997/go!-#000.zip`, `1997/go-000.zip`;
+`2004/mx-pack12.zip`, `2004/mxt-pack12.zip`; `1997/plf-0197.zip`, `1997/plf_0197.zip`). Five
+are filed under two years (`1993/die-pk5.zip` and `1994/die-pk5.zip`; `1997/cia52.zip` and
+`1998/ciapak52.zip`): a pack that circulated across a new year, or a dating hesitation of the
+archive. Packs travelled under the names each BBS or FTP site gave them, and the archive kept
+several of those names. The museum stores one artifact and dates it from the first name met,
+so for those five the year is uncertain by one. *Evidence: `sha256sum` of every archive of the
+mirror against the 5,766 sets the ingestion recorded from 5,858 archives.*
+
 **A pack can hold the same file twice in one archive.** `2004/cro-dskmg0604-nomp3.rar` lists
 `cro-dskmg0604-nomp3/cro.nfo` twice, with the same size, date and CRC, among 255 entries; it
 also has a `cro.nfo` at its root. The packer most likely added the folder's NFO twice when

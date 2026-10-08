@@ -27,7 +27,8 @@ It is the main source of the museum's PC textmode corpus (scene archive `16colo`
 | Largest shares of the bytes | mp3 27 %, jpg 24 %, png 9 % | same listing |
 
 The mirror holds 377 more archives than the API counts packs; some packs have several archives
-or are not listed. To be explained when packs are ingested.
+or are not listed. Ingestion explains 92 of them: archives that are byte-identical copies of
+another under a different name (field notes, 2026-10-08). The rest is still to be explained.
 
 Packs per year are very uneven: 3,224 of 5,485 date from 1993 to 1997, and 2005 to 2012 hold
 88 together. A random sample of the whole catalogue is a sample of the mid-1990s.
