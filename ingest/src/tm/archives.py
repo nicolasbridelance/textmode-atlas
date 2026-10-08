@@ -3,7 +3,9 @@
 """Reading pack archives: the files inside, byte for byte, in archive order (ADR 0013).
 
 ZIP is read in Python. Members stored with methods Python lacks (shrink, implode, from PKZIP
-1.x) are taken from Info-ZIP `unzip` and checked against the CRC-32 the archive records. RAR,
+1.x) are taken from Info-ZIP `unzip` and checked against the CRC-32 the archive records. A ZIP
+Python cannot open (no central directory, often a truncated download) is listed and extracted by
+7-Zip from its local headers, each member checked the same way (ADR 0014). RAR,
 LHA and LZH are read with the official 7-Zip build, ARJ with `arj`; both check their own CRCs.
 A member that cannot be read is named in `unreadable`, never guessed.
 """
@@ -56,7 +58,7 @@ def _zip(path: Path) -> Expanded:
     try:
         archive = zipfile.ZipFile(BytesIO(path.read_bytes()))
     except zipfile.BadZipFile as err:
-        raise ArchiveError("bad_archive", str(err)) from err
+        return _zip_recovered(path, err)
     infos = [info for info in archive.infolist() if not info.is_dir()]
     read: dict[str, bytes] = {}
     for info in infos:
@@ -95,6 +97,47 @@ def _zip_with_infozip(path: Path, wanted: list[zipfile.ZipInfo]) -> dict[str, by
                     found[info.filename] = data
                     break
     return found
+
+
+def _zip_recovered(path: Path, err: zipfile.BadZipFile) -> Expanded:
+    """A ZIP without a usable central directory: 7-Zip finds the members by their local headers,
+    and each is kept only if its size and CRC-32 match that header (ADR 0014)."""
+    listing = _run(["7zz", "l", "-slt", "-ba", "-tzip", str(path)])
+    entries = [
+        fields
+        for fields in map(_fields, listing.stdout.split(b"\n\n"))
+        if b"Path" in fields
+        and fields.get(b"Folder") != b"+"
+        and not fields.get(b"Attributes", b"").startswith(b"D")
+    ]
+    if not entries:
+        raise ArchiveError("bad_archive", str(err)) from err
+    result = Expanded()
+    with tempfile.TemporaryDirectory() as tmp:
+        _run(["7zz", "x", "-y", "-tzip", f"-o{tmp}", str(path)])
+        files = _extracted(tmp)
+        for entry in entries:
+            name = _dos_name(entry[b"Path"])
+            data = files[name].read_bytes() if name in files else b""
+            if name in files and _matches(data, entry):
+                result.members.append((name, data))
+            else:
+                result.unreadable.append(name)
+    return result
+
+
+def _fields(block: bytes) -> dict[bytes, bytes]:
+    """One entry of a `7zz l -slt` listing, as its `Key = value` lines."""
+    pairs = (line.split(b" = ", 1) for line in block.splitlines() if b" = " in line)
+    return {key: value.strip() for key, value in pairs}
+
+
+def _matches(data: bytes, entry: dict[bytes, bytes]) -> bool:
+    return (
+        len(data) <= MAX_MEMBER_BYTES
+        and str(len(data)).encode() == entry.get(b"Size")
+        and f"{zlib.crc32(data):08X}".encode() == entry.get(b"CRC")
+    )
 
 
 def _sized(path: Path, info: zipfile.ZipInfo) -> bool:

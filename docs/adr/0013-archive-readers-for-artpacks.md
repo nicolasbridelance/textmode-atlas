@@ -4,7 +4,7 @@ SPDX-License-Identifier: CC-BY-4.0
 -->
 # 0013. Read artpack archives with Python, Info-ZIP, 7-Zip and arj, checked by CRC
 
-- Status: Accepted
+- Status: Accepted; ZIP archives Python cannot open: see [0014](0014-recover-zips-without-central-directory.md)
 - Date: 2026-10-08
 - Deciders: Claude (autonomous mode, ADR 0008); Nicolas Bridelance reviews afterwards
 
