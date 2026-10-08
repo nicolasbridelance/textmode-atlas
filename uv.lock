@@ -1329,6 +1329,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "pyyaml" },
     { name = "sqlalchemy" },
+    { name = "tm-render" },
     { name = "typer" },
 ]
 
@@ -1341,6 +1342,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.10" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "sqlalchemy", specifier = ">=2.0" },
+    { name = "tm-render", editable = "renderers" },
     { name = "typer", specifier = ">=0.15" },
 ]
 

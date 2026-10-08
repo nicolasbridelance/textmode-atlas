@@ -9,16 +9,21 @@ from typing import Annotated
 
 import typer
 from pydantic import ValidationError
+from sqlalchemy import create_engine
 
 from tm import corpus as corpus_mod
 from tm.config import settings
 from tm.dev import storage_init
+from tm.ingest import ingest_golden
+from tm.storage import S3Store, s3_client
 
 app = typer.Typer(help="Digital Museum of Character Arts.", no_args_is_help=True)
 corpus_app = typer.Typer(help="YAML files in corpus/: validation and schemas.")
 dev_app = typer.Typer(help="Local development environment.")
+ingest_app = typer.Typer(help="Bring sources into the museum.", no_args_is_help=True)
 app.add_typer(corpus_app, name="corpus")
 app.add_typer(dev_app, name="dev")
+app.add_typer(ingest_app, name="ingest")
 
 CorpusRoot = Annotated[Path, typer.Option(help="Root of the corpus/ directory.")]
 
@@ -62,3 +67,18 @@ def dev_storage_init() -> None:
     """Prepare local Garage storage: node, access key, buckets."""
     for line in storage_init(settings()) or ["already set up"]:
         typer.echo(line)
+
+
+@ingest_app.command("golden")
+def ingest_golden_command(
+    root: Annotated[Path, typer.Option(help="Directory of golden artifacts.")] = Path(
+        "tests/golden"
+    ),
+) -> None:
+    """Store the project's golden artifacts and record them: source, work, version, artifact."""
+    cfg = settings()
+    store = S3Store(s3_client(), cfg.originals_bucket)
+    engine = create_engine(cfg.database_url)
+    with engine.begin() as conn:
+        for item in ingest_golden(conn, store, root):
+            typer.echo(f"{'ingested' if item.new else 'already known'} {item.path} {item.sha256}")
