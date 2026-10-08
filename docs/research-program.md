@@ -38,6 +38,11 @@ repeated here because they shape the design of every dataset and notebook.
    data is examined. Exploratory work is labelled exploratory.
 3. **Split by pack.** Training and test sets never share a pack: logos, templates and shared
    lettering otherwise inflate every score. Where time matters, split by date as well.
+   The test split of 16colo is fixed now, before anyone looks at the grids: a pack is `test`
+   when the first byte of its archive's SHA-256 is below 52 (about one pack in five, column
+   `split` of dataset `catalogue`). Exploration reads the `train` packs only, so that a question
+   it raises can still be tested on packs nobody has examined. The catalogue exploration saw
+   the metadata of every pack, not their grids, features or images.
 4. **Null models.** Every effect is compared with the same computation on permuted dates, labels
    or network edges.
 5. **Uncertainty and coverage.** Intervals come from resampling by pack. Every number is

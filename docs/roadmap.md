@@ -24,11 +24,12 @@ Status: ✅ done · 🔨 in progress · ⏳ next · 💤 later
 | M4 Scale | 💤 | all of 16colo in metadata; NFO credit extraction precision measured |
 | M5 Extensions | 💤 | one decoder, profile and collection per added system |
 
-## Current focus: real packs, the pilot dataset, then the work screen (M2)
+## Current focus: see and measure the corpus, then the pilot dataset and the work screen (M2)
 
-Order set on 2026-10-08: the pipeline runs end to end on the golden source, so real packs come
-next. They unlock research phase R0 (the first exploratory look needs grids and features of real
-work) and give the work screen real works to show. Nothing below is throwaway: each step is
+Order set on 2026-10-08, revised the same day: all of 16colo is ingested and decoded, so the
+next step is to look at it, as images and as measurements, before choosing the pilot. What the
+exploration finds may become constraints for the steps after it, so it comes first. It reads
+the `train` packs only (research program, rule 3). Nothing below is throwaway: each step is
 where the foundation document puts it.
 
 Done, pipeline on the golden source:
@@ -48,10 +49,12 @@ Next, in this order:
 
 1. [x] `tm ingest pack`: 16colo packs from the local mirror as `set` works with their `set_member` files, art found by extension, SAUCE or content, scene publication recorded (ADR 0009); archives read by Python, Info-ZIP, 7-Zip and arj ([ADR 0013](adr/0013-archive-readers-for-artpacks.md)); a rerun completes what an earlier one could not read
 2. [x] Catalogue exploration (exploratory): describe all of 16colo from the local mirror (years, groups, formats, SAUCE presence, widths, iCE, fonts, NFO and DIZ) before choosing anything; D1 strata come out of it ([source note](sources/16colo.md), [findings](../research/exploration/catalogue.md), dataset `catalogue`); 16colo's own tags (API v1) not used yet
-3. [ ] Feature extractor v1 in `analysis/` (geometry, glyphs, colour, sequence, from the foundation document) and `tm features` → `features.parquet`, reproducible bit for bit
-4. [ ] D1 pilot: 20 packs drawn by stratum with a fixed seed from the catalogue exploration, rare cases added by hand with a reason; frozen with its datasheet; marimo notebook template; first exploratory look
-5. [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`; refuses a shown file without credit (ADR 0009)
-6. [ ] Work screen, first version: canvas renderer from the grid and the bitmap font, credit as signed, source link, "withdraw or claim" on every record (ADR 0009)
+3. [ ] Conservation renderings of the whole corpus (`tm render`, private bucket), to look at
+4. [ ] Feature extractor v1 in `analysis/` (geometry, glyphs, colour, sequence, from the foundation document) and `tm features` → `features.parquet`, reproducible bit for bit
+5. [ ] Visual and statistical exploration of the `train` packs: a `works` dataset (metadata, features, rendering keys), marimo notebooks with contact sheets and distributions over time, exploration notes in `research/exploration/`; each note ends with the constraints it puts on later steps
+6. [ ] D1 pilot: 20 packs drawn by stratum with a fixed seed, strata revised after step 5, rare cases added by hand with a reason; frozen with its datasheet; marimo notebook template
+7. [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`; refuses a shown file without credit (ADR 0009)
+8. [ ] Work screen, first version: canvas renderer from the grid and the bitmap font, credit as signed, source link, "withdraw or claim" on every record (ADR 0009)
 
 Later, deliberately (nothing depends on them yet):
 
