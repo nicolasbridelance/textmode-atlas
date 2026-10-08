@@ -6,9 +6,10 @@ from pathlib import Path
 
 import pytest
 from sqlalchemy import Connection, text
+from stores import Stores
 from tm.decode import DECODER, decode_pending
 from tm.ingest import ingest_golden
-from tm.storage import IntegrityError, LocalStore, grid_key
+from tm.storage import IntegrityError, grid_key
 from tm_render.ansi import decode
 from tm_render.grid import Grid, from_parquet, to_parquet
 from tm_render.versions import DECODER_VERSION
@@ -17,17 +18,6 @@ GOLDEN = Path(__file__).resolve().parents[2] / "tests" / "golden"
 HORIZON = (GOLDEN / "ansi" / "horizon.ans").read_bytes()
 
 pytestmark = pytest.mark.db
-
-
-class Stores:
-    def __init__(self, root: Path) -> None:
-        self.originals = LocalStore(root / "originals")
-        self.derived = LocalStore(root / "derived")
-
-
-@pytest.fixture
-def stores(tmp_path: Path) -> Stores:
-    return Stores(tmp_path)
 
 
 def ingested(db: Connection, stores: Stores) -> str:
