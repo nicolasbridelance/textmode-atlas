@@ -52,7 +52,7 @@ Rules:
 | --- | --- | --- | --- | --- |
 | H1 | Byte economy declines over time: files spend more bytes per visible cell as connections get faster. | bytes per ink cell; share of cursor-forward runs | permuted years within groups | open |
 | H2 | The fall of shades from 1994 to 2004 happens within artists, not only by new artists replacing old ones. | shade share per artist over years | shuffled years within artists | open |
-| H3 | Features v1 carry an author signal: nearest neighbours share the author more often than the same group, year and content kind would predict. | same-author rate among 12 nearest | neighbours drawn within group × year | open |
+| H3 | Features v1 carry an author signal: nearest neighbours share the author more often than the same group, year and content kind would predict. | same-author rate among 12 nearest | neighbours drawn within group × year | explored (train): weak, 2.3% against 0.6% by chance and 14.2% knowing the group (works note); to retest with richer features |
 | H4 | Formal novelties follow tool releases (rule 6): a new habit (wide canvas, iCE, 24-bit colour) appears in the packs after the editor that makes it easy. | first appearance and adoption curves | release dates shifted at random | open |
 | H5 | Animation-like files peak in the mid-nineties and fall with the end of the BBS. | share of works over 20 bytes per cell | permuted years | open |
 | H6 | One-screen works compose for the 80×25 frame: their ink is centred and their fill higher than the first screen of long scrolls. | centre of mass, fill of rows 0–24 | same rows of scrolls | open |
@@ -80,6 +80,8 @@ Rules:
 | I15 | First-screen features beside whole-work features | what a BBS reader saw first (Q9, H6) | open |
 | I16 | Data stories for the museum: "Eight backgrounds", "ASCII was coloured", "A screen at 2400 baud", "Widths that were not widths" | field notes become visitor stories | open |
 | I17 | Distances between works on the grid itself (cell-level edit distance on aligned grids) to find versions, edits and recolours of one work | versions of a work across packs | open |
+| I20 | Resolve SAUCE author strings into handles (case, spacing, aliases, typos) before any author statistic | H3 counted lower-cased strings | open |
+| I21 | An "author signal" benchmark: same-author rate among nearest works from other packs, against random and group baselines, rerun for every new representation | H3 gives a first number to beat | open |
 | I19 | D1 sampling design: strata bounded by the mass, equal (or square-root) allocation per stratum so that thin years are over-represented, and each pack's inclusion weight recorded so that statistics can be reweighted to the corpus | owner: over-represent thin years | taken (roadmap step 6) |
 | I18 | Detect the artist's handle in NFO and in-grid text and link it to SAUCE authors, with confidence | linkage R1 | open |
 
