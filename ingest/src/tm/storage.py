@@ -47,6 +47,11 @@ def grid_key(sha256: str, decoder: str, decoder_version: str) -> str:
     )
 
 
+def rendering_key(output_sha256: str) -> str:
+    """Key of a rendering in the derived bucket: addressed by the digest of its file."""
+    return f"renderings/{original_key(output_sha256).removeprefix('sha256/')}.png"
+
+
 class ObjectStore(Protocol):
     def exists(self, key: str) -> bool: ...
     def get(self, key: str) -> bytes: ...

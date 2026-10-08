@@ -10,6 +10,7 @@ from typing import Annotated
 import typer
 from pydantic import ValidationError
 from sqlalchemy import create_engine
+from tm_render.conservation import MAX_SCALE, BitmapFont
 from tm_render.grid import Grid
 
 from tm import corpus as corpus_mod
@@ -17,6 +18,7 @@ from tm.config import settings
 from tm.decode import decode_pending
 from tm.dev import storage_init
 from tm.ingest import ingest_golden
+from tm.render import render_pending
 from tm.storage import S3Store, s3_client
 
 app = typer.Typer(help="Digital Museum of Character Arts.", no_args_is_help=True)
@@ -104,3 +106,22 @@ def decode_command() -> None:
         outcome = f"error {item.error_class}" if item.grid is None else _grid_summary(item.grid)
         typer.echo(f"{item.path} {outcome}")
     typer.echo(f"{len(results)} decoded")
+
+
+@app.command("render")
+def render_command(
+    scale: Annotated[int, typer.Option(min=1, max=MAX_SCALE, help="Integer scale.")] = 1,
+    font: Annotated[Path, typer.Option(help="Bitmap font (.f16).")] = Path(
+        "corpus/fonts/ibm-vga-8x16.f16"
+    ),
+) -> None:
+    """Draw a conservation PNG of every decoded grid not yet rendered with these settings."""
+    cfg = settings()
+    derived = S3Store(s3_client(), cfg.derived_bucket)
+    engine = create_engine(cfg.database_url)
+    with engine.begin() as conn:
+        results = render_pending(conn, derived, BitmapFont.load(font), scale)
+    for item in results:
+        recipe = item.recipe
+        typer.echo(f"{item.path} {recipe['width']}x{recipe['height']} {recipe['pixels_sha256']}")
+    typer.echo(f"{len(results)} rendered")
