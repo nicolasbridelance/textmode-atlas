@@ -13,6 +13,7 @@ import pytest
 from alembic import command
 from alembic.config import Config
 from sqlalchemy import Connection, create_engine, make_url, text
+from stores import Stores
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -49,3 +50,8 @@ def db(db_url: str) -> Iterator[Connection]:
         yield conn
         trans.rollback()
     engine.dispose()
+
+
+@pytest.fixture
+def stores(tmp_path: Path) -> Stores:
+    return Stores(tmp_path)

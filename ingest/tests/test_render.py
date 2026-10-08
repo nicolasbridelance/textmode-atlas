@@ -9,10 +9,11 @@ from pathlib import Path
 import pytest
 from PIL import Image
 from sqlalchemy import Connection, text
+from stores import Stores
 from tm.decode import DECODER, decode_pending
 from tm.ingest import ingest_golden
 from tm.render import render_pending
-from tm.storage import IntegrityError, LocalStore, grid_key, rendering_key
+from tm.storage import IntegrityError, grid_key, rendering_key
 from tm_render.conservation import BitmapFont, pixels_sha256
 from tm_render.grid import Grid, to_parquet
 from tm_render.versions import DECODER_VERSION, RENDERER_VERSION
@@ -23,17 +24,6 @@ PINNED = json.loads((GOLDEN / "renderings.json").read_text())
 FONT = BitmapFont.load(ROOT / "corpus" / "fonts" / "ibm-vga-8x16.f16")
 
 pytestmark = pytest.mark.db
-
-
-class Stores:
-    def __init__(self, root: Path) -> None:
-        self.originals = LocalStore(root / "originals")
-        self.derived = LocalStore(root / "derived")
-
-
-@pytest.fixture
-def stores(tmp_path: Path) -> Stores:
-    return Stores(tmp_path)
 
 
 def decoded(db: Connection, stores: Stores, root: Path = GOLDEN) -> str:
