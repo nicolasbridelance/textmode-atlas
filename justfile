@@ -107,3 +107,7 @@ shots *paths:
 # Research notebooks (marimo)
 notebook path="research":
     uv run --group research marimo edit {{path}}
+
+# Corpus explorer on http://127.0.0.1:8737 (reads the works dataset and the derived bucket)
+explore:
+    uv run --group research python research/explorer/explorer.py
