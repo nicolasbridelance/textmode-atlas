@@ -34,7 +34,9 @@ The first thing a visitor sees, built in pipeline order so that nothing is throw
 - [x] Spike 0001: grid rendering matches ansilove on 96 of 99 VGA files ([report](spikes/0001-ansilove-parity.md), [ADR 0010](adr/0010-render-from-the-grid.md))
 - [x] Decoder: canvas height is the last written row + 1, not the SAUCE height (spike 0001)
 - [x] Conservation renderer (grid → PNG, integer scale, 9th column, blink / iCE) with recipe; determinism test; ansilove parity on the golden artifacts in CI (`just parity`)
-- [ ] `tm ingest` for the golden source → `source`, `work`, `version`, `artifact` rows; `tm decode` → `decoding` rows; `tm render` → `representation` rows with the recipe
+- [x] `tm ingest golden` → `source`, `work`, `version`, `artifact` rows, original stored write-once
+- [x] `tm decode` → `decoding` rows (grid or classified error); grids in the private `tm-derived` bucket ([ADR 0011](adr/0011-a-private-bucket-for-derived-data.md))
+- [ ] `tm render` → `representation` rows with the recipe, PNGs in `tm-derived`
 - [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`; refuses a shown file without credit (ADR 0009)
 - [ ] Work screen: credit as signed, source link and "withdraw or claim" on every record (ADR 0009); canvas renderer from the grid and the bitmap font, profile switch, modem-speed playback, zoom to the cell, draw-order layer (honest about file order versus gesture)
 - [ ] Visual regression screenshots of the golden artifacts
@@ -84,5 +86,6 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 | deptry passed locally but failed in CI on first-party imports | local and CI environments differ | first-party packages are now declared explicitly; watch for other differences |
 | PabloDraw 24-bit colour (`ESC[1;R;G;Bt`) skipped by the decoder | recent packs use it; colours and sometimes layout differ (spike 0001) | decoder extension before M4 |
 | No golden artifact with blink, iCE or 8 px cells | Horizon covers 9 px only; renderer paths stay untested on golden files | golden artifact #2 |
+| `decoder_version` is the `tm-render` package version, still `0.0.0` | a decoder fix does not trigger a new decoding: `tm decode` sees the row and skips it | version `tm-render` with the decoder changes, or key the row on a decoder digest |
 | Embedding tables not in the schema | their dimension depends on models not chosen yet | add with research workstream 1 |
 | OpenTofu for staging / production not written | needed from M4 | after the host decision |
