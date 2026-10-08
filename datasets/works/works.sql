@@ -4,6 +4,11 @@
 -- One row per art file of the train packs (view work_split), whatever its format. A file in
 -- several packs is placed in the earliest one (by year, then path), and `packs` says how many
 -- hold it. SAUCE fields are as recorded; `sauce_problems` says when the decoder set them aside.
+--
+-- `content_kind` says what the grid holds, since the extension does not (works note): text or
+-- blocks (a quarter of the visible glyphs or more are █▄▀▌▐░▒▓; the share is bimodal, with its
+-- trough between 10% and 35%), coloured or not (more than two colours: plain text is grey on
+-- black). Null when the grid was not measured.
 with placed as (
   select distinct on (m.sha256)
     m.sha256, p.pack_sha256, pa.source_path as pack_path, w.title as pack,
@@ -37,7 +42,14 @@ select
   d.rows,
   d.sauce_problems,
   d.grid_sha256,
-  r.output_sha256 as rendering_sha256
+  r.output_sha256 as rendering_sha256,
+  case
+    when f.sha256 is null then null
+    when f.n_colors = 0 then 'empty'
+    when f.class_block + f.class_half_block + f.class_shade >= 0.25
+      then case when f.n_colors > 2 then 'coloured_blocks' else 'blocks' end
+    else case when f.n_colors > 2 then 'coloured_text' else 'text' end
+  end as content_kind
 from work_split s
 join placed pl on pl.sha256 = s.sha256
 join artifact a on a.sha256 = s.sha256
@@ -46,6 +58,8 @@ join work aw on aw.id = av.work_id and aw.kind = 'single'
 -- Each art file has one decoder at the current version: the ANSI decoder, or `none` for a
 -- format no decoder reads yet (error `unsupported_format`).
 left join decoding d on d.sha256 = a.sha256 and d.decoder_version = :decoder_version
+left join features f on f.sha256 = a.sha256 and f.extractor_version = :features_version
+  and f.grid_sha256 = d.grid_sha256
 left join lateral (
   select output_sha256 from representation r
   where r.sha256 = a.sha256 and r.level = 'conservation'

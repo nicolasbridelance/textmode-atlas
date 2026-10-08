@@ -23,7 +23,7 @@ def _():
     import duckdb
     import marimo as mo
 
-    build = Path(__file__).resolve().parents[2] / "datasets" / "build" / "works" / "1"
+    build = Path(__file__).resolve().parents[2] / "datasets" / "build" / "works" / "2"
     manifest = json.loads((build / "manifest.json").read_text())
     db = duckdb.connect()
     db.execute(f"create view works as select * from '{build / 'works.parquet'}'")
@@ -57,6 +57,35 @@ def _(alt, mo, q):
             .mark_bar()
             .encode(x="year:O", y="works:Q", color="format:N", tooltip=["format", "works"])
             .properties(width="container", height=260),
+        ]
+    )
+    return
+
+
+@app.cell
+def _(alt, mo, q):
+    kinds = q(
+        "select year, content_kind as kind, count(*) as works from works"
+        " where year is not null and content_kind is not null group by all"
+    )
+    mo.vstack(
+        [
+            mo.md(
+                "## What the files hold\n\nContent kind, read from the grid rather than the"
+                " extension: text or blocks (a quarter of visible glyphs or more are block"
+                " characters), coloured or not (more than two colours)."
+            ),
+            alt.Chart(kinds)
+            .mark_bar()
+            .encode(
+                x="year:O",
+                y=alt.Y("works:Q", stack="normalize"),
+                color=alt.Color(
+                    "kind:N", sort=["coloured_blocks", "blocks", "coloured_text", "text", "empty"]
+                ),
+                tooltip=["kind", "works"],
+            )
+            .properties(width="container", height=240),
         ]
     )
     return
@@ -104,7 +133,7 @@ def _(alt, mo, q):
             avg(class_shade) as shade, avg(class_box) as box,
             avg(class_alphanumeric) as alphanumeric, avg(class_punctuation) as punctuation,
             avg(class_other) as other
-          from w where year is not null and format = 'ansi' group by year
+          from w where year is not null and content_kind = 'coloured_blocks' group by year
         ) on block, half_block, shade, box, alphanumeric, punctuation, other
         into name class value share
         """
@@ -112,8 +141,9 @@ def _(alt, mo, q):
     mo.vstack(
         [
             mo.md(
-                "## What ANSI is drawn with\n\nMean share of each glyph class among visible"
-                " glyphs, per year (ANSI files; ASCII is in the next view)."
+                "## What coloured block art is drawn with\n\nMean share of each glyph class among"
+                " visible glyphs, per year, for works of content kind `coloured_blocks`: text"
+                " files, coloured or not, are left out, whatever their extension."
             ),
             alt.Chart(classes)
             .mark_area()

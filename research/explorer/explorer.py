@@ -32,7 +32,7 @@ from tm_render.conservation import BitmapFont, Settings, render
 from tm_render.grid import Grid, from_parquet
 
 ROOT = Path(__file__).resolve().parents[2]
-BUILD = ROOT / "datasets" / "build" / "works" / "1"
+BUILD = ROOT / "datasets" / "build" / "works" / "2"
 FONT = ROOT / "corpus" / "fonts" / "ibm-vga-8x16.f16"
 PAGE = Path(__file__).with_name("index.html")
 HOST, PORT = "127.0.0.1", 8737
@@ -111,6 +111,11 @@ class Corpus:
                 "select format, count(*) as works from works group by format order by works desc",
                 [],
             ),
+            "kinds": self.rows(
+                "select content_kind as kind, count(*) as works from works"
+                " where content_kind is not null group by 1 order by works desc",
+                [],
+            ),
             "orders": list(ORDERS),
             "dataset": {
                 "version": self.manifest["version"],
@@ -125,9 +130,10 @@ class Corpus:
         if query.get("year"):
             where.append("year = ?")
             params.append(int(query["year"]))
-        if query.get("format"):
-            where.append("format = ?")
-            params.append(query["format"])
+        for field, column in (("format", "format"), ("kind", "content_kind")):
+            if query.get(field):
+                where.append(f"{column} = ?")
+                params.append(query[field])
         if text := query.get("q", "").strip().lower():
             where.append(
                 "(lower(coalesce(sauce_group, '')) like ? or lower(coalesce(sauce_author, ''))"
@@ -140,8 +146,8 @@ class Corpus:
         total = self.db.cursor().execute(f"select count(*) from w where {condition}", params)
         total = total.fetchone()
         works = self.rows(
-            "select sha256, pack, year, path, format, sauce_title, sauce_author, sauce_group,"
-            " cols, rows, decoding, rendering_sha256 is not null as rendered from w"
+            "select sha256, pack, year, path, format, content_kind, sauce_title, sauce_author,"
+            " sauce_group, cols, rows, decoding, rendering_sha256 is not null as rendered from w"
             f" where {condition} order by {order}, sha256 limit {PAGE_SIZE} offset {offset}",
             params,
         )
