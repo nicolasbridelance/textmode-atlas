@@ -5,7 +5,9 @@
 Every art file gets a result. An unreadable file is a result, not a crash: it gets a row with a
 classified error, and so does art in a format no decoder reads yet (`unsupported_format`, under
 the decoder name `none`). ASCII goes through the ANSI decoder, as ansilove draws it: width from
-SAUCE, else 80 columns. The grid goes to the derived bucket (ADR 0011), under a key that follows
+SAUCE, else 80 columns. A SAUCE record with corrupt binary fields gives no width; the row names
+the evidence (`sauce_problems`), which marks the file for a later reading that restores it. The
+grid goes to the derived bucket (ADR 0011), under a key that follows
 the row's primary key. Run twice, it decodes nothing the second time.
 """
 
@@ -38,6 +40,7 @@ class Decoded:
     cols: int | None = None
     rows: int | None = None
     grid_sha256: str | None = None
+    sauce_problems: tuple[str, ...] = ()
 
 
 def decode_pending(conn: Connection, originals: ObjectStore, derived: ObjectStore) -> list[Decoded]:
@@ -78,18 +81,26 @@ def decode_artifact(
     if artifact.format not in DECODED_FORMATS:
         return _error(conn, {**row, "decoder": NO_DECODER}, path, "unsupported_format")
     try:
-        grid = decode(get_original(originals, sha256)).grid
+        decoded = decode(get_original(originals, sha256))
     except DecodeError as err:
         return _error(conn, row, path, err.kind)
+    grid, problems = decoded.grid, decoded.sauce_problems
     _put_grid(derived, grid_key(sha256, DECODER, DECODER_VERSION), grid)
     conn.execute(
         text(
             "insert into decoding (sha256, decoder, decoder_version, status, grid_sha256, cols,"
-            " rows) values (:sha256, :decoder, :version, 'ok', :grid_sha256, :cols, :rows)"
+            " rows, sauce_problems) values (:sha256, :decoder, :version, 'ok', :grid_sha256,"
+            " :cols, :rows, :problems)"
         ),
-        {**row, "grid_sha256": grid.digest(), "cols": grid.cols, "rows": grid.rows},
+        {
+            **row,
+            "grid_sha256": grid.digest(),
+            "cols": grid.cols,
+            "rows": grid.rows,
+            "problems": list(problems),
+        },
     )
-    return Decoded(path, sha256, None, grid.cols, grid.rows, grid.digest())
+    return Decoded(path, sha256, None, grid.cols, grid.rows, grid.digest(), problems)
 
 
 def _error(conn: Connection, row: dict[str, str], path: str, error_class: str) -> Decoded:

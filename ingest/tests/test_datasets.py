@@ -13,6 +13,7 @@ from sqlalchemy import Connection
 from stores import Stores
 from tm.datasets import DatasetError, build
 from tm.packs import ingest_pack
+from tm_render.versions import DECODER_VERSION
 
 ROOT = Path(__file__).resolve().parents[2]
 HORIZON = (ROOT / "tests/golden/ansi/horizon.ans").read_bytes()
@@ -67,8 +68,8 @@ def test_building_twice_gives_the_same_bytes(
     for name in names:
         assert (first / name).read_bytes() == (second / name).read_bytes()
     manifest = json.loads((first / "manifest.json").read_text())
-    assert manifest["migration"] == "0002"
-    assert manifest["extractors"]["decoder"] == "tm_render.ansi@1"
+    assert manifest["migration"] == "0003"
+    assert manifest["extractors"]["decoder"] == f"tm_render.ansi@{DECODER_VERSION}"
 
 
 def test_columns_must_match_the_definition(db: Connection, tmp_path: Path) -> None:

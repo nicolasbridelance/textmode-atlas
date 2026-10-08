@@ -47,7 +47,8 @@ def pending_renderings(conn: Connection, font: BitmapFont, scale: int) -> Sequen
     """Decoded grids with no conservation rendering by this renderer, scale and font yet."""
     return conn.execute(
         text(
-            "select a.sha256, a.source_path, a.sauce, d.grid_sha256 from decoding d"
+            "select a.sha256, a.source_path, a.sauce, d.sauce_problems, d.grid_sha256"
+            " from decoding d"
             " join artifact a on a.sha256 = d.sha256"
             " where d.status = 'ok' and d.decoder = :decoder"
             " and d.decoder_version = :decoder_version"
@@ -74,7 +75,9 @@ def render_artifact(
     grid = from_parquet(derived.get(grid_key(row.sha256, DECODER, DECODER_VERSION)))
     if grid.digest() != row.grid_sha256:
         raise IntegrityError(f"grid of {row.sha256} does not match its decoding row")
-    rendering = render(grid, font, Settings.from_sauce(_sauce(row.sauce), scale))
+    # Flags of a record the decoder set aside are as unreliable as its width.
+    sauce = None if row.sauce_problems else _sauce(row.sauce)
+    rendering = render(grid, font, Settings.from_sauce(sauce, scale))
     _put_rendering(derived, rendering.png)
     conn.execute(
         text(

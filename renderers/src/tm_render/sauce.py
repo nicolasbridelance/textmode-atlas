@@ -5,6 +5,11 @@
 Layout: optional EOF byte (0x1A), optional comment block (`COMNT` + 64-byte lines), then the
 record starting with `SAUCE00`. Absent or malformed records give `None`: they are common, and
 the content stays readable without them.
+
+Some tools wrote records that start with `SAUCE00` but whose binary fields are wrong: text that
+overflows into them, a field one byte too long that shifts the rest, spaces as padding instead of
+zeros. `Sauce.problems` names the evidence; a record with problems is kept as it was written, but
+its numbers (width, height, flags) are not to be trusted.
 """
 
 from __future__ import annotations
@@ -21,6 +26,9 @@ _FIELDS = struct.Struct("<5s2s35s20s20s8sIBBHHHHBB22s")
 
 LetterSpacing = Literal["legacy", "8px", "9px"]
 _SPACING: dict[int, LetterSpacing] = {0: "legacy", 1: "8px", 2: "9px"}
+# Highest file type defined for each data type (spec v00.5). Binary text (5) puts the width in
+# the file type, so any value is valid.
+_LAST_FILE_TYPE = {0: 0, 1: 8, 2: 13, 3: 3, 4: 24, 5: 255, 6: 0, 7: 9, 8: 0}
 
 
 @dataclass(frozen=True)
@@ -51,6 +59,19 @@ class Sauce:
     def legacy_aspect(self) -> bool:
         """Bits 3–4 = 01: stretch to the aspect ratio of a 4:3 CRT."""
         return (self.flags >> 3) & 0b11 == 1
+
+    def problems(self, file_bytes: int) -> tuple[str, ...]:
+        """Evidence that the binary fields are corrupt, for a file of `file_bytes` bytes.
+
+        Both are impossible in a well-formed record: a type pair the spec does not define, and an
+        original size larger than the whole file the record ends.
+        """
+        last = _LAST_FILE_TYPE.get(self.data_type, -1)
+        found = {
+            "type_out_of_spec": self.file_type > last,
+            "size_exceeds_file": self.file_size > file_bytes,
+        }
+        return tuple(name for name, present in found.items() if present)
 
 
 def _text(raw: bytes) -> str:
