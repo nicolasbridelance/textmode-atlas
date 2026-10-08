@@ -123,7 +123,8 @@ def ingest_pack(conn: Connection, store: ObjectStore, path: Path) -> PackIngeste
         ).scalars()
     )
     for member in enumerate(expanded.members):
-        if member[1][0] not in listed:
+        if member[1][0] not in listed:  # some archives list the same entry twice
+            listed.add(member[1][0])
             _add_member(conn, store, pack, set_work, member)
             result.members += 1
     return result

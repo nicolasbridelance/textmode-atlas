@@ -210,3 +210,14 @@ def test_art_signed_with_a_group_extension_is_found_by_its_content(
         " join artifact a on a.sha256 = m.sha256 left join version v on v.id = a.version_id"
         " order by m.position",
     ) == [("BW-INF.MIR", "ansi", True), ("LOADER.EXE", "exe", False), ("INFO.NFO", "nfo", False)]
+
+
+def test_an_entry_listed_twice_is_one_member(
+    db: Connection, stores: Stores, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    pack = make_pack(tmp_path / "2004" / "twice.zip", MEMBERS)
+    listed_twice = [("CRO.NFO", b"nfo\r\n"), ("CRO.NFO", b"nfo\r\n")]
+    monkeypatch.setattr("tm.packs.expand", lambda _p, _f: Expanded(listed_twice, []))
+    result = ingest_pack(db, stores.originals, pack)
+    assert result.members == 1
+    assert rows(db, "select path, position from set_member") == [("CRO.NFO", 0)]
