@@ -131,6 +131,7 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 | PabloDraw 24-bit colour (`ESC[1;R;G;Bt`) skipped by the decoder | recent packs use it; colours and sometimes layout differ (spike 0001) | decoder extension before M4 |
 | No golden artifact with blink, iCE or 8 px cells | Horizon covers 9 px only; renderer paths stay untested on golden files | golden artifact #2 |
 | Embedding tables not in the schema | their dimension depends on models not chosen yet | add with research workstream 1 |
+| About 1,600 pictures, programs and modules stamped with an ANSI SAUCE record were ingested as works before the fix (artifact rows are immutable) | they stay `single` works whose decoding is `binary_content`; catalogue counts of art include them | a correction mechanism for misclassified artifacts (an assertion, not an update), before M3 |
 | XBIN, BIN, RIP, ADF, IDF, PCBoard, Avatar and Tundra are recorded as `unsupported_format` | their works have no grid, so no rendering and no features | decoders by count of files in the catalogue; ASCII is read by the ANSI decoder, as ansilove does |
 | The `web` CI job sometimes spends 20 minutes installing Playwright's system packages | slows every merge | cache the browsers, or install without `--with-deps` on a runner that has them |
 | OpenTofu for staging / production not written | needed from M4 | after the host decision |
