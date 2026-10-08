@@ -86,6 +86,5 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 | deptry passed locally but failed in CI on first-party imports | local and CI environments differ | first-party packages are now declared explicitly; watch for other differences |
 | PabloDraw 24-bit colour (`ESC[1;R;G;Bt`) skipped by the decoder | recent packs use it; colours and sometimes layout differ (spike 0001) | decoder extension before M4 |
 | No golden artifact with blink, iCE or 8 px cells | Horizon covers 9 px only; renderer paths stay untested on golden files | golden artifact #2 |
-| `decoder_version` is the `tm-render` package version, still `0.0.0` | a decoder fix does not trigger a new decoding: `tm decode` sees the row and skips it | version `tm-render` with the decoder changes, or key the row on a decoder digest |
 | Embedding tables not in the schema | their dimension depends on models not chosen yet | add with research workstream 1 |
 | OpenTofu for staging / production not written | needed from M4 | after the host decision |
