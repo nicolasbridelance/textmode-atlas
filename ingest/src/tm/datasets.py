@@ -22,20 +22,32 @@ import pyarrow.parquet as pq
 import yaml
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import Connection, text
+from tm_analysis.versions import FEATURES_VERSION
 from tm_render.versions import DECODER_VERSION, RENDERER_VERSION
 
 from tm.decode import DECODER
 
-ColumnType = Literal["string", "int32", "int64", "bool"]
+ColumnType = Literal["string", "int32", "int64", "float64", "bool", "list<int32>", "list<string>"]
 ARROW_TYPES: dict[str, pa.DataType] = {
     "string": pa.string(),
     "int32": pa.int32(),
     "int64": pa.int64(),
+    "float64": pa.float64(),
     "bool": pa.bool_(),
+    "list<int32>": pa.list_(pa.int32()),
+    "list<string>": pa.list_(pa.string()),
 }
 # Bound in every query, and recorded in the manifest: which results the dataset reads.
-PARAMETERS = {"decoder_version": DECODER_VERSION}
-EXTRACTORS = {"decoder": f"{DECODER}@{DECODER_VERSION}", "renderer": RENDERER_VERSION}
+PARAMETERS = {
+    "decoder_version": DECODER_VERSION,
+    "renderer_version": RENDERER_VERSION,
+    "features_version": FEATURES_VERSION,
+}
+EXTRACTORS = {
+    "decoder": f"{DECODER}@{DECODER_VERSION}",
+    "renderer": RENDERER_VERSION,
+    "features": FEATURES_VERSION,
+}
 
 
 class Column(BaseModel):
