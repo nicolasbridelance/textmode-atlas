@@ -190,3 +190,20 @@ def test_a_pack_first_met_inside_another_becomes_a_set(
         "select w.title, a.source_path from artifact a join version v on v.id = a.version_id"
         f" join work w on w.id = v.work_id where a.sha256 = '{result.sha256}'",
     ) == [("inner", "1997/outer.zip/INNER.ZIP")]
+
+
+def test_art_signed_with_a_group_extension_is_found_by_its_content(
+    db: Connection, stores: Stores, tmp_path: Path
+) -> None:
+    files = {
+        "BW-INF.MIR": b"\x1b[0;1;34m Mirage \x1b[0m\r\n\x1a",
+        "LOADER.EXE": b"MZ\x00\x00\x1b[1;31mcoloured message\x00",
+        "INFO.NFO": b"\x1b[1mansi nfo\x1b[0m\r\n",
+    }
+    ingest_pack(db, stores.originals, make_pack(tmp_path / "1992" / "mirage01.zip", files))
+    assert rows(
+        db,
+        "select m.path, a.format, v.id is not null from set_member m"
+        " join artifact a on a.sha256 = m.sha256 left join version v on v.id = a.version_id"
+        " order by m.position",
+    ) == [("BW-INF.MIR", "ansi", True), ("LOADER.EXE", "exe", False), ("INFO.NFO", "nfo", False)]

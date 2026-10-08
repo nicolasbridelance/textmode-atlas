@@ -55,6 +55,8 @@ SAUCE_ART: dict[tuple[int, int | None], str] = {
     (1, 5): "avatar", (1, 8): "tundra", (5, None): "bin", (6, 0): "xbin",
 }  # fmt: skip
 SAUCE_BINARY_TEXT = 5
+CSI = b"\x1b["
+EOF_BYTE = b"\x1a"
 CHARSET = "cp437"
 YEAR_DIGITS = 4
 
@@ -178,7 +180,7 @@ def _add_member(
     sha256, _ = put_original(store, data)
     if not artifact_known(conn, sha256):
         sauce = split(data)[1]
-        art = _art_format(name, sauce)
+        art = _art_format(name, sauce, data)
         version_id = None
         if art:
             title = sauce.title if sauce and sauce.title else PurePosixPath(name).name
@@ -206,13 +208,23 @@ def _add_member(
     )
 
 
-def _art_format(name: str, sauce: Sauce | None) -> str | None:
-    by_extension = ART.get(PurePosixPath(name).suffix.lower())
-    if by_extension or sauce is None:
-        return by_extension
-    # BinaryText stores the width in the file type, so the type alone names the format.
-    file_type = None if sauce.data_type == SAUCE_BINARY_TEXT else sauce.file_type
-    return SAUCE_ART.get((sauce.data_type, file_type))
+def _art_format(name: str, sauce: Sauce | None, data: bytes) -> str | None:
+    """Art format by extension, as the scene named the file; else by SAUCE; else by content.
+
+    Before SAUCE (1994) groups often signed files with their tag as extension (`.MIR`, `.SDA`):
+    a file with escape sequences and no NUL byte (which programs have) is ANSI whatever its name.
+    """
+    suffix = PurePosixPath(name).suffix.lower()
+    if suffix in ART:
+        return ART[suffix]
+    if suffix in DOCUMENTS:
+        return None
+    if sauce is not None:
+        # BinaryText stores the width in the file type, so the type alone names the format.
+        file_type = None if sauce.data_type == SAUCE_BINARY_TEXT else sauce.file_type
+        return SAUCE_ART.get((sauce.data_type, file_type))
+    shown = data.split(EOF_BYTE, 1)[0]  # DOS `type` stops at the first EOF byte
+    return "ansi" if CSI in shown and b"\x00" not in shown else None
 
 
 def _extension(name: str) -> str | None:
