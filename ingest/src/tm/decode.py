@@ -22,6 +22,7 @@ from tm_render.ansi import DecodeError, decode
 from tm_render.grid import Grid, from_parquet, to_parquet
 from tm_render.versions import DECODER_VERSION
 
+from tm.shards import EVERYTHING, Shard, condition
 from tm.storage import IntegrityError, ObjectStore, get_original, grid_key
 
 DECODER = "tm_render.ansi"
@@ -48,7 +49,7 @@ def decode_pending(conn: Connection, originals: ObjectStore, derived: ObjectStor
     return [decode_artifact(conn, originals, derived, a) for a in pending_artifacts(conn)]
 
 
-def pending_artifacts(conn: Connection) -> Sequence[Row[Any]]:
+def pending_artifacts(conn: Connection, shard: Shard = EVERYTHING) -> Sequence[Row[Any]]:
     """Art artifacts with no result yet from the decoder their format calls for, at the current
     decoder version."""
     return conn.execute(
@@ -59,13 +60,14 @@ def pending_artifacts(conn: Connection) -> Sequence[Row[Any]]:
             " where not exists (select 1 from decoding d where d.sha256 = a.sha256"
             " and d.decoder_version = :version and d.decoder ="
             " case when a.format = any(:formats) then :decoder else :none end)"
-            " order by a.source_path, a.sha256"
+            f"{condition('a.sha256')} order by a.source_path, a.sha256"
         ),
         {
             "decoder": DECODER,
             "none": NO_DECODER,
             "formats": DECODED_FORMATS,
             "version": DECODER_VERSION,
+            **shard.params(),
         },
     ).all()
 
@@ -84,13 +86,14 @@ def decode_artifact(
         decoded = decode(get_original(originals, sha256))
     except DecodeError as err:
         return _error(conn, row, path, err.kind)
-    grid, problems = decoded.grid, decoded.sauce_problems
+    grid, problems, stream = decoded.grid, decoded.sauce_problems, decoded.stream
     _put_grid(derived, grid_key(sha256, DECODER, DECODER_VERSION), grid)
     conn.execute(
         text(
             "insert into decoding (sha256, decoder, decoder_version, status, grid_sha256, cols,"
-            " rows, sauce_problems) values (:sha256, :decoder, :version, 'ok', :grid_sha256,"
-            " :cols, :rows, :problems)"
+            " rows, sauce_problems, writes, overwrites, clears) values (:sha256, :decoder,"
+            " :version, 'ok', :grid_sha256, :cols, :rows, :problems, :writes, :overwrites,"
+            " :clears)"
         ),
         {
             **row,
@@ -98,6 +101,9 @@ def decode_artifact(
             "cols": grid.cols,
             "rows": grid.rows,
             "problems": list(problems),
+            "writes": stream.writes,
+            "overwrites": stream.overwrites,
+            "clears": stream.clears,
         },
     )
     return Decoded(path, sha256, None, grid.cols, grid.rows, grid.digest(), problems)

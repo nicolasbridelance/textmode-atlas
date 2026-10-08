@@ -11,8 +11,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-# Appended to a query whose decoding row is `d`.
-FILTER = " and get_byte(decode(d.sha256, 'hex'), 1) % :shard_count = :shard_index"
+
+def condition(column: str) -> str:
+    """SQL to append to a query's conditions: the artifact hash in `column` is in the shard."""
+    return f" and get_byte(decode({column}, 'hex'), 1) % :shard_count = :shard_index"
 
 
 @dataclass(frozen=True)

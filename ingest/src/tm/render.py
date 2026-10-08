@@ -21,7 +21,7 @@ from tm_render.sauce import Sauce
 from tm_render.versions import DECODER_VERSION, RENDERER_VERSION
 
 from tm.decode import DECODER
-from tm.shards import EVERYTHING, FILTER, Shard
+from tm.shards import EVERYTHING, Shard, condition
 from tm.storage import IntegrityError, ObjectStore, grid_key, rendering_key, sha256_hex
 
 LEVEL = "conservation"
@@ -59,7 +59,7 @@ def pending_renderings(
             " and r.level = :level and r.recipe->>'renderer_version' = :renderer_version"
             " and r.recipe->>'grid_sha256' = d.grid_sha256"
             " and (r.recipe->>'scale')::int = :scale and r.recipe#>>'{font,sha256}' = :font)"
-            f"{FILTER} order by a.source_path, a.sha256"
+            f"{condition('d.sha256')} order by a.source_path, a.sha256"
         ),
         {
             "decoder": DECODER,
