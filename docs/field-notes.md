@@ -16,6 +16,19 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-08 — Pictures signed as ANSI
+
+**Some packs signed every file, pictures and music included.** About 1,600 files of 16colo that
+are not text carry a SAUCE record that calls them ANSI: 662 JPEG and 505 GIF pictures, 142
+programs, 115 ZIP archives, 81 Scream Tracker and 22 ProTracker modules, PCX, BMP and IFF
+images. Most date from 1994–98 and come from many groups (iNSOMNiA, BLACK MAiDEN, Union, CiA,
+Mistigris…). A tool that appended SAUCE records to a whole pack must have set the type to
+Character/ANSI whatever the file was: the record became a signature of the group, not a
+description of the file. One module, `DD-ICE.ICE` ("agony intro"), even bears an artwork's
+extension. *How found: ANSI files named `.JPG` decoded as grey noise in the explorer; their first
+bytes were JPEG and GIF signatures. Evidence: decoder version 4, error `binary_content`;
+`artifact.sauce` (data type 1, file type 1) of those files.*
+
 ## 2026-10-08 — First look at the grids
 
 **The nineties drew with eight backgrounds.** VGA text mode can show sixteen background colours
