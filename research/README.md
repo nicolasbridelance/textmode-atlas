@@ -11,6 +11,9 @@ Hypotheses, pre-registered **before** looking at the data, and the notebooks tha
   of pre-registration.
 - Notebooks are [marimo](https://marimo.io/) files (plain Python, reviewable in a diff):
   `just notebook research/NNNN-short-name`.
+- Exploratory notebooks, which test no hypothesis, live in `research/exploration/`: what they
+  show is a lead, never a result, and a lead becomes a result only through a pre-registered
+  hypothesis.
 - Notebooks read built datasets (`datasets/`), never the production database directly.
 - Method rules (foundation document): split by pack, compare to a null model, resample by pack
   for intervals, publish coverage.
