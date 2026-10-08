@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+#
+# Built by `tm dataset build catalogue`. Datasheet: DATASHEET.md.
+name: catalogue
+version: "1"
+description: Every 16colo pack in the local mirror and every file in it, as ingested.
+
+tables:
+  packs:
+    query: packs.sql
+    key: [pack_sha256]
+    columns:
+      - { name: pack_sha256, type: string, description: SHA-256 of the pack archive as released }
+      - { name: pack, type: string, description: "Pack name: the archive name without extension" }
+      - { name: path, type: string, description: "Path in the 16colo mirror, year/archive" }
+      - { name: year, type: int32, description: "Year 16colo files the pack under; null outside a year directory" }
+      - { name: archive_format, type: string, description: "zip, rar, lha, lzh or arj" }
+      - { name: bytes, type: int64, description: Size of the archive }
+      - { name: expansion, type: string, description: "Latest reading of the archive: ok, partial or error; null if not read since migration 0002" }
+      - { name: expansion_error, type: string, description: Classified error when no member could be listed }
+      - { name: unreadable, type: int32, description: Members the readers could not extract }
+      - { name: members, type: int32, description: Files recorded in the pack }
+      - { name: split, type: string, description: "train or test, drawn from the archive hash; about one pack in five is test" }
+  files:
+    query: files.sql
+    key: [pack_sha256, path]
+    columns:
+      - { name: pack_sha256, type: string, description: The pack the file was found in (packs.pack_sha256) }
+      - { name: path, type: string, description: Path inside the archive }
+      - { name: position, type: int32, description: Rank in the archive listing }
+      - { name: sha256, type: string, description: SHA-256 of the file; the same file in two packs has two rows }
+      - { name: bytes, type: int64, description: Size of the file }
+      - { name: format, type: string, description: "Art format (ansi, ascii, xbin…), document kind (nfo, diz, text) or the bare extension" }
+      - { name: extension, type: string, description: "Extension of the file name, lower case; null when there is none" }
+      - { name: is_art, type: bool, description: "Recognised as textmode art (by extension, SAUCE or content): a work of its own" }
+      - { name: has_sauce, type: bool, description: The file ends with a SAUCE record }
+      - { name: sauce_title, type: string, description: SAUCE title }
+      - { name: sauce_author, type: string, description: "SAUCE author: a handle, as signed" }
+      - { name: sauce_group, type: string, description: SAUCE group }
+      - { name: sauce_date, type: string, description: "SAUCE date, raw YYYYMMDD text, not checked" }
+      - { name: sauce_data_type, type: int32, description: "SAUCE data type (1 character, 5 binary text, 6 XBIN…)" }
+      - { name: sauce_file_type, type: int32, description: "SAUCE file type; for binary text, half the width" }
+      - { name: sauce_width, type: int32, description: "SAUCE TInfo1: width in characters for character files" }
+      - { name: sauce_height, type: int32, description: "SAUCE TInfo2: height in lines for character files" }
+      - { name: sauce_flags, type: int32, description: "SAUCE TFlags: bit 0 iCE colours, bits 1-2 letter spacing, bits 3-4 aspect ratio" }
+      - { name: sauce_font, type: string, description: "SAUCE TInfoS: font name; null when empty" }
+      - { name: sauce_comment_lines, type: int32, description: Lines in the SAUCE comment block }
+      - { name: decoding, type: string, description: "ok or error for the current ANSI decoder; null when not decoded (not ANSI, or not run yet)" }
+      - { name: decoding_error, type: string, description: Classified decoding error }
+      - { name: cols, type: int32, description: Decoded canvas width in cells }
+      - { name: rows, type: int32, description: Decoded canvas height in cells }

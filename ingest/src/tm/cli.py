@@ -14,6 +14,7 @@ from tm_render.conservation import MAX_SCALE, BitmapFont
 
 from tm import corpus as corpus_mod
 from tm.config import settings
+from tm.datasets import DatasetError, build
 from tm.decode import decode_artifact, pending_artifacts
 from tm.dev import storage_init
 from tm.ingest import ingest_golden
@@ -23,9 +24,11 @@ from tm.storage import S3Store, s3_client
 
 app = typer.Typer(help="Digital Museum of Character Arts.", no_args_is_help=True)
 corpus_app = typer.Typer(help="YAML files in corpus/: validation and schemas.")
+dataset_app = typer.Typer(help="Frozen extracts of the database, for research.")
 dev_app = typer.Typer(help="Local development environment.")
 ingest_app = typer.Typer(help="Bring sources into the museum.", no_args_is_help=True)
 app.add_typer(corpus_app, name="corpus")
+app.add_typer(dataset_app, name="dataset")
 app.add_typer(dev_app, name="dev")
 app.add_typer(ingest_app, name="ingest")
 
@@ -64,6 +67,32 @@ def corpus_schema(root: CorpusRoot = Path("corpus")) -> None:
     for name, content in corpus_mod.json_schemas().items():
         (root / "schema" / name).write_text(content, encoding="utf-8")
         typer.echo(f"wrote corpus/schema/{name}")
+
+
+@dataset_app.command("build")
+def dataset_build(
+    name: Annotated[str, typer.Argument(help="A dataset defined in datasets/<name>/.")],
+    definitions: Annotated[Path, typer.Option(help="Where datasets are defined.")] = Path(
+        "datasets"
+    ),
+    out: Annotated[Path, typer.Option(help="Where builds go.")] = Path("datasets/build"),
+) -> None:
+    """Build a dataset: one Parquet file per table and a manifest, the same bytes every time."""
+    # One snapshot for every table, even while an ingestion is writing.
+    engine = create_engine(
+        settings().database_url,
+        isolation_level="REPEATABLE READ",
+        execution_options={"postgresql_readonly": True},
+    )
+    with engine.connect() as conn:
+        try:
+            built = build(conn, definitions / name, out)
+        except (DatasetError, ValidationError) as err:
+            typer.echo(f"✗ {err}", err=True)
+            raise typer.Exit(1) from err
+    for table, rows in built.rows.items():
+        typer.echo(f"{table}: {rows} rows")
+    typer.echo(f"built {built.directory}")
 
 
 @dev_app.command("storage-init")
