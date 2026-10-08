@@ -7,9 +7,11 @@ SPDX-License-Identifier: CC-BY-4.0
 Roadmap step 5, exploratory: what the decoded grids of the **train** packs show, measured by
 feature extractor v1. Leads, not results; each one is to be tested later on the test packs,
 which nobody has examined. Notebook: [works.py](works.py); explorer:
-[../explorer/](../explorer/) (`just explore`). Dataset `works` v1, then v2 with the content kind
-(migration 0006, decoder `tm_render.ansi@2`, features 1), built 2026-10-08: 88,951 art files,
-85,977 measured grids.
+[../explorer/](../explorer/) (`just explore`). Dataset `works` v3 (migration 0007, decoder
+`tm_render.ansi@4`, features 1), built 2026-10-08: 88,951 art files, 84,382 measured grids.
+Counts were redone on v3 after decoder 4 set aside about 2,000 pictures, programs and modules
+that a SAUCE record called ANSI (field notes); earlier drafts counted them as text and as
+animations.
 
 Eras are groups of 16colo's filing years, chosen to keep each one large enough to read; they are
 not periods of the scene.
@@ -18,13 +20,13 @@ not periods of the scene.
 
 | Era | ANSI works | block | half block | shade | box | letters | punctuation | median rows | median colours |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1990–93 | 5,448 | 28.0% | 28.3% | 22.9% | 6.6% | 10.4% | 2.5% | 29 | 9 |
-| 1994–95 | 17,516 | 24.6% | 25.1% | 23.8% | 3.3% | 13.8% | 6.7% | 30 | 8 |
-| 1996–97 | 20,764 | 22.9% | 25.9% | 18.6% | 1.6% | 15.0% | 12.9% | 26 | 9 |
-| 1998–99 | 7,341 | 22.7% | 26.0% | 17.8% | 2.1% | 14.3% | 13.3% | 26 | 9 |
-| 2000–04 | 3,998 | 21.5% | 21.3% | 15.0% | 3.6% | 12.7% | 23.2% | 29 | 9 |
+| 1990–93 | 5,447 | 28.0% | 28.3% | 22.9% | 6.6% | 10.4% | 2.5% | 29 | 9 |
+| 1994–95 | 16,924 | 25.5% | 25.9% | 24.6% | 3.1% | 12.8% | 6.6% | 34 | 8 |
+| 1996–97 | 20,098 | 23.7% | 26.8% | 19.2% | 1.4% | 14.3% | 13.1% | 27 | 9 |
+| 1998–99 | 7,081 | 23.5% | 26.9% | 18.4% | 1.9% | 13.5% | 13.6% | 26 | 9 |
+| 2000–04 | 3,993 | 21.5% | 21.3% | 15.0% | 3.6% | 12.7% | 23.2% | 29 | 9 |
 | 2005–12 | 535 | 30.8% | 28.4% | 17.9% | 1.4% | 7.5% | 13.2% | 60 | 12 |
-| 2013–26 | 6,984 | 28.2% | 21.6% | 18.2% | 2.0% | 11.9% | 14.9% | 50 | 9 |
+| 2013–26 | 6,932 | 28.4% | 21.8% | 18.4% | 2.0% | 11.7% | 14.9% | 50 | 9 |
 
 Glyph classes are mean shares of the visible glyphs of each work (ADR 0016).
 
@@ -34,16 +36,20 @@ Glyph classes are mean shares of the visible glyphs of each work (ADR 0016).
   kind, below), shades stay between 22% and 28% in every era and punctuation under 3.5%: the
   shift came from text files, coloured or not, filling a growing share of the packs (Q2,
   answered for exploration). Within block art, full blocks gain after 2000 (29% → 37%).
-- **One screen, then scrolls.** Until 2004 the median work is one screen high (26–30 rows),
-  with a tail of long scrolls (90th percentile 124–148 rows). From 2005 the median doubles
+- **One screen, then scrolls.** Until 2004 the median work is about one screen high (26–34
+  rows), with a tail of long scrolls (90th percentile 123–150 rows). From 2005 the median doubles
   (50–60 rows).
 - **Wider than 80 columns** is a recent habit: 0.6% of ANSI in 2000–04, 8.2% since 2013. These
   are the works whose SAUCE record is coherent (ADR 0015).
+- **Animation belongs to the early years.** Decoder 3 counts how the bytes drew: a work is
+  taken as animated when a tenth of its writes or more fall on cells already written, or when
+  it clears the screen twice or more (exploratory rule; one clear is the usual header). 98.5% of
+  works rewrite less than 1% of their cells. Animated ANSI are 7.2% of 1990–93, 1.2% of
+  1994–95, then 0.2–0.4% (Q4, H5: the peak is earlier than supposed). Earlier drafts used bytes
+  per cell and found 3% in 1994–99: most of those were pictures stamped as ANSI.
 - **Typed, not drawn.** In byte order, almost every ANSI after 1993 writes its cells in reading
-  order (draw order ≥ 0.9 for 99%). In 1990–93, 5.8% do not. A lead: early screens built with
-  cursor movements (menus, animations), against later editors that save line by line.
-- **Animation-like files.** About 3% of the ANSI of 1994–99 hold over 20 bytes of file per cell:
-  the screen is redrawn, and the grid keeps only its last state.
+  order (draw order ≥ 0.9 for 99%). In 1990–93, 5.8% do not, and about half of the animated
+  works do not: out-of-order writing is mostly animation.
 
 ## What the files hold
 
@@ -53,15 +59,15 @@ when the work uses more than two colours.
 
 | Era | coloured blocks | blocks | coloured text | text |
 | --- | ---: | ---: | ---: | ---: |
-| 1990–93 | 5,116 | 32 | 298 | 31 |
-| 1994–95 | 14,844 | 278 | 2,158 | 3,325 |
-| 1996–97 | 16,317 | 640 | 5,671 | 6,395 |
-| 1998–99 | 5,486 | 466 | 2,196 | 3,543 |
-| 2000–04 | 2,536 | 2,419 | 1,498 | 3,752 |
+| 1990–93 | 5,116 | 32 | 298 | 30 |
+| 1994–95 | 14,844 | 277 | 2,158 | 2,728 |
+| 1996–97 | 16,317 | 640 | 5,671 | 5,730 |
+| 1998–99 | 5,486 | 466 | 2,196 | 3,283 |
+| 2000–04 | 2,536 | 2,419 | 1,498 | 3,746 |
 | 2005–12 | 439 | 429 | 91 | 284 |
-| 2013–26 | 5,040 | 474 | 1,235 | 910 |
+| 2013–26 | 5,040 | 474 | 1,235 | 858 |
 
-Files named ANSI are 80% coloured block art, 14% coloured text and 6% plain text; files named
+Files named ANSI are 81% coloured block art, 14% coloured text and 3% plain text; files named
 ASCII are 63% text, 19% coloured text and 18% colourless block art. In 2000–04, colourless
 block art is as common as coloured block art (Q22).
 
@@ -76,10 +82,10 @@ attribute that iCE draws as a bright background (the blink bit, under ink) is ju
 | 1990–93 | 6.0% | 1.5% | 0.0% |
 | 1994–95 | 1.1% | 0.2% | 0.2% |
 | 1996–97 | 2.3% | 0.2% | 0.0% |
-| 1998–99 | 2.1% | 0.1% | 2.7% |
+| 1998–99 | 2.2% | 0.1% | 2.8% |
 | 2000–04 | 3.6% | 0.6% | 7.0% |
 | 2005–12 | 6.9% | 0.9% | 3.0% |
-| 2013–26 | 22.0% | 10.5% | 32.5% |
+| 2013–26 | 22.2% | 10.6% | 32.8% |
 
 To exclude a decoder blind spot, the raw bytes of 3,000 ANSI of 1994–99 (fixed sample) were
 searched for the other ways to ask for a bright background: no `ESC[100–107m`, no
@@ -127,9 +133,10 @@ These change the roadmap's later steps, as rule 3 of the program requires before
    1998–2004, 2005–12, 2013–26). Each stratum gets the same number of packs (or a square-root
    share), so that thin years are over-represented, and every pack keeps its inclusion weight
    for reweighting (leads I19). Whether 1996 is the scene's peak or 16colo's is open (Q21, H8).
-3. **Animation needs the byte stream.** For about 3% of works the grid is not the work. The
-   decoder should count overwritten cells, the work screen needs playback (spike 0002), and
-   the features of those works should be flagged, not compared as still images.
+3. **Animation needs the byte stream.** For about 700 works of the train packs (7% of the
+   ANSI of 1990–93) the grid is not the work. The decoder counts overwrites (version 3); the
+   work screen needs playback (spike 0002), and the features of those works are to be flagged,
+   not compared as still images.
 4. **The default rendering is right for most of the corpus.** Blink, not iCE, is the reading of
    nineties files; the iCE profile matters mostly after 2013.
 

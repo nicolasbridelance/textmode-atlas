@@ -25,7 +25,7 @@ Rules:
 | Q1 | Which editor writes `ESC[?7h` (line wrap on) in 15% of the ANSI of 1994–99? | works note, byte scan | byte habits of files whose tool is known (SAUCE comments, NFO, tool release dates) | open |
 | Q2 | Is the fall of shades and the rise of punctuation (1994 → 2004) one shift in style, or text-heavy files (NFO-like ANSI, ASCII in ANSI) growing in the packs? | works note | the same measure by content kind (I1), and within artists over time | answered for exploration: composition; within coloured block art shades stay 22–28% (works note) |
 | Q3 | Why does the median height double after 2005? The end of the 25-line BBS screen as reading frame, web viewers, or a change in what packs hold? | works note | heights by content kind and by pack type; scroll works vs logos | open |
-| Q4 | What are the 5.8% of ANSI of 1990–93 written out of reading order: animations, BBS menus, editors that saved by blocks? | works note | contact sheet sorted by draw order; overwrite counts (I3) | open |
+| Q4 | What are the 5.8% of ANSI of 1990–93 written out of reading order: animations, BBS menus, editors that saved by blocks? | works note | contact sheet sorted by draw order; overwrite counts (I3) | answered for exploration: about half of the animated works are out of order, and animation is 7.2% of 1990–93 ANSI (works note) |
 | Q5 | Are the 2005–12 years thin because the scene was, or because 16colo holds less of them? | catalogue, works note | other archives (Demozoo, textfiles.com) for the same years; `lost_item` | open |
 | Q6 | Do groups have house palettes or house glyph habits that outlive their members? | explorer | features by group against by artist, over time | open |
 | Q7 | Which files travel most between packs (`packs` > 1): intros, ads, logos, member lists? | works dataset | the shared files, by content and position in the pack | open |
@@ -54,7 +54,7 @@ Rules:
 | H2 | The fall of shades from 1994 to 2004 happens within artists, not only by new artists replacing old ones. | shade share per artist over years | shuffled years within artists | open |
 | H3 | Features v1 carry an author signal: nearest neighbours share the author more often than the same group, year and content kind would predict. | same-author rate among 12 nearest | neighbours drawn within group × year | explored (train): weak, 2.3% against 0.6% by chance and 14.2% knowing the group (works note); to retest with richer features |
 | H4 | Formal novelties follow tool releases (rule 6): a new habit (wide canvas, iCE, 24-bit colour) appears in the packs after the editor that makes it easy. | first appearance and adoption curves | release dates shifted at random | open |
-| H5 | Animation-like files peak in the mid-nineties and fall with the end of the BBS. | share of works over 20 bytes per cell | permuted years | open |
+| H5 | Animation-like files peak in the mid-nineties and fall with the end of the BBS. | share of animated works (overwrites, clears) | permuted years | explored (train): the peak is 1990–93 (7.2%), not the mid-nineties; restate before testing |
 | H6 | One-screen works compose for the 80×25 frame: their ink is centred and their fill higher than the first screen of long scrolls. | centre of mass, fill of rows 0–24 | same rows of scrolls | open |
 | H8 | The golden age is real: across independent sources, artpacks per year peak in the mid-nineties, not only in 16colo. | artpacks per year in each source, overlap-corrected | each source's own curve, resampled | open |
 | H7 | Groups keep a house palette: colour histograms are closer within a group than between groups of the same years. | distance of `fg_hist`/`bg_hist` | group labels permuted within year | open |
@@ -65,7 +65,7 @@ Rules:
 | --- | --- | --- | --- |
 | I1 | Content kind of each work: escape sequences or not, colours, block share; plain text art, coloured text art, colourless block art, ANSI | the extension does not say it (works note, constraint 1) | done: `works` v2, `content_kind` |
 | I2 | Extract text runs from grids (letters and punctuation in rows) | search inside works, signatures (Q12), greetings, languages (Q10) | taken: `tm_analysis.text`, explorer detail; next, corpus-wide with a search index. Short tags (`rs!`, two letters) escape the three-character word rule |
-| I3 | Decoder counts overwritten cells; keep frames of animations | the grid is not the work for animations (constraint 3) | taken (roadmap step 5) |
+| I3 | Decoder counts overwritten cells; keep frames of animations | the grid is not the work for animations (constraint 3) | counts done (decoder v3, `works` v3); frames for playback still open |
 | I4 | Lettering fingerprints: glyph n-grams of logos, to find shared or copied letterforms | diffusion and borrowing (W4, W5) | open |
 | I5 | Colour ramps: the sequences of colours along rows and down columns | shading schools (Q15), house palettes (H7) | open |
 | I6 | "Time to arrive": bytes / (baud / 10) at 2400 and 14400 baud, on each record | a cartel fact for visitors; also a measure of byte economy | taken: explorer detail; the museum record later |
