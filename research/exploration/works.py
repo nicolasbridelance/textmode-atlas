@@ -99,7 +99,8 @@ def _(alt, mo, q):
           avg((cols > 80)::int) as wider_than_80,
           quantile_cont(rows, 0.5) as median_rows,
           quantile_cont(rows, 0.9) as p90_rows,
-          avg((bytes::double / (cols * rows) > 20)::int) as animation_like
+          avg((overwrites::double / greatest(writes, 1) >= 0.1 or clears >= 2)::int)
+            as animated
         from w where year is not null group by year order by year
         """
     )
@@ -108,15 +109,15 @@ def _(alt, mo, q):
         [
             mo.md(
                 "## Canvas\n\nMedian and 90th percentile of rows; share wider than 80 columns;"
-                " share *animation-like* (over 20 bytes of file per cell: the screen is"
-                " redrawn, and the grid shows only its last state)."
+                " share *animated* (a tenth of the writes or more on cells already written, or"
+                " two screen clears or more: the grid shows only the last state)."
             ),
             mo.hstack(
                 [
                     _base.mark_line(point=True).encode(y="median_rows:Q")
                     + _base.mark_line(strokeDash=[4, 2]).encode(y="p90_rows:Q"),
                     _base.mark_line(point=True).encode(y="wider_than_80:Q")
-                    + _base.mark_line(color="firebrick").encode(y="animation_like:Q"),
+                    + _base.mark_line(color="firebrick").encode(y="animated:Q"),
                 ]
             ),
         ]
