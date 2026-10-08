@@ -16,6 +16,26 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-08 — First look at the grids
+
+**The nineties drew with eight backgrounds.** VGA text mode can show sixteen background colours
+if the blink bit is given up (iCE colours), and the SAUCE record has a flag for it. Before 1998
+the flag is almost never set, which could have meant that editors did not write it. The grids
+say otherwise: in the train packs of 1994–99, only 1–2% of ANSI works use the blink bit under
+ink at all, and the raw files hold no other way of asking for a bright background
+(`ESC[100–107m`, `ESC[?33h`) in a sample of 3,000. Artists worked within eight backgrounds, as
+the BBS terminals of their readers would show them, blinking otherwise. Sixteen backgrounds
+became common only after 2013 (22% of works). *How found: feature `high_bg_ratio` against the
+SAUCE flag, then a byte scan of the originals. Evidence: research/exploration/works.md; dataset
+`works` v1.*
+
+**"ASCII" files were often coloured.** In 1994–99, a third of the files the scene named `.ASC`
+contain ANSI colour codes, and about a quarter are drawn in more than two colours: the
+extension named a style of drawing (with letters and punctuation), not the absence of colour.
+After 2000 the same extension often holds colourless block art. *How found: fixed sample of
+600 `.ASC` files of the train packs, colours measured on the grid and escape sequences on the
+bytes. Evidence: research/exploration/works.md.*
+
 ## 2026-10-08 — Widths that were not widths
 
 **A broken SAUCE record is a tool's fingerprint.** 568 ANSI and ASCII files carry a SAUCE
