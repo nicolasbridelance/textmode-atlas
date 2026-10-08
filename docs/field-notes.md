@@ -18,6 +18,24 @@ session"). Newest first.
 
 ## 2026-10-08 — Ingesting all of 16colo
 
+**Packs drew in their own file listing.** 1,541 files of the mirror are empty, in 377 packs.
+730 of them, in 207 packs from 1993 to 2004, have names made of blocks, lines and dots: shown
+in archive order, as a BBS file lister or `pkunzip -v` would, they draw. `1993/chs-0893.zip`
+spells its logo over five empty files (` ▄▄`, `▀██▀██▀▀`, ` ██ ██▄▄`, ` ██────┐`, ` │TOTAL│`,
+` │CHAOS`) and then section headers (`∙■ANSI■∙`, `∙■VGA■∙`, `∙■INFO■∙`); `1994/wbl-0694.zip`
+alternates `-·ANSI·-`, `-·VGA·-`, `-·MODS·-` with blank names. The archive itself was a canvas,
+read before any file was opened. A museum that shows only the files loses it: the listing
+should be shown as the pack's first page. *Evidence: dataset `catalogue` v1, `files` with
+`bytes = 0`, by archive position; research/exploration/catalogue.md.*
+
+**A tool's default became the most common group name.** In SAUCE records, the group most often
+named is `READ THE INI FILE`: 1,874 art files in 167 packs, 1994 to 1998, most in 1995 (WiCKED
+packs, for instance `1995/wkd-0695.zip`). The authors are filled in; the group is the
+placeholder of a SAUCE-writing tool that nobody configured. The font field likewise carries
+`SAUCE-ADDER V1.4` on 92 files. Which tool wrote them is not established. Metadata inside the
+file is evidence of the tools as much as of the artists. *Evidence: dataset `catalogue` v1,
+`sauce_group` and `sauce_font`; research/exploration/catalogue.md.*
+
 **The same pack, released under several names.** 92 archives of the 16colo mirror are
 byte-for-byte copies of another one: 91 packs exist in two or three files. In 30 cases only the
 case of the name differs (`2002/017-Athanasia.zip`, `2002/017-athanasia.zip`); in 56 the name
