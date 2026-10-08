@@ -16,6 +16,10 @@ RUN apt-get update \
       build-essential cmake libgd-dev postgresql-client curl ca-certificates libmagic1 \
  && rm -rf /var/lib/apt/lists/*
 
+# Archive readers for artpacks: unzip, arj, 7-Zip (ADR 0013); same script as CI
+COPY scripts/install-archive-readers.sh /tmp/install-archive-readers.sh
+RUN sh /tmp/install-archive-readers.sh && rm /tmp/install-archive-readers.sh
+
 # uv and just
 COPY --from=ghcr.io/astral-sh/uv:0.12.23 /uv /uvx /usr/local/bin/
 RUN UV_TOOL_DIR=/opt/uv-tools UV_TOOL_BIN_DIR=/usr/local/bin uv tool install "rust-just==${JUST_VERSION}"
