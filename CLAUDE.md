@@ -27,6 +27,10 @@ prepare anything sent on his behalf, never send it.
   `spike/NNNN-topic` branch, never merged, reported in [docs/spikes/](docs/spikes/).
 - Visible changes are checked in rendering, not only in code: `just shots [path…]`, then look at
   the images (desktop and mobile, every locale).
+- Something the work reveals about the scene's history (a habit in the files, a gap in the
+  record, how works travelled) → an entry in [docs/field-notes.md](docs/field-notes.md), dated,
+  with how it was found and its evidence. It feeds future visitor stories; write it when found,
+  not at the end.
 - Commits follow the rules below; `just check` must be green before a push (the pre-push hook
   runs it).
 
@@ -39,8 +43,8 @@ prepare anything sent on his behalf, never send it.
    propose a refactor: target, warning signal, expected gain, 2–3 step plan. Never execute it
    without approval.
 
-**Session end.** Write `docs/journal/YYYY-MM-DD.md` (goal, done, decisions, problems, state,
-next). Update the roadmap checkboxes and known debt. Update this file if a convention changed.
+**Session end.** Write `docs/journal/YYYY-MM-DD.md` (goal, done, decisions, problems, field
+notes added, state, next). Update the roadmap checkboxes and known debt. Update this file if a convention changed.
 
 ## Commit rules
 

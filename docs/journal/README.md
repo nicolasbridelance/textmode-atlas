@@ -14,5 +14,7 @@ Sections, kept short:
 - **Done**: what changed, with commits.
 - **Decisions**: what was decided and why (and where it is recorded: spec, CLAUDE.md, code).
 - **Problems met**: what went wrong, and what was learned.
+- **Field notes**: discoveries about the scene added to [field-notes.md](../field-notes.md),
+  one line each.
 - **State at the end**: what works, what does not, what is uncommitted.
 - **Next**: the first thing to do next session.
