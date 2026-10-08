@@ -61,6 +61,9 @@ Later, deliberately (nothing depends on them yet):
 | Visual regression screenshots of the golden artifacts | after the first work screen | the golden pixels are already pinned in CI |
 | Golden artifact #2 (blink, iCE, 8 px cells) | next renderer change | spike 0001 checked these paths on real packs |
 | M1 schema test by hand | after D1 | real packs test the schema first; M1 then covers what they do not (BBS, radios, testimonies) |
+| Offline copy of the originals and a database export (the foundation document's three copies start in production) | before the first hand-made records (M1) or the first source beyond 16colo | 16colo still holds every original, and every `tm` command is idempotent: the local corpus can be rebuilt from the mirror. Only hand-entered records would be lost |
+| Preservation package: originals laid out as OCFL objects with JSON metadata, readable without our database; published spec of the grid format | ADR before M4 | until then the database is the only index of the store, which is fine while it can be rebuilt |
+| Normalized preservation copies of the formats we do not decode (PCX/LBM/BMP → PNG, FLI/FLC → FFV1 in MKV, tracker modules → FLAC as a rendering with its recipe) | with each M5 decoder | the originals are kept as written; these formats are documented and readable today |
 
 ## Research track
 
