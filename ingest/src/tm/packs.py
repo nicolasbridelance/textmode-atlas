@@ -73,7 +73,6 @@ class PackIngested:
 class _Pack:
     """What every row of one pack shares."""
 
-    set_work: str
     source_id: str
     source_path: str
     dating: Dating
@@ -90,51 +89,90 @@ def pack_archives(paths: list[Path]) -> list[Path]:
 
 
 def ingest_pack(conn: Connection, store: ObjectStore, path: Path) -> PackIngested:
+    """Record a pack, or complete one recorded before: members already listed are left alone,
+    members an earlier run could not read are added."""
     year = path.parent.name if _is_year(path.parent.name) else None
     source_path = f"{year}/{path.name}" if year else path.name
     data = path.read_bytes()
     sha256 = sha256_hex(data)
-    if artifact_known(conn, sha256):
-        return PackIngested(source_path, sha256, new=False)
-    put_original(store, data)
-    source_id = ensure_source(conn, "archive", SOURCE, SOURCE_URL, SOURCE_NOTE)
     rights = Rights(
         scene_publication=ScenePublication.model_validate(
             {"archive": "16colo", "url": PACK_URL.format(name=path.stem)}
         )
     )
     dating = _year_dating(year)
-    set_version = insert_work(conn, "set", path.stem, rights, dating)
-    archive_format = ARCHIVES[path.suffix.lower()]
-    insert_artifact(
-        conn,
-        ArtifactRow(
-            sha256=sha256,
-            bytes=len(data),
-            format=archive_format,
-            charset=None,
-            sauce=None,
-            source_id=source_id,
-            source_path=source_path,
-            version_id=set_version,
-        ),
-    )
-    result = PackIngested(source_path, sha256, new=True)
-    pack = _Pack(_work_of(conn, set_version), source_id, source_path, dating, rights)
+    source_id = ensure_source(conn, "archive", SOURCE, SOURCE_URL, SOURCE_NOTE)
+    pack = _Pack(source_id, source_path, dating, rights)
+    set_work = _set_work_of(conn, sha256)
+    result = PackIngested(source_path, sha256, new=set_work is None)
+    if set_work is None:
+        set_work = _record_archive(conn, store, path, data, pack)
     try:
-        expanded = expand(path, archive_format)
+        expanded = expand(path, ARCHIVES[path.suffix.lower()])
     except ArchiveError as err:
         result.error_class = err.kind
         return result
     result.unreadable = expanded.unreadable
+    listed = set(
+        conn.execute(
+            text("select path from set_member where set_work_id = :w"), {"w": set_work}
+        ).scalars()
+    )
     for member in enumerate(expanded.members):
-        _add_member(conn, store, pack, member)
-        result.members += 1
+        if member[1][0] not in listed:
+            _add_member(conn, store, pack, set_work, member)
+            result.members += 1
     return result
 
 
+def _set_work_of(conn: Connection, sha256: str) -> str | None:
+    """The set work an archive already stands for, if any."""
+    found = conn.execute(
+        text(
+            "select w.id from artifact a join version v on v.id = a.version_id"
+            " join work w on w.id = v.work_id where a.sha256 = :s and w.kind = 'set'"
+        ),
+        {"s": sha256},
+    ).scalar()
+    return None if found is None else str(found)
+
+
+def _record_archive(
+    conn: Connection, store: ObjectStore, path: Path, data: bytes, pack: _Pack
+) -> str:
+    """Store the archive and make it a set work. An archive already met as a file inside another
+    pack keeps its artifact row and gains the set."""
+    put_original(store, data)
+    set_version = insert_work(conn, "set", path.stem, pack.rights, pack.dating)
+    sha256 = sha256_hex(data)
+    if artifact_known(conn, sha256):
+        conn.execute(
+            text("update artifact set version_id = :v where sha256 = :s and version_id is null"),
+            {"v": set_version, "s": sha256},
+        )
+    else:
+        insert_artifact(
+            conn,
+            ArtifactRow(
+                sha256=sha256,
+                bytes=len(data),
+                format=ARCHIVES[path.suffix.lower()],
+                charset=None,
+                sauce=None,
+                source_id=pack.source_id,
+                source_path=pack.source_path,
+                version_id=set_version,
+            ),
+        )
+    return _work_of(conn, set_version)
+
+
 def _add_member(
-    conn: Connection, store: ObjectStore, pack: _Pack, member: tuple[int, tuple[str, bytes]]
+    conn: Connection,
+    store: ObjectStore,
+    pack: _Pack,
+    set_work: str,
+    member: tuple[int, tuple[str, bytes]],
 ) -> None:
     position, (name, data) = member
     sha256, _ = put_original(store, data)
@@ -164,7 +202,7 @@ def _add_member(
             "insert into set_member (set_work_id, sha256, path, position)"
             " values (:set_work, :sha256, :path, :position)"
         ),
-        {"set_work": pack.set_work, "sha256": sha256, "path": name, "position": position},
+        {"set_work": set_work, "sha256": sha256, "path": name, "position": position},
     )
 
 

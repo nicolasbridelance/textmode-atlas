@@ -159,3 +159,34 @@ def test_a_pack_outside_a_year_directory_is_undated(
     result = ingest_pack(db, stores.originals, make_pack(tmp_path / "loose.zip", MEMBERS))
     assert result.path == "loose.zip"
     assert rows(db, "select distinct date_min, date_basis from version") == [(None, None)]
+
+
+def test_a_later_run_adds_the_members_an_earlier_one_could_not_read(
+    db: Connection, stores: Stores, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    pack = make_pack(tmp_path / "1993" / "imploded.zip", MEMBERS)
+    readable = [(name, data) for name, data in MEMBERS.items() if name != "TUNE.XM"]
+    with monkeypatch.context() as patched:
+        patched.setattr("tm.packs.expand", lambda _p, _f: Expanded(readable, ["TUNE.XM"]))
+        ingest_pack(db, stores.originals, pack)
+    again = ingest_pack(db, stores.originals, pack)
+    assert (again.new, again.members, again.unreadable) == (False, 1, [])
+    assert rows(db, "select position, path from set_member where path = 'TUNE.XM'") == [
+        (2, "TUNE.XM")
+    ]
+    assert rows(db, "select count(*) from work where kind = 'set'") == [(1,)]
+
+
+def test_a_pack_first_met_inside_another_becomes_a_set(
+    db: Connection, stores: Stores, tmp_path: Path
+) -> None:
+    inner = make_pack(tmp_path / "1996" / "inner.zip", {"HORIZON.ANS": HORIZON})
+    outer = make_pack(tmp_path / "1997" / "outer.zip", {"INNER.ZIP": inner.read_bytes()})
+    ingest_pack(db, stores.originals, outer)
+    result = ingest_pack(db, stores.originals, inner)
+    assert (result.new, result.members) == (True, 1)
+    assert rows(
+        db,
+        "select w.title, a.source_path from artifact a join version v on v.id = a.version_id"
+        f" join work w on w.id = v.work_id where a.sha256 = '{result.sha256}'",
+    ) == [("inner", "1997/outer.zip/INNER.ZIP")]

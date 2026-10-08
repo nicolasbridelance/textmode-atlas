@@ -144,9 +144,9 @@ def ingest_pack_command(
 
 
 def _pack_summary(item: PackIngested) -> str:
-    if not item.new:
+    if not item.new and not item.members:
         return f"already known {item.path}"
-    parts = [f"ingested {item.path} {item.members} members"]
+    parts = [f"{'ingested' if item.new else 'completed'} {item.path} {item.members} members"]
     if item.error_class:
         parts.append(f"error {item.error_class}")
     if item.unreadable:
