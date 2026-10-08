@@ -9,8 +9,8 @@ artifact and two `set_member` rows. Textmode art members are also `single` works
 (ADR 0009). Run twice, it leaves the same state: a pack whose archive is known is skipped.
 
 Archives are read as ADR 0013 says (`tm.archives`). One that cannot be read at all is still
-stored and recorded, with a classified error and no members; a member that cannot be read is
-named in the result, not recorded.
+stored and recorded with no members; a member that cannot be read is not recorded. Either way
+`expansion` keeps the outcome of the latest reading: a classified error, or the unreadable names.
 """
 
 from __future__ import annotations
@@ -113,8 +113,10 @@ def ingest_pack(conn: Connection, store: ObjectStore, path: Path) -> PackIngeste
         expanded = expand(path, ARCHIVES[path.suffix.lower()])
     except ArchiveError as err:
         result.error_class = err.kind
+        _record_expansion(conn, result)
         return result
     result.unreadable = expanded.unreadable
+    _record_expansion(conn, result)
     listed = set(
         conn.execute(
             text("select path from set_member where set_work_id = :w"), {"w": set_work}
@@ -125,6 +127,26 @@ def ingest_pack(conn: Connection, store: ObjectStore, path: Path) -> PackIngeste
             _add_member(conn, store, pack, set_work, member)
             result.members += 1
     return result
+
+
+def _record_expansion(conn: Connection, result: PackIngested) -> None:
+    """Keep what this reading of the archive gave, replacing what an earlier run recorded."""
+    status = "error" if result.error_class else "partial" if result.unreadable else "ok"
+    conn.execute(
+        text(
+            "insert into expansion (sha256, status, error_class, unreadable)"
+            " values (:sha256, :status, :error_class, :unreadable)"
+            " on conflict (sha256) do update set status = excluded.status,"
+            " error_class = excluded.error_class, unreadable = excluded.unreadable,"
+            " expanded_at = now()"
+        ),
+        {
+            "sha256": result.sha256,
+            "status": status,
+            "error_class": result.error_class,
+            "unreadable": result.unreadable,
+        },
+    )
 
 
 def _set_work_of(conn: Connection, sha256: str) -> str | None:

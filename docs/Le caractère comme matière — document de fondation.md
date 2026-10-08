@@ -394,6 +394,7 @@ Compléments au schéma, consignés lors de la première migration :
 
 - `source` : origine d'une acquisition (`archive`, `api`, `deposit`, `manual`, `golden`), référencée par `artifact.source_id` mais absente du schéma initial.
 - `decoding` : résultat du décodage de chaque artefact par chaque version de décodeur, une grille ou une erreur classée, jamais rien (contrainte SQL).
+- `expansion` (migration 0002) : résultat de la dernière lecture de chaque archive de pack, lue entière, lue sauf des fichiers nommés, ou erreur classée ; un pack vide ou incomplet dit pourquoi.
 - `work.rights` et `work.privacy` : blocs JSON validés par `tm.rights`.
 - `assertion.role` : précise `had_role` (artiste, codeur, sysop…).
 - `lost_item`, `ticket` (file de modération) et `cartel` (textes du musée, une ligne par langue).

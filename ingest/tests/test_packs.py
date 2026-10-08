@@ -140,6 +140,7 @@ def test_an_archive_that_cannot_be_read_is_still_recorded(
     assert get_original(stores.originals, result.sha256) == rar.read_bytes()
     assert rows(db, "select format, source_path from artifact") == [("rar", "1994/old.rar")]
     assert rows(db, "select count(*) from set_member") == [(0,)]
+    assert rows(db, "select status, error_class from expansion") == [("error", "bad_archive")]
 
 
 def test_unreadable_members_are_named_not_recorded(
@@ -151,6 +152,7 @@ def test_unreadable_members_are_named_not_recorded(
     result = ingest_pack(db, stores.originals, pack)
     assert (result.members, result.unreadable) == (4, ["TUNE.XM"])
     assert rows(db, "select count(*) from artifact where format = 'xm'") == [(0,)]
+    assert rows(db, "select status, unreadable from expansion") == [("partial", ["TUNE.XM"])]
 
 
 def test_a_pack_outside_a_year_directory_is_undated(
@@ -175,6 +177,7 @@ def test_a_later_run_adds_the_members_an_earlier_one_could_not_read(
         (2, "TUNE.XM")
     ]
     assert rows(db, "select count(*) from work where kind = 'set'") == [(1,)]
+    assert rows(db, "select status, unreadable from expansion") == [("ok", [])]
 
 
 def test_a_pack_first_met_inside_another_becomes_a_set(
