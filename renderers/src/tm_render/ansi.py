@@ -52,12 +52,22 @@ class DecodeError(Exception):
         self.kind = kind
 
 
+@dataclass(frozen=True)
+class Stream:
+    """How the bytes drew the grid, which the final grid cannot say: an animation redraws."""
+
+    writes: int  # characters put on the canvas
+    overwrites: int  # writes on a position already written, even if erased since
+    clears: int  # whole-screen erasures (ESC[2J)
+
+
 @dataclass
 class Decoded:
     grid: Grid
     sauce: Sauce | None
     skipped_sequences: int
     sauce_problems: tuple[str, ...] = ()
+    stream: Stream = Stream(0, 0, 0)
 
 
 @dataclass
@@ -74,8 +84,13 @@ class _State:
     skipped: int = 0
     cells: dict[tuple[int, int], Cell] = field(default_factory=lambda: {})
     max_row: int = 0
+    writes: int = 0
+    clears: int = 0
+    written: set[tuple[int, int]] = field(default_factory=set[tuple[int, int]])
 
     def put(self, codepoint: int, offset: int) -> None:
+        self.writes += 1
+        self.written.add((self.row, self.col))
         fg, bg = (self.bg, self.fg) if self.inverse else (self.fg, self.bg)
         self.cells[(self.row, self.col)] = Cell(
             codepoint, fg + (BRIGHT if self.bold else 0), bg, self.blink, offset
@@ -132,6 +147,7 @@ def _position(state: _State, params: list[int]) -> None:
 
 def _erase_display(state: _State, params: list[int]) -> None:
     if params and params[0] == ERASE_ALL:
+        state.clears += 1
         state.cells.clear()
         state.move_to(0, 0)
 
@@ -224,4 +240,5 @@ def decode(data: bytes) -> Decoded:
     # The canvas ends at the last written row, as ansilove draws it: SAUCE heights often count a
     # trailing CR LF as a row (spike 0001). The record itself stays in `Decoded.sauce`.
     grid = Grid(width, state.max_row + 1, dict(state.cells))
-    return Decoded(grid, sauce, state.skipped, problems)
+    stream = Stream(state.writes, state.writes - len(state.written), state.clears)
+    return Decoded(grid, sauce, state.skipped, problems, stream)

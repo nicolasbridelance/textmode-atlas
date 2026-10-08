@@ -84,6 +84,17 @@ def test_a_corrupt_sauce_gives_no_width(sauce_record: SauceRecord) -> None:
     assert decoded.sauce.width == 0x2050
 
 
+def test_the_stream_counts_writes_overwrites_and_clears() -> None:
+    frames = b"ab\x1b[1;1Hcd" + b"\x1b[2Jef"
+    stream = decode(frames).stream
+    assert (stream.writes, stream.overwrites, stream.clears) == (6, 4, 1)
+
+
+def test_a_still_picture_overwrites_nothing() -> None:
+    stream = decode(b"one\r\ntwo").stream
+    assert (stream.writes, stream.overwrites, stream.clears) == (6, 0, 0)
+
+
 def test_sauce_without_eof_byte_is_not_drawn(sauce_record: SauceRecord) -> None:
     assert len(decode(b"art" + sauce_record()).grid.cells) == len(b"art")
 

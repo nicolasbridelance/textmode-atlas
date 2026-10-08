@@ -119,8 +119,20 @@ def ingest_golden_command(
             typer.echo(f"{'ingested' if item.new else 'already known'} {item.path} {item.sha256}")
 
 
+SHARD_HELP = "Take only shard i of n (i/n): run n processes, one per index, to share the work."
+
+
+def _shard(text: str) -> Shard:
+    try:
+        return Shard.parse(text)
+    except ValueError as err:
+        raise typer.BadParameter(str(err)) from err
+
+
 @app.command("decode")
-def decode_command() -> None:
+def decode_command(
+    shard: Annotated[str, typer.Option(help=SHARD_HELP)] = "0/1",
+) -> None:
     """Decode every stored artifact that has no result yet: a grid, or a classified error."""
     cfg = settings()
     client = s3_client()
@@ -128,7 +140,7 @@ def decode_command() -> None:
     derived = S3Store(client, cfg.derived_bucket)
     engine = create_engine(cfg.database_url)
     with engine.connect() as conn:
-        todo = pending_artifacts(conn)
+        todo = pending_artifacts(conn, _shard(shard))
     for artifact in todo:
         with engine.begin() as conn:  # one transaction per artifact: a long run keeps its work
             item = decode_artifact(conn, originals, derived, artifact)
@@ -139,16 +151,6 @@ def decode_command() -> None:
         )
         typer.echo(f"{item.path} {outcome}")
     typer.echo(f"{len(todo)} decoded")
-
-
-SHARD_HELP = "Take only shard i of n (i/n): run n processes, one per index, to share the work."
-
-
-def _shard(text: str) -> Shard:
-    try:
-        return Shard.parse(text)
-    except ValueError as err:
-        raise typer.BadParameter(str(err)) from err
 
 
 @app.command("render")
