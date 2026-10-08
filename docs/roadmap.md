@@ -36,7 +36,7 @@ The first thing a visitor sees, built in pipeline order so that nothing is throw
 - [x] Conservation renderer (grid → PNG, integer scale, 9th column, blink / iCE) with recipe; determinism test; ansilove parity on the golden artifacts in CI (`just parity`)
 - [x] `tm ingest golden` → `source`, `work`, `version`, `artifact` rows, original stored write-once
 - [x] `tm decode` → `decoding` rows (grid or classified error); grids in the private `tm-derived` bucket ([ADR 0011](adr/0011-a-private-bucket-for-derived-data.md))
-- [ ] `tm render` → `representation` rows with the recipe, PNGs in `tm-derived`
+- [x] `tm render` → conservation `representation` rows with the recipe, PNGs in `tm-derived` (the authentic level comes with the profiles, on the work screen)
 - [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`; refuses a shown file without credit (ADR 0009)
 - [ ] Work screen: credit as signed, source link and "withdraw or claim" on every record (ADR 0009); canvas renderer from the grid and the bitmap font, profile switch, modem-speed playback, zoom to the cell, draw-order layer (honest about file order versus gesture)
 - [ ] Visual regression screenshots of the golden artifacts
