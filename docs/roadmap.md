@@ -47,10 +47,11 @@ Done, pipeline on the golden source:
 Next, in this order:
 
 1. [ ] `tm ingest pack <zip>`: a local 16colo pack as a `set` work with its `set_member` files (NFO and DIZ included), scene publication recorded for ADR 0009; no 16colo crawler before M4
-2. [ ] Feature extractor v1 in `analysis/` (geometry, glyphs, colour, sequence, from the foundation document) and `tm features` → `features.parquet`, reproducible bit for bit
-3. [ ] D1 pilot: 20 packs spread over years and groups, frozen with its datasheet; marimo notebook template; first exploratory look (labelled exploratory)
-4. [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`; refuses a shown file without credit (ADR 0009)
-5. [ ] Work screen, first version: canvas renderer from the grid and the bitmap font, credit as signed, source link, "withdraw or claim" on every record (ADR 0009)
+2. [ ] Catalogue exploration (exploratory): describe all of 16colo from the local mirror (years, groups, formats, SAUCE presence, widths, iCE, fonts, NFO and DIZ) before choosing anything; D1 strata come out of it ([source note](sources/16colo.md))
+3. [ ] Feature extractor v1 in `analysis/` (geometry, glyphs, colour, sequence, from the foundation document) and `tm features` → `features.parquet`, reproducible bit for bit
+4. [ ] D1 pilot: 20 packs drawn by stratum with a fixed seed from the catalogue exploration, rare cases added by hand with a reason; frozen with its datasheet; marimo notebook template; first exploratory look
+5. [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`; refuses a shown file without credit (ADR 0009)
+6. [ ] Work screen, first version: canvas renderer from the grid and the bitmap font, credit as signed, source link, "withdraw or claim" on every record (ADR 0009)
 
 Later, deliberately (nothing depends on them yet):
 
@@ -88,7 +89,7 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 - [x] Add `devcontainer` to the required checks of the `main` ruleset
 - [x] Repository description and topics
 
-- [ ] Before M4: contacts with 16colo.rs, Demozoo, IF Archive (access, API limits, terms); not needed before, packs and API are public
+- [ ] Before M4: contacts with 16colo.rs, Demozoo, IF Archive (access, API limits, terms); not needed before, packs and API are public. Access, limits and terms of 16colo are checked in its [source note](sources/16colo.md) (contact@16colo.rs)
 - [ ] Radios: Nectarine, SLAY Radio, Ericade, Kohina, BitJam (agreement, HTTPS stream); until then the site links out to the station instead of embedding its stream
 - [ ] First artists and groups for display permission
 - [ ] Before M3: inform 16colo and Demozoo of the project (Claude drafts, Nicolas sends)
