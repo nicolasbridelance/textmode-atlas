@@ -138,6 +138,23 @@ def test_decoding_is_grid_or_classified_error(db: Connection) -> None:
     db.execute(sql, {"s": SHA, "v": "4", "st": "ok", "e": None, "g": "b" * 64})
 
 
+def test_expansion_says_why_a_pack_is_empty_or_partial(db: Connection) -> None:
+    insert_artifact(db)
+    sql = text(
+        "insert into expansion (sha256, status, error_class, unreadable)"
+        " values (:s, :st, :e, cast(:u as text[]))"
+    )
+    for status, error_class, unreadable in [
+        ("error", None, []),
+        ("ok", "bad_archive", []),
+        ("partial", None, []),
+        ("ok", None, ["TUNE.XM"]),
+    ]:
+        values = {"s": SHA, "st": status, "e": error_class, "u": unreadable}
+        fails(db, "check", lambda values=values: db.execute(sql, values))
+    db.execute(sql, {"s": SHA, "st": "partial", "e": None, "u": ["TUNE.XM"]})
+
+
 def test_authentic_representation_needs_profile(db: Connection) -> None:
     insert_artifact(db)
     sql = text(
