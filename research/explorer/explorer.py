@@ -33,7 +33,7 @@ from tm_render.conservation import BitmapFont, Settings, render
 from tm_render.grid import Grid, from_parquet
 
 ROOT = Path(__file__).resolve().parents[2]
-BUILD = ROOT / "datasets" / "build" / "works" / "2"
+BUILD = ROOT / "datasets" / "build" / "works" / "3"
 FONT = ROOT / "corpus" / "fonts" / "ibm-vga-8x16.f16"
 PAGE = Path(__file__).with_name("index.html")
 HOST, PORT = "127.0.0.1", 8737
@@ -53,6 +53,8 @@ ORDERS = {
     "tall": "rows desc nulls last",
     "wide": "cols desc nulls last",
     "fill": "fill_ratio desc nulls last",
+    "redrawn": "overwrites::double / greatest(writes, 1) desc nulls last",
+    "clears": "clears desc nulls last",
 }
 # Measures that place a work among the others (neighbours); colours enter as shares.
 PROFILE = [

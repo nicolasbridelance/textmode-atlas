@@ -23,7 +23,7 @@ def _():
     import duckdb
     import marimo as mo
 
-    build = Path(__file__).resolve().parents[2] / "datasets" / "build" / "works" / "2"
+    build = Path(__file__).resolve().parents[2] / "datasets" / "build" / "works" / "3"
     manifest = json.loads((build / "manifest.json").read_text())
     db = duckdb.connect()
     db.execute(f"create view works as select * from '{build / 'works.parquet'}'")

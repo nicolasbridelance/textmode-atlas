@@ -3,7 +3,7 @@
 #
 # Built by `tm dataset build works`. Datasheet: DATASHEET.md.
 name: works
-version: "2"
+version: "3"
 description: The art files of the 16colo train packs, with their decoding, rendering and grid features.
 
 tables:
@@ -32,6 +32,9 @@ tables:
       - { name: rows, type: int32, description: Grid height (last written row + 1) }
       - { name: sauce_problems, type: "list<string>", description: "Evidence for which the decoder set the SAUCE numbers aside (ADR 0015)" }
       - { name: grid_sha256, type: string, description: Digest of the decoded grid }
+      - { name: writes, type: int32, description: "Characters the bytes put on the canvas" }
+      - { name: overwrites, type: int32, description: "Writes on a position already written, even if erased since: an animation redraws" }
+      - { name: clears, type: int32, description: "Whole-screen erasures (ESC[2J)" }
       - { name: rendering_sha256, type: string, description: "Conservation PNG at scale 1 (derived bucket, renderings/…); null until rendered" }
       - { name: content_kind, type: string, description: "What the grid holds: text, coloured_text, blocks, coloured_blocks or empty (works.sql); null when not measured" }
   features:

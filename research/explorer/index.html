@@ -108,7 +108,7 @@ const CLASSES = [["block","#5555ff"],["half_block","#ff5555"],["shade","#55ff55"
 const ORDER_LABELS = {random: "random (fixed)", year: "year, pack", colours: "most colours",
   entropy: "most glyph entropy", shade: "most shades", half_block: "most half blocks",
   letters: "most letters", drawn: "least linear drawing", tall: "tallest", wide: "widest",
-  fill: "most filled"};
+  fill: "most filled", redrawn: "most redrawn (animations)", clears: "most screen clears"};
 
 const $ = (id) => document.getElementById(id);
 // `generation` changes with the filters: a page that arrives for older filters is dropped.
@@ -239,6 +239,7 @@ function side(w) {
       · ${Number(w.bytes).toLocaleString()} bytes</dd>
     <dt>grid</dt><dd>${w.cols ?? "–"} × ${w.rows ?? "–"}${w.cells ? ` · ${w.cells.toLocaleString()} cells` : ""}
       ${w.cols ? ` · ${num(w.bytes / (w.cols * w.rows), 1)} bytes/cell` : ""}</dd>
+    <dt>stream</dt><dd>${w.writes == null ? "–" : `${w.writes.toLocaleString()} writes · ${pct(w.overwrites / Math.max(w.writes, 1))} redrawn · ${w.clears} clears`}</dd>
     <dt>to arrive</dt><dd>${arrival(w.bytes, 2400)} at 2400 baud · ${arrival(w.bytes, 14400)} at 14400</dd>
     <dt>packs</dt><dd>${w.packs}</dd>
     <dt>sha256</dt><dd style="font-size:11px">${w.sha256}</dd>

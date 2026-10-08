@@ -42,6 +42,9 @@ select
   d.rows,
   d.sauce_problems,
   d.grid_sha256,
+  d.writes,
+  d.overwrites,
+  d.clears,
   r.output_sha256 as rendering_sha256,
   case
     when f.sha256 is null then null
