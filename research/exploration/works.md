@@ -80,9 +80,11 @@ These change the roadmap's later steps, as rule 3 of the program requires before
 1. **Classify works by content, not extension.** A content kind (escape sequences or not,
    colours, block share) is needed before any stratum or comparison by format. Feature
    extractor v2 or a catalogue column; D1 strata use it.
-2. **D1 strata follow the mass.** Three quarters of the works are filed 1994–98; strata by era
-   must be unequal in width (1990–93, 1994–95, 1996–97, 1998–2004, 2013–26), and 2005–12 is a
-   rare case of its own (535 ANSI).
+2. **D1 strata are bounded by the mass, and sampled against it.** Three quarters of the works
+   are filed 1994–98, so strata by era are unequal in width (1990–93, 1994–95, 1996–97,
+   1998–2004, 2005–12, 2013–26). Each stratum gets the same number of packs (or a square-root
+   share), so that thin years are over-represented, and every pack keeps its inclusion weight
+   for reweighting (leads I19). Whether 1996 is the scene's peak or 16colo's is open (Q21, H8).
 3. **Animation needs the byte stream.** For about 3% of works the grid is not the work. The
    decoder should count overwritten cells, the work screen needs playback (spike 0002), and
    the features of those works should be flagged, not compared as still images.

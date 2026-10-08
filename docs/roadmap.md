@@ -54,7 +54,7 @@ Next, in this order:
 5. [x] Visual and statistical exploration of the `train` packs: a `works` dataset (metadata, features, rendering keys), marimo notebook, local corpus explorer (`just explore`), first note ([works.md](../research/exploration/works.md)) with the constraints it puts on later steps
    - [ ] Content kind of each work (escape sequences, colours, block share), since the extension does not say it (constraint 1)
    - [ ] Decoder counts overwritten cells; features of animation-like works are flagged (constraint 3)
-6. [ ] D1 pilot: 20 packs drawn by stratum with a fixed seed, strata revised after step 5 (unequal eras and content kind, constraints 1–2 of the works note), rare cases added by hand with a reason; frozen with its datasheet; marimo notebook template
+6. [ ] D1 pilot: 20 packs drawn by stratum with a fixed seed, strata revised after step 5 (eras bounded by the mass, equal allocation so thin years are over-represented, inclusion weights recorded, content kind: constraints 1–2 of the works note, leads I19), rare cases added by hand with a reason; frozen with its datasheet; marimo notebook template
 7. [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`; refuses a shown file without credit (ADR 0009)
 8. [ ] Work screen, first version: canvas renderer from the grid and the bitmap font, credit as signed, source link, "withdraw or claim" on every record (ADR 0009)
 
@@ -69,6 +69,20 @@ Later, deliberately (nothing depends on them yet):
 | Offline copy of the originals and a database export (the foundation document's three copies start in production) | before the first hand-made records (M1) or the first source beyond 16colo | 16colo still holds every original, and every `tm` command is idempotent: the local corpus can be rebuilt from the mirror. Only hand-entered records would be lost |
 | Preservation package: originals laid out as OCFL objects with JSON metadata, readable without our database; published spec of the grid format | ADR before M4 | until then the database is the only index of the store, which is fine while it can be rebuilt |
 | Normalized preservation copies of the formats we do not decode (PCX/LBM/BMP → PNG, FLI/FLC → FFV1 in MKV, tracker modules → FLAC as a rendering with its recipe) | with each M5 decoder | the originals are kept as written; these formats are documented and readable today |
+
+## Leads
+
+Every question, hypothesis, idea and curiosity is written in [leads.md](leads.md) when it comes,
+even when it would lead too far; a lead taken up moves here or into a study. Next in line, after
+the open tasks of step 5:
+
+- I2, text runs extracted from the grids: it opens signatures (Q12), languages (Q10) and
+  greetings at once.
+- H3 explored on the train packs: do features v1 carry an author signal? It says whether
+  workstream W1 can start from them.
+- I7, tool fingerprints from byte habits (Q1, Q14, Q18): rule 6 of the research program needs
+  them before any claim about style.
+- I6, time to arrive at modem speed, a fact for every record.
 
 ## Research track
 
