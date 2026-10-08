@@ -78,8 +78,9 @@ the open tasks of step 5:
 
 - I2, text runs extracted from the grids: it opens signatures (Q12), languages (Q10) and
   greetings at once.
-- H3 explored on the train packs: do features v1 carry an author signal? It says whether
-  workstream W1 can start from them.
+- I21, an author-signal benchmark: H3 explored on the train packs found a weak signal in
+  features v1 (2.3% same author among nearest works, 0.6% by chance, 14.2% knowing the group);
+  every new representation is measured against it.
 - I7, tool fingerprints from byte habits (Q1, Q14, Q18): rule 6 of the research program needs
   them before any claim about style.
 - I6, time to arrive at modem speed, a fact for every record.

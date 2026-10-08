@@ -96,6 +96,25 @@ In 1994–99, 32% of the `.ASC` files of a fixed sample of 600 contain ANSI esca
 half block characters (░▒▓█▄▀) with no colour. The format recorded from the extension mixes at
 least three things: plain text art, coloured text art, and colourless block art.
 
+## Do features v1 carry an author signal? (H3, exploratory)
+
+Coloured block art with a SAUCE author: 31,127 works, 1,366 authors with five works or more.
+For 2,000 of their works (fixed seed), the 12 nearest works by standardized features v1
+(measures, foreground and background shares), **never from the same pack**, were compared with
+12 works drawn at random:
+
+| Among 12 works… | same author |
+| --- | ---: |
+| nearest by features, other packs | 2.3% |
+| random, same year, other packs | 0.6% |
+| random, same group and year, other packs | 14.2% |
+
+Features v1 carry a signal (about four times chance), but a weak one: knowing the group says six
+times more. 15% of the works have at least one work by their author among their 12 neighbours.
+Workstream W1 should not start from these features alone: lettering (I4), colour ramps (I5) and
+learned representations are needed. Author names are SAUCE strings, lower-cased, not resolved
+identities (aliases and typos split one artist, shared defaults merge several).
+
 ## Constraints for the next steps
 
 These change the roadmap's later steps, as rule 3 of the program requires before D1:
