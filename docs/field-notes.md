@@ -18,6 +18,13 @@ session"). Newest first.
 
 ## 2026-10-08 — Ingesting all of 16colo
 
+**Some packs survive only as cut downloads.** Four ZIP packs of the mirror end before their
+central directory, the index a ZIP keeps at its end: `1994/itr-9401.zip` stops at exactly
+65,536 bytes, a transfer cut at 64 KB; `1994/id-1194.zip`, `1995/ioa-1295.zip` and
+`2004/mxt-pack17.zip` stop inside their last file. The copy that reached the archive is the one
+that broke, and no complete one has been found. Every member before the cut is intact (checked
+by CRC); the last one is lost. *Evidence: ADR 0014; `expansion` rows of those packs.*
+
 **Packs drew in their own file listing.** 1,541 files of the mirror are empty, in 377 packs.
 730 of them, in 207 packs from 1993 to 2004, have names made of blocks, lines and dots: shown
 in archive order, as a BBS file lister or `pkunzip -v` would, they draw. `1993/chs-0893.zip`
