@@ -1,0 +1,101 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: Apache-2.0
+from __future__ import annotations
+
+from importlib.metadata import version
+from pathlib import Path
+
+import pytest
+from sqlalchemy import Connection, text
+from tm.decode import DECODER, decode_pending
+from tm.ingest import ingest_golden
+from tm.storage import IntegrityError, LocalStore, grid_key
+from tm_render.ansi import decode
+from tm_render.grid import Grid, from_parquet, to_parquet
+
+GOLDEN = Path(__file__).resolve().parents[2] / "tests" / "golden"
+HORIZON = (GOLDEN / "ansi" / "horizon.ans").read_bytes()
+
+pytestmark = pytest.mark.db
+
+
+class Stores:
+    def __init__(self, root: Path) -> None:
+        self.originals = LocalStore(root / "originals")
+        self.derived = LocalStore(root / "derived")
+
+
+@pytest.fixture
+def stores(tmp_path: Path) -> Stores:
+    return Stores(tmp_path)
+
+
+def ingested(db: Connection, stores: Stores) -> str:
+    return ingest_golden(db, stores.originals, GOLDEN)[0].sha256
+
+
+def test_grid_key_follows_the_decoding_primary_key() -> None:
+    sha = "ab" * 32
+    assert grid_key(sha, "d", "1.2") == f"grids/ab/ab/{sha}/d@1.2.parquet"
+    with pytest.raises(ValueError, match="invalid SHA-256"):
+        grid_key("nope", "d", "1")
+
+
+def test_decode_records_the_grid_and_stores_it(db: Connection, stores: Stores) -> None:
+    sha = ingested(db, stores)
+    [item] = decode_pending(db, stores.originals, stores.derived)
+    expected = decode(HORIZON).grid
+    assert (item.path, item.error_class, item.grid) == ("ansi/horizon.ans", None, expected)
+    row = db.execute(text("select * from decoding where sha256 = :sha"), {"sha": sha}).one()
+    assert (row.decoder, row.decoder_version) == (DECODER, version("tm-render"))
+    assert (row.status, row.error_class) == ("ok", None)
+    assert (row.cols, row.rows, row.grid_sha256) == (80, 40, expected.digest())
+    stored = stores.derived.get(grid_key(sha, DECODER, version("tm-render")))
+    assert from_parquet(stored) == expected
+
+
+def test_decode_is_idempotent(db: Connection, stores: Stores) -> None:
+    ingested(db, stores)
+    assert len(decode_pending(db, stores.originals, stores.derived)) == 1
+    assert decode_pending(db, stores.originals, stores.derived) == []
+    assert db.execute(text("select count(*) from decoding")).scalar_one() == 1
+
+
+def test_an_unreadable_file_gets_a_classified_error_and_no_grid(
+    db: Connection, tmp_path: Path, stores: Stores
+) -> None:
+    root = tmp_path / "golden"
+    root.mkdir()
+    (root / "empty.ans").write_bytes(b"")
+    sha = ingest_golden(db, stores.originals, root)[0].sha256
+    [item] = decode_pending(db, stores.originals, stores.derived)
+    assert (item.error_class, item.grid) == ("empty", None)
+    row = db.execute(text("select * from decoding where sha256 = :sha"), {"sha": sha}).one()
+    assert (row.status, row.error_class, row.grid_sha256) == ("error", "empty", None)
+    assert not stores.derived.exists(grid_key(sha, DECODER, version("tm-render")))
+
+
+def test_a_new_decoder_version_decodes_again(
+    db: Connection, stores: Stores, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    ingested(db, stores)
+    decode_pending(db, stores.originals, stores.derived)
+    monkeypatch.setattr("tm.decode.version", lambda _name: "99.0")
+    assert len(decode_pending(db, stores.originals, stores.derived)) == 1
+    versions = db.execute(text("select decoder_version from decoding order by 1")).scalars().all()
+    assert versions == sorted([version("tm-render"), "99.0"])
+
+
+def test_a_stored_grid_that_differs_stops_the_run(db: Connection, stores: Stores) -> None:
+    sha = ingested(db, stores)
+    other = Grid(80, 1, {})
+    stores.derived.put(grid_key(sha, DECODER, version("tm-render")), to_parquet(other))
+    with pytest.raises(IntegrityError, match="decoder is not stable"):
+        decode_pending(db, stores.originals, stores.derived)
+
+
+def test_a_stored_grid_that_matches_is_kept(db: Connection, stores: Stores) -> None:
+    sha = ingested(db, stores)
+    key = grid_key(sha, DECODER, version("tm-render"))
+    stores.derived.put(key, to_parquet(decode(HORIZON).grid))
+    assert len(decode_pending(db, stores.originals, stores.derived)) == 1

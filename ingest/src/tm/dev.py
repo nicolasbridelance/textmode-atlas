@@ -16,7 +16,7 @@ from tm.config import Settings
 # Fixed local access key, so the devcontainer environment variables stay stable.
 LOCAL_KEY_ID = "GK746d6c6f63616c6f6e6c7900"
 LOCAL_SECRET = "746d2d6c6f63616c2d6f6e6c792d6e6f742d612d7265616c2d7365637265742e"
-BUCKETS = ("tm-originals", "tm-public")
+BUCKETS = ("tm-originals", "tm-derived", "tm-public")
 # The public bucket is served for anonymous reads by Garage's web endpoint (port 3902), as the
 # CDN will do in production. Garage picks the bucket from the Host header:
 # `tm-public.web.localhost`.
@@ -40,7 +40,7 @@ def _call(cfg: Settings, endpoint: str, body: Any = None) -> Any:
 
 
 def storage_init(cfg: Settings) -> list[str]:
-    """Create the node layout, the local key and both buckets. Idempotent."""
+    """Create the node layout, the local key and the three buckets. Idempotent."""
     done: list[str] = []
     status = _call(cfg, "GetClusterStatus")
     node = status["nodes"][0]
