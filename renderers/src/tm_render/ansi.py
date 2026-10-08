@@ -16,6 +16,7 @@ from dataclasses import dataclass, field
 
 from tm_render.grid import Cell, Grid
 from tm_render.sauce import Sauce, split
+from tm_render.signatures import binary_format
 
 DEFAULT_WIDTH = 80
 MAX_ROWS = 10_000  # far beyond any real artwork; stops runaway cursor movement
@@ -220,6 +221,8 @@ def _control(state: _State, byte: int) -> bool:
 
 
 def decode(data: bytes) -> Decoded:
+    if binary := binary_format(data):
+        raise DecodeError("binary_content", f"a {binary} file, not text")
     content, sauce = split(data)
     if not content:
         raise DecodeError("empty", "no content before the end of file")

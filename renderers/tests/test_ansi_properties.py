@@ -27,7 +27,7 @@ def test_decoder_never_crashes(data: bytes) -> None:
     else:
         kind = None
     if kind is not None:
-        assert kind in {"empty", "too_large"}
+        assert kind in {"empty", "too_large", "binary_content"}
         return
     for (row, col), cell in grid.cells.items():
         assert 0 <= row < grid.rows

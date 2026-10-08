@@ -21,6 +21,7 @@ from pathlib import Path, PurePosixPath
 
 from sqlalchemy import Connection, text
 from tm_render.sauce import Sauce, split
+from tm_render.signatures import binary_format
 
 from tm.archives import ArchiveError, expand
 from tm.records import (
@@ -234,13 +235,16 @@ def _add_member(
 def _art_format(name: str, sauce: Sauce | None, data: bytes) -> str | None:
     """Art format by extension, as the scene named the file; else by SAUCE; else by content.
 
+    A file that starts with a binary signature (picture, program, archive, module) is not art,
+    even when a tool stamped it with a SAUCE record of type ANSI.
+
     Before SAUCE (1994) groups often signed files with their tag as extension (`.MIR`, `.SDA`):
     a file with escape sequences and no NUL byte (which programs have) is ANSI whatever its name.
     """
     suffix = PurePosixPath(name).suffix.lower()
     if suffix in ART:
         return ART[suffix]
-    if suffix in DOCUMENTS:
+    if suffix in DOCUMENTS or binary_format(data):  # pictures and programs stamped with SAUCE
         return None
     if sauce is not None:
         # BinaryText stores the width in the file type, so the type alone names the format.

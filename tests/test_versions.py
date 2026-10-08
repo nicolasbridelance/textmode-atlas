@@ -24,7 +24,12 @@ from tm_render.versions import DECODER_VERSION, RENDERER_VERSION
 RENDER = Path(tm_render.__file__).parent
 ANALYSIS = Path(tm_analysis.__file__).parent
 COVERS = {
-    "decoder": (RENDER / "ansi.py", RENDER / "sauce.py", RENDER / "grid.py"),
+    "decoder": (
+        RENDER / "ansi.py",
+        RENDER / "sauce.py",
+        RENDER / "grid.py",
+        RENDER / "signatures.py",
+    ),
     "renderer": (RENDER / "conservation.py",),
     "features": (ANALYSIS / "features.py",),
 }
@@ -34,6 +39,7 @@ PINS = {
         "1": "44389ece653d37c069bc8bf98d8e4bdea16f8506ee4a5411cf83acbfbe8205eb",
         "2": "2d265d8cbef4796364a6523b815a21156f2573ef354eae5a811038fc4b64b574",
         "3": "1f9b38b8579d77499978944519e3973949758b66fe274a1b2e045b0b53cde4e7",
+        "4": "d900f99aaf924896396e079ffa9826cc876328c9ed9fe89bf892e960485aa058",
     },
     "renderer": {"1": "acf2f900bd645c61dac80da37121cceab3abb36ae5bbbc627da178422e6d5c28"},
     "features": {"1": "6722aeabbaa4cbee87caa167ef6d32a9abb8adfea9aa36ecb889ffa357271079"},
