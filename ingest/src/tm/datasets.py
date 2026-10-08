@@ -34,7 +34,7 @@ ARROW_TYPES: dict[str, pa.DataType] = {
     "bool": pa.bool_(),
 }
 # Bound in every query, and recorded in the manifest: which results the dataset reads.
-PARAMETERS = {"decoder": DECODER, "decoder_version": DECODER_VERSION}
+PARAMETERS = {"decoder_version": DECODER_VERSION}
 EXTRACTORS = {"decoder": f"{DECODER}@{DECODER_VERSION}", "renderer": RENDERER_VERSION}
 
 

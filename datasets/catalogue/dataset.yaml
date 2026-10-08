@@ -46,7 +46,7 @@ tables:
       - { name: sauce_flags, type: int32, description: "SAUCE TFlags: bit 0 iCE colours, bits 1-2 letter spacing, bits 3-4 aspect ratio" }
       - { name: sauce_font, type: string, description: "SAUCE TInfoS: font name; null when empty" }
       - { name: sauce_comment_lines, type: int32, description: Lines in the SAUCE comment block }
-      - { name: decoding, type: string, description: "ok or error for the current ANSI decoder; null when not decoded (not ANSI, or not run yet)" }
+      - { name: decoding, type: string, description: "ok or error at the current decoder version (ANSI and ASCII are decoded; other art is an unsupported_format error); null for files that are not art, or not decoded yet" }
       - { name: decoding_error, type: string, description: Classified decoding error }
       - { name: cols, type: int32, description: Decoded canvas width in cells }
       - { name: rows, type: int32, description: Decoded canvas height in cells }
