@@ -28,6 +28,7 @@ import numpy as np
 from PIL import Image
 from tm.config import settings
 from tm.storage import S3Store, grid_key, rendering_key, s3_client
+from tm_analysis.text import text_lines
 from tm_render.conservation import BitmapFont, Settings, render
 from tm_render.grid import Grid, from_parquet
 
@@ -175,6 +176,13 @@ class Corpus:
         rank = {s: i for i, s in enumerate(nearest)}
         return sorted(found, key=lambda w: rank[w["sha256"]])
 
+    def text(self, sha: str) -> list[dict[str, Any]] | None:
+        """The text layer of the work's grid: rows that hold words (leads I2)."""
+        if not self.rows("select 1 from w where sha256 = ? and decoding = 'ok'", [sha]):
+            return None
+        grid = from_parquet(self.derived.get(grid_key(sha, self.decoder, self.decoder_version)))
+        return [{"row": line.row, "text": line.text} for line in text_lines(grid)]
+
     def image(self, sha: str, screen: bool) -> bytes | None:
         """The stored rendering, or a preview drawn from the grid; `screen` keeps the first
         screen at half size."""
@@ -233,6 +241,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.json(self.corpus.wall(query))
             case ["api", "work", sha] if SHA.match(sha):
                 self.json(self.corpus.work(sha))
+            case ["api", "text", sha] if SHA.match(sha):
+                self.json(self.corpus.text(sha))
             case ["image", kind, sha] if SHA.match(sha) and kind in ("screen", "full"):
                 self.png(_image(self.corpus, sha, kind == "screen"))
             case _:

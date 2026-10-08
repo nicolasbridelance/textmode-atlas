@@ -62,6 +62,9 @@ SPDX-License-Identifier: Apache-2.0
   .bigrams { display: flex; flex-wrap: wrap; gap: 6px; font-size: 18px; }
   .bigrams span { background: #000; padding: 0 4px; border: 1px solid var(--line); }
   .bigrams small { font-size: 10px; color: var(--dim); }
+  .textlayer { background: #000; border: 1px solid var(--line); padding: 6px 8px; font-size: 12px;
+    white-space: pre-wrap; max-height: 240px; overflow: auto; margin: 0; }
+  .textlayer b { color: var(--dim); font-weight: normal; }
   .neighbours { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
   .neighbours img { width: 100%; image-rendering: pixelated; cursor: pointer;
     border: 1px solid var(--line); }
@@ -196,6 +199,15 @@ async function open(sha) {
   drawArt(w);
   $("side").innerHTML = side(w);
   for (const img of $("side").querySelectorAll("[data-sha]")) img.onclick = () => open(img.dataset.sha);
+  if (w.decoding === "ok") textLayer(sha);
+}
+async function textLayer(sha) {
+  const lines = await (await fetch("api/text/" + sha)).json();
+  const box = $("textlayer");
+  if (!box || current !== sha) return;
+  box.innerHTML = lines.length
+    ? lines.map((l) => `<b>${String(l.row).padStart(3)}</b>  ${esc(l.text)}`).join("\n")
+    : "no words in letters";
 }
 function drawArt(w) {
   const tools = `<div class="tools"><button onclick="setZoom(1)">1×</button>
@@ -230,7 +242,9 @@ function side(w) {
     <dt>to arrive</dt><dd>${arrival(w.bytes, 2400)} at 2400 baud · ${arrival(w.bytes, 14400)} at 14400</dd>
     <dt>packs</dt><dd>${w.packs}</dd>
     <dt>sha256</dt><dd style="font-size:11px">${w.sha256}</dd>
-  </dl>${w.fill_ratio == null ? "" : features(w)}`;
+  </dl>
+  <h3>Text in the work (rows with words)</h3><pre class="textlayer" id="textlayer">…</pre>
+  ${w.fill_ratio == null ? "" : features(w)}`;
 }
 
 function features(w) {
