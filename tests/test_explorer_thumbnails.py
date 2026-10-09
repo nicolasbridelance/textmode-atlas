@@ -40,9 +40,15 @@ def test_best_window_prefers_the_top_on_ties() -> None:
 
 
 def test_every_mode_makes_a_card_of_the_wall_width() -> None:
-    for mode in thumbnails.MODES:
+    for mode in ("screen", "best", "whole"):
         card = thumbnails.thumbnail(portrait(range(60, 80)), mode)
         assert card.width == thumbnails.CARD_WIDTH
+
+
+def test_an_icon_is_the_best_screen_small_and_bare() -> None:
+    icon = thumbnails.thumbnail(portrait(range(60, 80)), "icon")
+    assert icon.size == (thumbnails.ICON_WIDTH, 100)
+    assert np.asarray(icon).mean() > 255 * 0.7  # the window found the 20 white rows of 25
 
 
 def test_the_corner_shows_the_whole_work_on_the_right() -> None:

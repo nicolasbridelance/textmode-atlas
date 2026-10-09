@@ -7,7 +7,8 @@ screen, and nothing of the rest. Three ways to make a card from a rendering:
 
 - `screen`: the first screen, as before;
 - `best`: the screen with the most ink, the window of rows that differ most from black;
-- `whole`: the whole work scaled into the card, a tall work folded into columns.
+- `whole`: the whole work scaled into the card, a tall work folded into columns;
+- `icon`: the best screen at half a card's width, with no corner: a node of the graph.
 
 `screen` and `best` add the whole work in the card's right corner, seen from afar and folded
 the same way, with the window outlined on it, when the work is taller than the window.
@@ -26,7 +27,8 @@ INSET_MARGIN = 3
 MAX_COLUMNS = 40
 FRAME = (85, 255, 255)  # bright cyan, the explorer's accent in VGA
 BACKDROP = (0, 0, 0)
-MODES = ("screen", "best", "whole")
+MODES = ("screen", "best", "whole", "icon")
+ICON_WIDTH = 160  # the best screen, small and bare, for the graph's nodes
 
 
 def window_rows(width: int) -> int:
@@ -56,8 +58,10 @@ def thumbnail(image: Image.Image, mode: str) -> Image.Image:
     if mode == "whole":
         return _contain(image)
     size = window_rows(image.width)
-    top = best_window(ink_per_row(image), size) if mode == "best" else 0
+    top = best_window(ink_per_row(image), size) if mode in ("best", "icon") else 0
     box = (0, top * BAND, image.width, min(image.height, (top + size) * BAND))
+    if mode == "icon":
+        return _scale(image.crop(box), ICON_WIDTH / image.width)
     card = _scale(image.crop(box), CARD_WIDTH / image.width)
     if image.height > box[3] - box[1]:
         _corner(card, image, box)
