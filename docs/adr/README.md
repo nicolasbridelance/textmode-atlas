@@ -60,3 +60,4 @@ What becomes easier, what becomes harder, what we must now do.
 | [0019](0019-content-descriptors-and-audiences.md) | Describe sensitive content, and decide audiences on the server | Proposed |
 | [0020](0020-the-audience-grid.md) | The museum's audience grid, adapted from PEGI, from one source to every layer | Accepted |
 | [0021](0021-provenance-of-acquisitions.md) | Record where and when every original was fetched, and carry it into what we publish | Accepted |
+| [0022](0022-the-public-export.md) | What `tm export` publishes: a record, a compact grid and a PNG per work, nothing else | Accepted |
