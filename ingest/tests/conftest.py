@@ -14,8 +14,11 @@ from alembic import command
 from alembic.config import Config
 from sqlalchemy import Connection, create_engine, make_url, text
 from stores import Stores
+from tm.decode import decode_pending
+from tm.ingest import ingest_golden
 
 ROOT = Path(__file__).resolve().parents[2]
+GOLDEN = ROOT / "tests" / "golden"
 
 
 @pytest.fixture(scope="session")
@@ -55,3 +58,11 @@ def db(db_url: str) -> Iterator[Connection]:
 @pytest.fixture
 def stores(tmp_path: Path) -> Stores:
     return Stores(tmp_path)
+
+
+@pytest.fixture
+def horizon(db: Connection, stores: Stores) -> str:
+    """Golden artifact #1, ingested and decoded: its SHA-256."""
+    sha = ingest_golden(db, stores.originals, GOLDEN)[0].sha256
+    decode_pending(db, stores.originals, stores.derived)
+    return sha

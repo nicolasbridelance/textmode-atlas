@@ -16,6 +16,7 @@ from tm.datasets import DatasetError, build
 from tm.decode import decode_pending
 from tm.features import extract_artifact, pending_features
 from tm.packs import ingest_pack
+from tm.text_layer import pending_text, read_artifact
 from tm_render.versions import DECODER_VERSION
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -100,6 +101,8 @@ def test_works_hold_the_train_packs_only(db: Connection, stores: Stores, tmp_pat
     decode_pending(db, stores.originals, stores.derived)
     for row in pending_features(db):
         extract_artifact(db, stores.derived, row)
+    for row in pending_text(db):
+        read_artifact(db, stores.derived, row)
     built = build(db, definition(tmp_path, "works"), tmp_path / "build")
     works = pq.read_table(built.directory / "works.parquet").to_pylist()
     assert {(w["path"], w["decoding"], w["decoding_error"]) for w in works} == {
@@ -112,6 +115,10 @@ def test_works_hold_the_train_packs_only(db: Connection, stores: Stores, tmp_pat
     features = pq.read_table(built.directory / "features.parquet").to_pylist()
     assert [f["sha256"] for f in features] == [kept["sha256"]]
     assert len(features[0]["glyph_hist"]) == 256
+    lines = pq.read_table(built.directory / "text.parquet").to_pylist()
+    assert lines
+    assert {line["sha256"] for line in lines} == {kept["sha256"]}
+    assert [line["row"] for line in lines] == sorted(line["row"] for line in lines)
 
 
 def test_columns_must_match_the_definition(db: Connection, tmp_path: Path) -> None:

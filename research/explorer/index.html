@@ -36,6 +36,7 @@ SPDX-License-Identifier: Apache-2.0
   .card .none { color: var(--dim); align-self: center; font-size: 12px; }
   .card .meta { padding: 6px 8px; font-size: 12px; }
   .card .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card .hit { font-family: monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .card .who { color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   #more { height: 40px; }
   #detail { position: fixed; inset: 0; z-index: 10; background: rgba(0,0,0,.92);
@@ -85,6 +86,7 @@ SPDX-License-Identifier: Apache-2.0
   <select id="format"><option value="">all formats</option></select>
   <select id="kind"><option value="">all contents</option></select>
   <input id="q" type="search" placeholder="group, author, pack, file">
+  <input id="words" type="search" placeholder="words in the work">
   <select id="order"></select>
   <span id="count"></span>
   <div class="note" id="note"></div>
@@ -124,7 +126,7 @@ const arrival = (bytes, baud) => {
 
 function filters() {
   return {year: $("year").value, format: $("format").value, kind: $("kind").value, q: $("q").value,
-    order: $("order").value};
+    words: $("words").value, order: $("order").value};
 }
 function saveHash(work) {
   const params = new URLSearchParams(Object.entries(filters()).filter(([, v]) => v));
@@ -143,7 +145,7 @@ async function facets() {
     + ` the train packs, ${d.measured.toLocaleString()} measured. Exploratory: the test packs`
     + ` are not here. Extractors ${JSON.stringify(d.extractors)}.`;
   const hash = new URLSearchParams(location.hash.slice(1));
-  for (const k of ["year", "format", "kind", "q", "order"]) if (hash.get(k)) $(k).value = hash.get(k);
+  for (const k of ["year", "format", "kind", "q", "words", "order"]) if (hash.get(k)) $(k).value = hash.get(k);
   state.ready = true;
   await reload();
   if (hash.get("work")) open(hash.get("work"));
@@ -184,7 +186,8 @@ function card(w) {
   el.innerHTML = `<div class="thumb">${thumb}</div><div class="meta">
     <div class="name" title="${esc(w.path)}">${esc(file)}</div>
     <div class="who">${esc(w.sauce_author || "?")} / ${esc(w.sauce_group || "?")}</div>
-    <div class="who">${esc(w.pack)} · ${w.year ?? "?"}${w.cols ? ` · ${w.cols}×${w.rows}` : ""}</div></div>`;
+    <div class="who">${esc(w.pack)} · ${w.year ?? "?"}${w.cols ? ` · ${w.cols}×${w.rows}` : ""}</div>
+    ${w.hit ? `<div class="hit" title="${esc(w.hit)}">${esc(w.hit)}</div>` : ""}</div>`;
   el.onclick = () => open(w.sha256);
   el.onkeydown = (e) => { if (e.key === "Enter") open(w.sha256); };
   return el;
@@ -288,7 +291,7 @@ document.addEventListener("keydown", (e) => {
 });
 for (const id of ["year", "format", "kind", "order"]) $(id).onchange = reload;
 let typing;
-$("q").oninput = () => { clearTimeout(typing); typing = setTimeout(reload, 350); };
+$("q").oninput = $("words").oninput = () => { clearTimeout(typing); typing = setTimeout(reload, 350); };
 new IntersectionObserver((e) => { if (e[0].isIntersecting) more(); }, {rootMargin: "800px"}).observe($("more"));
 facets();
 </script>

@@ -3,8 +3,8 @@
 #
 # Built by `tm dataset build works`. Datasheet: DATASHEET.md.
 name: works
-version: "3"
-description: The art files of the 16colo train packs, with their decoding, rendering and grid features.
+version: "4"
+description: The art files of the 16colo train packs, with their decoding, rendering, grid features and text layer.
 
 tables:
   works:
@@ -68,3 +68,10 @@ tables:
       - { name: fg_bg_pairs, type: int32, description: Distinct foreground–background pairs among visible glyphs }
       - { name: cursor_jumps, type: float64, description: "Share of writes, in byte order, that do not follow the previous cell" }
       - { name: draw_order, type: float64, description: "Spearman correlation of byte order with reading order; 1 = typed line by line" }
+  text:
+    query: text.sql
+    key: [sha256, row]
+    columns:
+      - { name: sha256, type: string, description: The art file (works.sha256) }
+      - { name: row, type: int32, description: Grid row of the line }
+      - { name: text, type: string, description: "Printable ASCII cells that show, gaps of four spaces or more cut to three; only rows holding a word of three letters or digits (tm_analysis.text)" }
