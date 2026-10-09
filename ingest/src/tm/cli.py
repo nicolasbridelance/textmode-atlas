@@ -14,6 +14,7 @@ from tm_render.conservation import MAX_SCALE, BitmapFont
 
 from tm import corpus as corpus_mod
 from tm import ratings
+from tm.audience import rate_flashing, rate_words
 from tm.config import settings
 from tm.datasets import DatasetError, build, draw_sample
 from tm.decode import decode_artifact, pending_artifacts
@@ -259,6 +260,18 @@ def text_command(
             lines = read_artifact(conn, derived, row)
         typer.echo(f"{row.source_path} {len(lines)} lines")
     typer.echo(f"{len(todo)} read")
+
+
+@app.command("rate")
+def rate_command() -> None:
+    """Infer content ratings for review (ADR 0020): descriptors from words, flashing."""
+    engine = create_engine(settings().database_url)
+    with engine.begin() as conn:
+        found = rate_words(conn)
+        flashing = rate_flashing(conn)
+    for (descriptor, level), count in sorted(found.items()):
+        typer.echo(f"{descriptor} {level}: {count}")
+    typer.echo(f"flashing: {flashing}")
 
 
 @ingest_app.command("pack")
