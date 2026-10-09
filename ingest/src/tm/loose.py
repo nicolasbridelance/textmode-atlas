@@ -62,7 +62,7 @@ def loose_files(paths: list[Path]) -> list[Path]:
             for p in candidates
             if p.is_file() and p.suffix.lower() not in ARCHIVES and p.name != SITE_INDEX
         )
-    return sorted(found)
+    return sorted(found, key=lambda path: path.as_posix())
 
 
 def ingest_loose(
