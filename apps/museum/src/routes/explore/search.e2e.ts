@@ -78,28 +78,28 @@ for (const locale of ['en', 'fr']) {
 		await files(page);
 		const prefix = locale === 'fr' ? '/fr' : '';
 		await page.goto(`${prefix}/explore?view=pinterest&source=public`);
-		await expect(page.locator('.pin')).toHaveCount(3);
-		await page.locator('.pin button').first().click();
+		await expect(page.locator('.card')).toHaveCount(3);
+		await page.locator('.card button').first().click();
 		await page.locator('input[name=q]').fill('Artist');
 		await page.locator('.search-submit').click();
-		await expect(page.locator('.pin')).toHaveCount(2);
+		await expect(page.locator('.card')).toHaveCount(2);
 		await expect(page).toHaveURL(/q=Artist/);
-		await page.locator('.views a').filter({ hasText: 'Instagram' }).click();
-		await expect(page.locator('.post')).toHaveCount(2);
+		await page.locator('.layouts [data-layout=feed]').click();
+		await expect(page.locator('.card')).toHaveCount(2);
 		await expect(page.locator('input[name=q]')).toHaveValue('Artist');
 		await page.locator('.reset').click();
-		await expect(page.locator('.post')).toHaveCount(3);
+		await expect(page.locator('.card')).toHaveCount(3);
 		await page.locator('.catalogue-controls summary').click();
 		await page.locator('select[name=year]').selectOption('__unknown__');
-		await expect(page.locator('.post')).toHaveCount(1);
+		await expect(page.locator('.card')).toHaveCount(1);
 		await page.locator('.reset').click();
-		await expect(page.locator('.post button').first()).toHaveAttribute('aria-pressed', 'true');
+		await expect(page.locator('.card button').first()).toHaveAttribute('aria-pressed', 'true');
 		await page.locator('.selection-toggle button').last().click();
-		await expect(page.locator('.post')).toHaveCount(1);
+		await expect(page.locator('.card')).toHaveCount(1);
 		await page.locator('.clear-selection').click();
 		await expect(page.locator('.empty-selection')).toBeVisible();
 		await page.locator('.selection-cleared button').click();
-		await expect(page.locator('.post')).toHaveCount(1);
+		await expect(page.locator('.card')).toHaveCount(1);
 		expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
 			true
 		);
@@ -111,23 +111,23 @@ test('global corpus pagination and filters survive layout, reload and locale cha
 }) => {
 	await files(page);
 	await page.goto('/explore?view=pinterest');
-	await expect(page.locator('.pin')).toHaveCount(3);
+	await expect(page.locator('.card')).toHaveCount(3);
 	await expect(page.locator('.count')).toContainText('5 results');
 	await page.locator('.more').click();
-	await expect(page.locator('.pin')).toHaveCount(5);
+	await expect(page.locator('.card')).toHaveCount(5);
 	await page.locator('.catalogue-controls summary').click();
 	await page.locator('select[name=year]').selectOption('1996');
 	await expect(page).toHaveURL(/year=1996/);
 	await expect(page.locator('.count')).toContainText('4 results');
-	await page.locator('.views a').filter({ hasText: 'Instagram' }).click();
-	await expect(page.locator('.post')).toHaveCount(3);
+	await page.locator('.layouts [data-layout=feed]').click();
+	await expect(page.locator('.card')).toHaveCount(3);
 	await expect(page.locator('select[name=year]')).toHaveValue('1996');
 	await page.locator('.locales a[lang=fr]').click();
 	await expect(page.locator('.count')).toContainText('4 résultats');
 	await expect(page.locator('select[name=year]')).toHaveValue('1996');
 	await page.reload();
 	await expect(page.locator('select[name=year]')).toHaveValue('1996');
-	await expect(page.locator('.post-image').first()).toHaveAttribute('href', /^\/fr\/work\?w=/);
+	await expect(page.locator('.card .image').first()).toHaveAttribute('href', /^\/fr\/work\?w=/);
 	await page.locator('.reset').click();
 	await expect(page.locator('.count')).toContainText('5 résultats');
 	await expect(page).toHaveURL(/source=corpus/);
@@ -156,7 +156,7 @@ test('a failed corpus request is visible and reset retries it', async ({ page })
 	await expect(page.getByRole('alert')).toBeVisible();
 	fail = false;
 	await page.locator('.reset').click();
-	await expect(page.locator('.pin')).toHaveCount(3);
+	await expect(page.locator('.card')).toHaveCount(3);
 });
 
 test('chance: reshuffle keeps the filters, and a draw opens one work', async ({ page }) => {
@@ -171,7 +171,7 @@ test('chance: reshuffle keeps the filters, and a draw opens one work', async ({ 
 		});
 	});
 	await page.goto('/explore?view=pinterest&year=1996');
-	await expect(page.locator('.pin')).toHaveCount(3);
+	await expect(page.locator('.card')).toHaveCount(3);
 	await page.locator('.chance button').first().click();
 	await expect(page).toHaveURL(/seed=[a-z2-9]{6}/);
 	await expect(page).toHaveURL(/year=1996/);
@@ -184,7 +184,7 @@ test('chance: reshuffle keeps the filters, and a draw opens one work', async ({ 
 test('chance in the public collection draws among the listed works', async ({ page }) => {
 	await files(page);
 	await page.goto('/explore?view=pinterest&source=public');
-	await expect(page.locator('.pin')).toHaveCount(3);
+	await expect(page.locator('.card')).toHaveCount(3);
 	await page.locator('.chance button').last().click();
 	await expect(page).toHaveURL(/\/work\?w=(a{64}|b{64}|c{64})/);
 });

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+﻿// SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 // SPDX-License-Identifier: Apache-2.0
 import { expect, test, type Page } from '@playwright/test';
 
@@ -47,15 +47,15 @@ for (const locale of ['en', 'fr']) {
 			const errors: string[] = [];
 			page.on('pageerror', (error) => errors.push(error.message));
 			await page.goto(`${prefix}/explore?view=pinterest`);
-			await expect(page.locator('.pin')).toHaveCount(3);
-			await page.locator('.pin button').first().click();
-			await expect(page.locator('.pin button').first()).toHaveAttribute('aria-pressed', 'true');
-			await page.locator('.views a').filter({ hasText: 'Instagram' }).click();
-			await expect(page.locator('.post')).toHaveCount(3);
-			await expect(page.locator('.post button').first()).toHaveAttribute('aria-pressed', 'true');
+			await expect(page.locator('.card')).toHaveCount(3);
+			await page.locator('.card button').first().click();
+			await expect(page.locator('.card button').first()).toHaveAttribute('aria-pressed', 'true');
+			await page.locator('.layouts [data-layout=feed]').click();
+			await expect(page.locator('.card')).toHaveCount(3);
+			await expect(page.locator('.card button').first()).toHaveAttribute('aria-pressed', 'true');
 			await page.reload();
-			await expect(page.locator('.post button').first()).toHaveAttribute('aria-pressed', 'true');
-			await page.locator('.views a').filter({ hasText: 'Tinder' }).click();
+			await expect(page.locator('.card button').first()).toHaveAttribute('aria-pressed', 'true');
+			await page.locator('.layouts [data-layout=deck]').click();
 			await expect(page.locator('.swipe-card h2')).toHaveText('Tall work');
 			await page.locator('.pass').click();
 			await expect(page.locator('.swipe-card h2')).toHaveText('Wide work');
@@ -67,7 +67,7 @@ for (const locale of ['en', 'fr']) {
 			await page.keyboard.press('ArrowRight');
 			await expect(page.locator('.swipe-card h2')).toHaveText('Square work');
 			await page.locator('.selection-toggle button').last().click();
-			await expect(page.locator('.pin')).toHaveCount(2);
+			await expect(page.locator('.card')).toHaveCount(2);
 			await page.keyboard.press('ArrowRight'); // Hidden deck must not react.
 			await page.locator('.selection-toggle button').first().click();
 			await expect(page.locator('.swipe-card h2')).toHaveText('Square work');
@@ -75,13 +75,15 @@ for (const locale of ['en', 'fr']) {
 			await expect(page.locator('.finished')).toBeVisible();
 			await page.locator('.finished button').first().click();
 			await expect(page.locator('.swipe-card h2')).toHaveText('Tall work');
-			for (const view of ['pinterest', 'instagram', 'tinder']) {
-				await page.goto(`${prefix}/explore?view=${view}`);
-				await expect(page.locator(`[data-layout="${view}"]`)).toBeVisible();
+			for (const layout of ['wall', 'grid', 'feed', 'deck']) {
+				await page.goto(`${prefix}/explore?layout=${layout}`);
+				await expect(
+					page.locator(layout === 'deck' ? '.swipe-card' : `.gallery[data-layout="${layout}"]`)
+				).toBeVisible();
 				expect(
 					await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
 				).toBe(true);
-				await page.screenshot({ path: info.outputPath(`${view}-${locale}-${width}.png`) });
+				await page.screenshot({ path: info.outputPath(`${layout}-${locale}-${width}.png`) });
 			}
 			expect(errors).toEqual([]);
 		});
@@ -121,9 +123,29 @@ test('a missing image has a readable fallback, and an empty selection can be exi
 		route.fulfill({ status: 404 })
 	);
 	await page.goto('/fr/explore?view=pinterest');
-	await expect(page.locator('.pin').first()).toContainText('Image indisponible');
+	await expect(page.locator('.card').first()).toContainText('Image indisponible');
 	await page.locator('.selection-toggle button').last().click();
 	await expect(page.locator('.empty-selection')).toBeVisible();
 	await page.locator('.selection-toggle button').first().click();
-	await expect(page.locator('.pin')).toHaveCount(3);
+	await expect(page.locator('.card')).toHaveCount(3);
+});
+
+test('display settings live in the address and change the gallery', async ({ page }) => {
+	await collection(page);
+	await page.goto('/explore?view=pinterest');
+	await page.locator('.layouts [data-layout=grid]').click();
+	await expect(page.locator('.gallery[data-layout=grid]')).toBeVisible();
+	await expect(page).toHaveURL(/layout=grid/);
+	await page.locator('.display-controls summary').click();
+	await page.locator('select[name=cols]').selectOption('2');
+	await page.locator('select[name=fit]').selectOption('whole');
+	await page.locator('select[name=caption]').selectOption('none');
+	await expect(page).toHaveURL(/cols=2/);
+	await expect(page).toHaveURL(/fit=whole/);
+	await expect(page.locator('.card .title')).toHaveCount(0);
+	await page.reload();
+	await expect(page.locator('select[name=cols]')).toHaveValue('2');
+	await expect(page.locator('.gallery')).toHaveAttribute('style', /--cols: 2/);
+	await page.locator('.layouts [data-layout=feed]').click();
+	await expect(page).not.toHaveURL(/cols=/); // a new layout starts from its preset
 });

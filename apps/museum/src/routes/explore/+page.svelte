@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 SPDX-License-Identifier: Apache-2.0
 -->
 <script lang="ts">
-	import { SvelteMap, SvelteURLSearchParams } from 'svelte/reactivity';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/env';
 	import { goto } from '$app/navigation';
@@ -13,124 +13,115 @@ SPDX-License-Identifier: Apache-2.0
 	import { localizeHref } from '#lib/paraglide/runtime.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { isWorkId, loadWork } from '../../lib/work/record';
-	import { loadList, type List, type ListPaths } from '../../lib/work/visit';
-	import Constellation from '../../lib/presentation/Constellation.svelte';
-	import Thumbnail from '../../lib/presentation/Thumbnail.svelte';
-	import DiscoveryLayouts from '../../lib/presentation/DiscoveryLayouts.svelte';
+	import type { ListPaths } from '../../lib/work/visit';
+	import Gallery from '../../lib/presentation/Gallery.svelte';
 	import SwipeDeck from '../../lib/presentation/SwipeDeck.svelte';
 	import CatalogueControls from '../../lib/presentation/CatalogueControls.svelte';
+	import DisplayControls from '../../lib/presentation/DisplayControls.svelte';
 	import {
 		filterEntries,
 		readFilters,
-		researchPage,
 		researchQuery,
 		type BrowseFilters,
 		type ResearchFacets
 	} from '../../lib/presentation/catalogue';
+	import { CollectionLoader } from '../../lib/presentation/collection.svelte';
+	import { displayQuery, readDisplay, type Display } from '../../lib/presentation/display';
+	import { selection } from '../../lib/presentation/selection.svelte';
 	import { museumContext } from '../../lib/presentation/settings.svelte';
 	import { draw, newSeed } from '../../lib/presentation/chance';
 
 	const PAGE_SIZE = 48;
 	const RESEARCH_BASE = '';
-	let collection = $state<List | null>(null);
-	let paths: ListPaths | null = $state(null);
 	const SCOPES = ['days', 'pack', 'author', 'year'] as const;
+	const loader = new CollectionLoader(RESEARCH_BASE);
+	let paths: ListPaths | null = $state(null);
+	let facets: ResearchFacets | null = $state(null);
+	let limit = $state(PAGE_SIZE);
+	let onlySaved = $state(false);
+	let resetSerial = $state(0);
+	let drawing = $state(false);
+	let nothingToDraw = $state(false);
+
+	const params = $derived(browser ? page.url.searchParams : null);
 	const scope = $derived.by(() => {
-		const value = browser ? page.url.searchParams.get('scope') : null;
+		const value = params?.get('scope');
 		return SCOPES.includes(value as (typeof SCOPES)[number])
 			? (value as (typeof SCOPES)[number])
 			: 'days';
 	});
-	let groupBy: 'pack' | 'author' | 'year' = $state('pack');
-	let limit = $state(PAGE_SIZE);
-	let loading = $state(true);
-	let saved: string[] = $state([]);
-	let restored = $state(false);
-	let onlySaved = $state(false);
-	let clearedSaved: string[] | null = $state(null);
-	let resultTotal = $state(0);
-	let loadingMore = $state(false);
-	let failed = $state(false);
-	let facets: ResearchFacets | null = $state(null);
-	let resetSerial = $state(0);
-	let drawing = $state(false);
-	let nothingToDraw = $state(false);
-	const corpus = $derived(
-		facets !== null && browser && page.url.searchParams.get('source') !== 'public'
-	);
-	const filters = $derived(readFilters(browser ? page.url.searchParams : null));
+	const corpus = $derived(facets !== null && params?.get('source') !== 'public');
+	const filters = $derived(readFilters(params));
+	const display = $derived(readDisplay(params));
+	const deck = $derived(display.layout === 'deck');
+	const id = $derived(params?.get('w') ?? null);
 	const requestKey = $derived(
 		corpus ? researchQuery(filters) : scope === 'days' ? 'lists/days.json' : (paths?.[scope] ?? '')
 	);
 	const browseKey = $derived(JSON.stringify([corpus, requestKey, filters, resetSerial]));
-	const SAVED_KEY = 'textmode-discovery-selection-v1';
-	const VIEWS = ['pinterest', 'instagram', 'tinder', 'grid', 'relations'] as const;
-	type View = (typeof VIEWS)[number];
-	const id = $derived(browser ? page.url.searchParams.get('w') : null);
-	const view = $derived.by((): View => {
-		const requested = browser ? page.url.searchParams.get('view') : null;
-		return VIEWS.includes(requested as View) ? (requested as View) : 'pinterest';
-	});
-	const constellation = $derived(view === 'relations');
-	const discovery = $derived(view === 'pinterest' || view === 'instagram' || view === 'tinder');
-	const works = $derived(collection?.works ?? []);
-	const matched = $derived(corpus ? works : filterEntries(works, filters));
-	const selected = $derived(matched.filter((entry) => saved.includes(entry.sha256)));
-	const visible = $derived(discovery && onlySaved ? selected : matched);
-	const total = $derived(
-		discovery && onlySaved ? selected.length : corpus ? resultTotal : matched.length
-	);
-	const hasMore = $derived(corpus && works.length < resultTotal);
+	const matched = $derived(corpus ? loader.works : filterEntries(loader.works, filters));
+	const selected = $derived(matched.filter((entry) => selection.has(entry.sha256)));
+	const visible = $derived(onlySaved ? selected : matched);
+	const total = $derived(onlySaved ? selected.length : corpus ? loader.total : matched.length);
 	const shown = $derived(visible.slice(0, limit));
-	const heading = $derived.by(() => {
-		if (view === 'pinterest') return m.discovery_pinterest_title();
-		if (view === 'instagram') return m.discovery_instagram_title();
-		if (view === 'tinder') return m.discovery_tinder_title();
-		return m.explore_title();
-	});
-	const note = $derived.by(() => {
-		if (view === 'pinterest') return m.discovery_pinterest_note();
-		if (view === 'instagram') return m.discovery_instagram_note();
-		return m.discovery_tinder_note();
-	});
-	const groups = $derived.by(() => {
-		const result = new SvelteMap<string, typeof shown>();
-		for (const entry of shown) {
-			const key = String(entry[groupBy] ?? m.explore_unknown());
-			result.set(key, [...(result.get(key) ?? []), entry]);
-		}
-		return [...result];
-	});
-	onMount(() => {
-		try {
-			const value: unknown = JSON.parse(localStorage.getItem(SAVED_KEY) ?? '[]');
-			if (Array.isArray(value))
-				saved = [
-					...new Set(value.filter((id): id is string => typeof id === 'string' && isWorkId(id)))
-				];
-		} catch {
-			/* Selection still works when storage is unavailable. */
-		}
-		restored = true;
+	const heading = $derived(
+		{
+			wall: m.discovery_pinterest_title,
+			grid: m.explore_title,
+			feed: m.discovery_instagram_title,
+			deck: m.discovery_tinder_title
+		}[display.layout]()
+	);
+	const note = $derived(
+		{
+			wall: m.discovery_pinterest_note,
+			grid: m.discovery_pinterest_note,
+			feed: m.discovery_instagram_note,
+			deck: m.discovery_tinder_note
+		}[display.layout]()
+	);
+
+	onMount(() => selection.restore());
+	$effect(() => {
+		if (!browser) return;
+		let active = true;
+		paths = null;
+		if (isWorkId(id))
+			void loadWork(id).then((work) => {
+				if (active) paths = work?.record.lists ?? null;
+			});
+		return () => {
+			active = false;
+		};
 	});
 	$effect(() => {
-		if (!restored) return;
-		try {
-			localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
-		} catch {
-			/* Keep the selection for this visit. */
-		}
+		if (!browser) return;
+		void browseKey; // reload when the query, the filters or a reset change
+		limit = PAGE_SIZE;
+		void loader.load(requestKey, corpus);
+		return () => loader.stop();
 	});
-	function setSaved(sha256: string, value: boolean): void {
-		saved = value ? [...new Set([...saved, sha256])] : saved.filter((id) => id !== sha256);
-	}
-	function toggle(sha256: string): void {
-		setSaved(sha256, !saved.includes(sha256));
+	$effect(() => {
+		if (!browser) return;
+		let active = true;
+		void fetch(`${RESEARCH_BASE}/api/facets`)
+			.then(async (response) => {
+				if (response.ok && active) facets = await response.json();
+			})
+			.catch(() => {
+				/* The results report the error; filters remain usable. */
+			});
+		return () => {
+			active = false;
+		};
+	});
+
+	function href(sha256: string): string {
+		return `${resolve(localizeHref('/work') as Path)}?w=${sha256}`;
 	}
 	function navigate(values: Record<string, string>, clean = false): void {
 		const query = new SvelteURLSearchParams(clean ? '' : page.url.search);
-		query.set('view', view);
-		if (page.url.searchParams.get('source') === 'public') query.set('source', 'public');
+		if (params?.get('source') === 'public') query.set('source', 'public');
 		if (corpus) query.set('source', 'corpus');
 		for (const [key, value] of Object.entries(values)) {
 			if (value) query.set(key, value);
@@ -141,19 +132,20 @@ SPDX-License-Identifier: Apache-2.0
 			reset: false
 		});
 	}
-	function apply(filters: BrowseFilters): void {
+	function apply(next: BrowseFilters): void {
 		limit = PAGE_SIZE;
-		navigate(filters);
+		navigate(next);
+	}
+	function show(next: Display): void {
+		navigate(displayQuery(next));
 	}
 	function reset(): void {
 		onlySaved = false;
-		groupBy = 'pack';
 		limit = PAGE_SIZE;
 		resetSerial += 1;
 		museumContext.workId = null;
-		navigate({}, true);
+		navigate(displayQuery(display), true);
 	}
-
 	function reshuffle(): void {
 		apply({ ...filters, order: '', seed: newSeed() });
 	}
@@ -177,120 +169,25 @@ SPDX-License-Identifier: Apache-2.0
 			drawing = false;
 		}
 	}
-
-	function clearSelection(): void {
-		clearedSaved = [...saved];
-		saved = [];
-	}
-	function restoreSelection(): void {
-		if (clearedSaved) saved = [...new Set([...saved, ...clearedSaved])];
-		clearedSaved = null;
-	}
 	async function more(): Promise<void> {
-		const nextPage = view === 'tinder' || limit >= visible.length;
-		if (hasMore && !onlySaved && nextPage) await appendPage();
-		else limit += PAGE_SIZE;
-	}
-	async function appendPage(): Promise<void> {
-		if (loadingMore) return;
-		const key = browseKey;
-		const query = requestKey;
-		loadingMore = true;
-		try {
-			const result = await researchPage(RESEARCH_BASE, query, works.length);
-			if (browseKey !== key) return;
-			collection = { works: [...works, ...result.works] };
-			resultTotal = result.total;
-			limit += PAGE_SIZE;
-		} catch {
-			if (browseKey === key) failed = true;
-		} finally {
-			if (browseKey === key) loadingMore = false;
-		}
-	}
-
-	$effect(() => {
-		if (!browser) return;
-		let active = true;
-		paths = null;
-		if (isWorkId(id))
-			void loadWork(id).then((work) => {
-				if (active) paths = work?.record.lists ?? null;
-			});
-		return () => {
-			active = false;
-		};
-	});
-	$effect(() => {
-		if (!browser) return;
-		let active = true;
-		const controller = new AbortController();
-		const research = corpus;
-		const key = requestKey;
-		const serial = resetSerial;
-		loading = true;
-		failed = false;
-		loadingMore = false;
-		collection = null;
-		resultTotal = 0;
-		limit = PAGE_SIZE;
-		const request = research
-			? researchPage(RESEARCH_BASE, key, 0, controller.signal)
-			: loadList(key || null);
-		void request
-			.then((list) => {
-				if (active && resetSerial === serial) {
-					collection = list;
-					resultTotal =
-						research && list && 'total' in list ? Number(list.total) : (list?.works.length ?? 0);
-					failed = list === null;
-					loading = false;
-				}
-			})
-			.catch(() => {
-				if (active) {
-					failed = true;
-					loading = false;
-				}
-			});
-		return () => {
-			active = false;
-			controller.abort();
-		};
-	});
-	$effect(() => {
-		if (!browser) return;
-		let active = true;
-		void fetch(`${RESEARCH_BASE}/api/facets`)
-			.then(async (response) => {
-				if (response.ok && active) facets = await response.json();
-			})
-			.catch(() => {
-				/* The results report the error; filters remain usable. */
-			});
-		return () => {
-			active = false;
-		};
-	});
-	function href(sha256: string): string {
-		return `${resolve(localizeHref('/work') as Path)}?w=${sha256}`;
+		const nextPage = deck || limit >= visible.length;
+		if (loader.hasMore && !onlySaved && nextPage) {
+			await loader.more();
+			limit = Math.max(limit, loader.works.length);
+		} else limit += PAGE_SIZE;
 	}
 </script>
 
 <svelte:head><title>{m.nav_explore()} · {m.museum_name()}</title></svelte:head>
 
-<main
-	class:discovery
-	class:pinterest={view === 'pinterest'}
-	class:instagram={view === 'instagram'}
-	class:tinder={view === 'tinder'}
->
+<main data-paper={display.paper} class:deck>
 	<div class="explore-inner">
-		{#if discovery}<p class="eyebrow">{m.discovery_eyebrow()}</p>{/if}
+		<p class="eyebrow">{m.discovery_eyebrow()}</p>
 		<div class="intro">
 			<h1>{heading}</h1>
-			{#if discovery}<p>{note}</p>{/if}
+			<p>{note}</p>
 		</div>
+		<DisplayControls {display} apply={show} />
 		<div class="toolbar">
 			{#if !corpus}<label
 					>{m.explore_scope()}
@@ -304,14 +201,6 @@ SPDX-License-Identifier: Apache-2.0
 						{#if paths?.year}<option value="year">{m.explore_year()}</option>{/if}
 					</select></label
 				>{/if}
-			{#if constellation}<label
-					>{m.explore_group()}
-					<select bind:value={groupBy}
-						><option value="pack">{m.explore_group_pack()}</option><option value="author"
-							>{m.explore_group_author()}</option
-						><option value="year">{m.explore_group_year()}</option></select
-					></label
-				>{/if}
 			{#if !corpus && isWorkId(id)}<a href={href(id)}>{m.explore_back()}</a>{/if}
 			<div class="chance">
 				<button type="button" onclick={reshuffle}>{m.explore_reshuffle()}</button>
@@ -319,146 +208,104 @@ SPDX-License-Identifier: Apache-2.0
 					>{m.explore_surprise()}</button
 				>
 			</div>
-			{#if discovery}
-				<div class="selection-toggle" role="group" aria-label={m.discovery_collection_label()}>
-					<button type="button" aria-pressed={!onlySaved} onclick={() => (onlySaved = false)}
-						>{m.discovery_all()}</button
-					>
-					<button type="button" aria-pressed={onlySaved} onclick={() => (onlySaved = true)}
-						>{m.discovery_selection({ count: selected.length })}</button
-					>
-				</div>
-			{/if}
+			<div class="selection-toggle" role="group" aria-label={m.discovery_collection_label()}>
+				<button type="button" aria-pressed={!onlySaved} onclick={() => (onlySaved = false)}
+					>{m.discovery_all()}</button
+				>
+				<button type="button" aria-pressed={onlySaved} onclick={() => (onlySaved = true)}
+					>{m.discovery_selection({ count: selected.length })}</button
+				>
+			</div>
 		</div>
 		<p class="scope-note">
-			{#if corpus}{m.browse_corpus_note({ count: facets?.dataset.works ?? resultTotal })}
+			{#if corpus}{m.browse_corpus_note({ count: facets?.dataset.works ?? loader.total })}
 			{:else if scope === 'days'}{m.browse_days_note()}
 			{:else if scope === 'year'}{m.browse_year_note()}
 			{:else}{m.browse_collection_note()}{/if}
 		</p>
-		<CatalogueControls {filters} entries={works} {corpus} {facets} {apply} {reset} />
-		{#if onlySaved && saved.length}<button
+		<CatalogueControls {filters} entries={loader.works} {corpus} {facets} {apply} {reset} />
+		{#if onlySaved && selection.ids.length}<button
 				class="clear-selection"
 				type="button"
-				onclick={clearSelection}>{m.browse_clear_selection()}</button
+				onclick={() => selection.clear()}>{m.browse_clear_selection()}</button
 			>{/if}
-		{#if clearedSaved}<p class="selection-cleared" role="status">
+		{#if selection.cleared}<p class="selection-cleared" role="status">
 				{m.browse_selection_cleared()}
-				<button type="button" onclick={restoreSelection}>{m.browse_undo_clear()}</button>
+				<button type="button" onclick={() => selection.undoClear()}>{m.browse_undo_clear()}</button>
 			</p>{/if}
 		{#if nothingToDraw}<p role="status">{m.explore_surprise_none()}</p>{/if}
-		{#if loading}<p role="status">{m.explore_loading()}</p>
-		{:else if failed && !works.length}<p role="alert">{m.browse_unavailable()}</p>
+		{#if loader.loading}<p role="status">{m.explore_loading()}</p>
+		{:else if loader.failed && !loader.works.length}<p role="alert">{m.browse_unavailable()}</p>
 		{:else if !matched.length}<p class="empty-selection">{m.browse_no_results()}</p>
 		{:else}
-			<p class="count">
-				{m.browse_results({ count: total })}
-			</p>
-			{#if view === 'tinder'}
-				{#if onlySaved}
-					{#if selected.length}<DiscoveryLayouts
-							entries={shown}
-							total={selected.length}
-							view="pinterest"
-							{saved}
-							{toggle}
-							{href}
-						/>
-					{:else}<p class="empty-selection">{m.discovery_selection_empty()}</p>{/if}
-				{/if}
+			<p class="count">{m.browse_results({ count: total })}</p>
+			{#if onlySaved && !selected.length}
+				<p class="empty-selection">{m.discovery_selection_empty()}</p>
+			{:else if !deck || onlySaved}
+				<Gallery entries={shown} display={deck ? { ...display, layout: 'wall' } : display} {href} />
+			{/if}
+			{#if deck}
+				<!-- Kept mounted while the selection is shown, so the deck resumes where it was. -->
 				<div hidden={onlySaved}>
 					{#key browseKey}<SwipeDeck
 							entries={matched}
 							{total}
-							{hasMore}
-							{loadingMore}
+							hasMore={loader.hasMore}
+							loadingMore={loader.loadingMore}
 							{more}
-							{saved}
-							{setSaved}
+							saved={selection.ids}
+							setSaved={(sha256, value) => selection.set(sha256, value)}
 							{href}
 							active={!onlySaved}
 						/>{/key}
 				</div>
-			{:else if discovery && !visible.length}
-				<p class="empty-selection">{m.discovery_selection_empty()}</p>
-			{:else if view === 'pinterest' || view === 'instagram'}
-				<DiscoveryLayouts entries={shown} {total} {view} {saved} {toggle} {href} />
-			{:else if constellation}
-				<p class="explanation">{m.explore_relations()}</p>
-				<div class="constellations">
-					{#each groups as [name, entries] (name)}
-						<section class="cluster" aria-label={name}>
-							<h2>{name}</h2>
-							<Constellation {name} {entries} {href} />
-						</section>
-					{/each}
-				</div>
-			{:else}
-				<div class="grid">
-					{#each shown as entry (entry.sha256)}<Thumbnail
-							{entry}
-							href={href(entry.sha256)}
-						/>{/each}
-				</div>
 			{/if}
-			{#if (view !== 'tinder' || onlySaved) && (limit < visible.length || (!onlySaved && hasMore))}<button
+			{#if (!deck || onlySaved) && (limit < visible.length || (!onlySaved && loader.hasMore))}<button
 					class="more"
 					type="button"
-					disabled={loadingMore}
-					onclick={() => void more()}>{loadingMore ? m.explore_loading() : m.explore_more()}</button
+					disabled={loader.loadingMore}
+					onclick={() => void more()}
+					>{loader.loadingMore ? m.explore_loading() : m.explore_more()}</button
 				>{/if}
-			{#if failed}<p role="alert">{m.browse_unavailable()}</p>{/if}
+			{#if loader.failed}<p role="alert">{m.browse_unavailable()}</p>{/if}
 		{/if}
 	</div>
 </main>
 
 <style>
 	main {
-		max-width: 90rem;
-		margin: auto;
-		padding: 1rem 1.5rem 4rem;
-	}
-	.discovery {
-		max-width: none;
 		min-height: calc(100dvh - 5rem);
 		padding: 2rem 1.5rem 5rem;
-		background: var(--discovery-bg);
-		color: var(--discovery-ink);
-		--bright: var(--discovery-ink);
-		--ink: var(--discovery-ink);
-		--dim: var(--discovery-dim);
-		--line: var(--discovery-line);
-		--panel: var(--discovery-paper);
+		background: var(--paper-bg, var(--surface));
+		color: var(--ink);
+		/* The deck and the controls read these names. */
+		--discovery-bg: var(--paper-bg, var(--surface));
+		--discovery-paper: var(--panel);
+		--discovery-ink: var(--ink);
+		--discovery-dim: var(--dim);
+		--discovery-line: var(--line);
+		--discovery-accent: var(--accent);
 	}
-	.pinterest {
-		--discovery-bg: #f5f3ee;
-		--discovery-paper: #fffdf9;
-		--discovery-ink: #292a25;
-		--discovery-dim: #6e6e65;
-		--discovery-line: #d9d7cf;
-		--discovery-accent: #a53d32;
-		--discovery-on-accent: #fff;
+	/* Papers set the room's colours; `museum` keeps the site's theme. */
+	[data-paper='light'] {
+		--paper-bg: #f5f3ee;
+		--panel: #fffdf9;
+		--ink: #292a25;
+		--bright: #292a25;
+		--dim: #6e6e65;
+		--line: #d9d7cf;
 		--accent: #a53d32;
-	}
-	.instagram {
-		--discovery-bg: #f8f8fa;
-		--discovery-paper: #fff;
-		--discovery-ink: #28242c;
-		--discovery-dim: #716b78;
-		--discovery-line: #dedbe2;
-		--discovery-accent: #775074;
 		--discovery-on-accent: #fff;
-		--accent: #775074;
 	}
-	.tinder {
-		--discovery-bg: #110e17;
-		--discovery-paper: #211824;
-		--discovery-ink: #fff0f5;
-		--discovery-dim: #b5a0b1;
-		--discovery-line: #513343;
-		--discovery-accent: #f75380;
-		--discovery-on-accent: #160c13;
+	[data-paper='dark'] {
+		--paper-bg: #110e17;
+		--panel: #211824;
+		--ink: #fff0f5;
+		--bright: #fff0f5;
+		--dim: #b5a0b1;
+		--line: #513343;
 		--accent: #f75380;
+		--discovery-on-accent: #160c13;
 	}
 	.explore-inner {
 		max-width: 82rem;
@@ -467,7 +314,7 @@ SPDX-License-Identifier: Apache-2.0
 	.eyebrow {
 		font: 0.65rem var(--mono);
 		letter-spacing: 0.14em;
-		color: var(--discovery-dim);
+		color: var(--dim);
 		margin: 0 0 1.5rem;
 	}
 	.intro {
@@ -475,14 +322,15 @@ SPDX-License-Identifier: Apache-2.0
 		align-items: center;
 		justify-content: space-between;
 		gap: 2rem;
-		margin-bottom: 1.8rem;
+		margin-bottom: 1.4rem;
 	}
-	.discovery h1 {
+	h1 {
 		font-size: clamp(2rem, 4vw, 3.3rem);
 		letter-spacing: -0.055em;
 		font-weight: 600;
 		line-height: 1.1;
 		margin: 0;
+		color: var(--bright);
 	}
 	.intro > p {
 		max-width: 22rem;
@@ -491,21 +339,27 @@ SPDX-License-Identifier: Apache-2.0
 		color: var(--dim);
 		margin: 0;
 	}
-
-	.chance {
+	.toolbar {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		align-items: center;
+		margin-top: 1rem;
+	}
+	.chance,
+	.selection-toggle {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.4rem;
 	}
 	.selection-toggle {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem;
 		margin-left: auto;
 	}
 	.chance button,
-	.selection-toggle button {
-		margin: 0;
+	.selection-toggle button,
+	.clear-selection,
+	.selection-cleared button,
+	.more {
 		border-radius: 2rem;
 		font-size: 0.75rem;
 		padding: 0.7rem 0.9rem;
@@ -514,6 +368,13 @@ SPDX-License-Identifier: Apache-2.0
 	.selection-toggle button[aria-pressed='true'] {
 		border-color: var(--accent);
 		color: var(--accent);
+	}
+	.scope-note {
+		color: var(--dim);
+		font-size: 0.75rem;
+		line-height: 1.6;
+		margin: 1rem 0;
+		max-width: 65rem;
 	}
 	.count {
 		color: var(--dim);
@@ -527,34 +388,8 @@ SPDX-License-Identifier: Apache-2.0
 	}
 	.more {
 		display: block;
-		margin-inline: auto;
-		border-radius: 2rem;
+		margin: 2rem auto 0;
 		padding: 0.8rem 1.5rem;
-	}
-	h1 {
-		font-size: clamp(1.3rem, 3vw, 2rem);
-		font-weight: 400;
-		color: var(--bright);
-	}
-	.toolbar {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 1rem;
-		align-items: center;
-	}
-
-	.scope-note {
-		color: var(--dim);
-		font-size: 0.75rem;
-		line-height: 1.6;
-		margin: 1rem 0;
-		max-width: 65rem;
-	}
-	.clear-selection,
-	.selection-cleared button {
-		margin-top: 0;
-		border-radius: 2rem;
-		font-size: 0.75rem;
 	}
 	.selection-cleared {
 		font-size: 0.8rem;
@@ -574,40 +409,10 @@ SPDX-License-Identifier: Apache-2.0
 		border: 1px solid var(--line);
 		padding: 0.5rem;
 		max-width: 100%;
-	}
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
-		gap: 1.5rem;
-	}
-	.explanation {
-		max-width: 48rem;
-		font-size: 0.85rem;
-		line-height: 1.6;
-		color: var(--dim);
-	}
-	.constellations {
-		display: grid;
-		gap: 2rem;
-	}
-	.cluster {
-		border: 1px solid var(--line);
-		border-radius: 1rem;
-		padding: 1rem;
-		background: var(--panel);
-	}
-	h2 {
-		font: 1rem var(--mono);
-		color: var(--accent);
-		margin-block: 0 1.5rem;
-		overflow-wrap: anywhere;
-	}
-	button {
-		margin-top: 2rem;
 		cursor: pointer;
 	}
 	@media (max-width: 760px) {
-		.discovery {
+		main {
 			padding: 1.5rem 1rem 3rem;
 		}
 		.intro {
@@ -625,22 +430,13 @@ SPDX-License-Identifier: Apache-2.0
 			margin-left: 0;
 			width: 100%;
 		}
-
-		.tinder .eyebrow,
-		.tinder .intro > p,
-		.tinder .count {
+		.deck .eyebrow,
+		.deck .intro > p,
+		.deck .count {
 			display: none;
 		}
-		.tinder .intro {
-			margin-bottom: 1rem;
-		}
-		.tinder h1 {
+		.deck h1 {
 			font-size: 1.5rem;
-		}
-
-		.tinder .toolbar {
-			gap: 0.6rem;
-			margin-bottom: 1rem;
 		}
 	}
 </style>
