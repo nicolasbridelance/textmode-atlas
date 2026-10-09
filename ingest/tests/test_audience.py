@@ -8,7 +8,7 @@ import pytest
 from packs_on_disk import HORIZON, ingest
 from sqlalchemy import Connection, text
 from stores import Stores
-from tm.audience import KEYWORDS, STREAM, rate_flashing, rate_words
+from tm.audience import KEYWORDS, STREAM, Rated, audience, rate_flashing, rate_words
 from tm.decode import decode_pending
 from tm.features import extract_artifact, pending_features
 from tm.text_layer import pending_text, read_artifact
@@ -82,3 +82,20 @@ def test_a_new_version_supersedes_the_earlier_one(
         ("language", True, "16", KEYWORDS),
         ("sexual", False, None, KEYWORDS),
     ]
+
+
+@pytest.mark.parametrize(
+    ("rated", "shown"),
+    [
+        (None, "12"),  # no program found anything
+        (Rated("3", reviewed=False), "12"),  # a program no longer finds anything
+        (Rated("7", reviewed=False), "12"),
+        (Rated("16", reviewed=False), "16"),
+        (Rated("3", reviewed=True), "3"),
+        (Rated("withheld", reviewed=True), "withheld"),
+    ],
+)
+def test_an_unreviewed_file_is_shown_at_twelve_at_the_least(
+    rated: Rated | None, shown: str
+) -> None:
+    assert audience(rated) == shown

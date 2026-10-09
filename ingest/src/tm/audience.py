@@ -18,13 +18,14 @@ from __future__ import annotations
 
 from collections import Counter
 from collections.abc import Iterable
+from dataclasses import dataclass
 
 from sqlalchemy import Connection, text
 from tm_analysis.ratings import infer
 from tm_analysis.versions import FEATURES_VERSION, RATING_VERSION, TEXT_VERSION
 from tm_render.versions import DECODER_VERSION
 
-GRID_VERSION = 1  # corpus/ratings/grid.yaml
+GRID_VERSION = 2  # corpus/ratings/grid.yaml
 KEYWORDS = f"algo:keywords@{RATING_VERSION}"
 STREAM = "algo:stream@1"  # its rule is the FLASHING query below
 REDRAWN = 0.3  # share of writes on an already written cell: an animation (works note)
@@ -136,3 +137,28 @@ def rate_flashing(conn: Connection) -> int:
 
 def _texts(name: str, title: str | None, lines: Iterable[str]) -> list[str]:
     return [name, title or "", *lines]
+
+
+@dataclass(frozen=True)
+class Rated:
+    """A file's row in `work_audience`."""
+
+    level: str
+    reviewed: bool
+
+
+LEVELS = ("3", "7", "12", "16", "18", "withheld")
+UNREVIEWED_FLOOR = "12"  # grid rule 4 (v2, a trial): never lower until a person reviews
+
+
+def audience(rated: Rated | None) -> str:
+    """The level a file is shown at. Applied by `tm export` and the API, never by the frontend.
+
+    A file no person has reviewed is shown at its inferred level, and at 12 at the least, even
+    when no program found anything in it (no row at all).
+    """
+    if rated is None:
+        return UNREVIEWED_FLOOR
+    if rated.reviewed:
+        return rated.level
+    return max(rated.level, UNREVIEWED_FLOOR, key=LEVELS.index)

@@ -2,7 +2,7 @@
 SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 SPDX-License-Identifier: CC-BY-4.0
 -->
-# Grille des publics (v1)
+# Grille des publics (v2)
 
 [English version](audience-grid.md)
 
@@ -41,6 +41,6 @@ Ce que le musée montre, et à qui. Adaptée de PEGI, le consensus européen sur
 1. Le niveau d'une œuvre est le plus haut niveau parmi ses descripteurs. Un cartel peut expliquer une œuvre, jamais abaisser son niveau.
 2. La grille classe ce qu'une œuvre montre, dans son temps et son contexte, pas la personne qui l'a faite. Un descripteur s'applique à une œuvre, jamais à une personne.
 3. Chaque descripteur est une assertion avec son auteur. Un programme peut le déduire ; un relecteur nommé le confirme ou le rejette ; l'artiste peut le déclarer. Rien n'est effacé, l'histoire d'un classement reste visible.
-4. Tant qu'une personne ne l'a pas relu, un descripteur déduit par un programme compte. Une œuvre que personne n'a relue est « pas encore classée » et n'est montrée que là où le 16 l'est.
+4. Tant qu'une personne ne l'a pas relu, un descripteur déduit par un programme compte. Une œuvre que personne n'a relue et où aucun programme ne trouve rien est montrée jusqu'à 12, jamais en dessous ; c'est un essai, surveillé par un échantillon relu par des personnes, et il s'arrête si plus d'une œuvre sur 100 de ce type appelle en fait 16 ou plus.
 5. Les niveaux sont appliqués par le serveur quand il exporte et sert les œuvres, jamais par la page dans le navigateur.
 6. Chacun peut demander qu'une œuvre soit reclassée, avec le même formulaire que pour un retrait.

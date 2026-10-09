@@ -6,7 +6,7 @@
 # games and whose marks belong to it. This file is the single source: the badges, the grid
 # documents (docs/audience-grid*.md) and the database vocabularies are derived from it, and CI
 # checks that they agree.
-version: 1
+version: 2
 
 # Ages at which a work may be shown. A work's level is the highest level among its descriptors.
 # Colours are indexes in the VGA palette of the works themselves.
@@ -186,8 +186,8 @@ rules:
     fr: La grille classe ce qu'une œuvre montre, dans son temps et son contexte, pas la personne qui l'a faite. Un descripteur s'applique à une œuvre, jamais à une personne.
   - en: Every descriptor is an assertion with its author. A program may infer it; a named reviewer confirms or rejects it; the artist may declare it. Nothing is erased, so the history of a rating stays visible.
     fr: Chaque descripteur est une assertion avec son auteur. Un programme peut le déduire ; un relecteur nommé le confirme ou le rejette ; l'artiste peut le déclarer. Rien n'est effacé, l'histoire d'un classement reste visible.
-  - en: Until a person has reviewed it, a descriptor inferred by a program counts. A work no one has reviewed is "not rated yet" and is shown only where 16 is.
-    fr: Tant qu'une personne ne l'a pas relu, un descripteur déduit par un programme compte. Une œuvre que personne n'a relue est « pas encore classée » et n'est montrée que là où le 16 l'est.
+  - en: Until a person has reviewed it, a descriptor inferred by a program counts. A work no one has reviewed and in which no program finds anything is shown up to 12, never lower; this is a trial, watched by a sample reviewed by people, and it ends if more than 1 in 100 such works turns out to call for 16 or more.
+    fr: Tant qu'une personne ne l'a pas relu, un descripteur déduit par un programme compte. Une œuvre que personne n'a relue et où aucun programme ne trouve rien est montrée jusqu'à 12, jamais en dessous ; c'est un essai, surveillé par un échantillon relu par des personnes, et il s'arrête si plus d'une œuvre sur 100 de ce type appelle en fait 16 ou plus.
   - en: Levels are applied by the server when it exports and serves works, never by the page in the browser.
     fr: Les niveaux sont appliqués par le serveur quand il exporte et sert les œuvres, jamais par la page dans le navigateur.
   - en: Anyone can ask for a work to be rated again, with the same form as for withdrawal.
