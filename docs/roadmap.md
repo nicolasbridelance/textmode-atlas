@@ -65,6 +65,9 @@ Later, deliberately (nothing depends on them yet):
 | Work screen: profile switch and authentic level, modem-speed playback, zoom to the cell, draw-order layer | after the first version; spike 0002 before the playback | the first version stands without them |
 | Visual regression screenshots of the golden artifacts | after the first work screen | the golden pixels are already pinned in CI |
 | Golden artifact #2 (blink, iCE, 8 px cells) | next renderer change | spike 0001 checked these paths on real packs |
+| Near-duplicates beyond bytes: same grid (works v5: 84,104 decoded files, 83,172 grids), same grid but SAUCE, cell similarity, perceptual hash of the rendering (leads I40) | before M4 counts and before any "unique works" figure | byte identity is enough for storage; counts of works need the next levels |
+| White-background reading: an `interpretation` profile (palette mapping, not the conservation PNG), tested by content kind and colour family before anything is shown (leads I41, spike 0004) | after the first work screen | the screen stands on the authentic and conservation levels |
+| A vision model as a reader of the works: describe, then comment, blind or with context, at several sizes; marked `interpretation` / `algo:` (invariant 8), local open-weight models only until rights allow more (leads I42, Q33, spike 0005) | after D1 by hand, which gives the human descriptions to compare with | nothing in M2–M3 depends on it |
 | M1 schema test by hand | after D1 | real packs test the schema first; M1 then covers what they do not (BBS, radios, testimonies) |
 | Offline copy of the originals and a database export (the foundation document's three copies start in production) | before the first hand-made records (M1) or the first source beyond 16colo | 16colo still holds every original, and every `tm` command is idempotent: the local corpus can be rebuilt from the mirror. Only hand-entered records would be lost |
 | Preservation package: originals laid out as OCFL objects with JSON metadata, readable without our database; published spec of the grid format | ADR before M4 | until then the database is the only index of the store, which is fine while it can be rebuilt |
@@ -106,6 +109,8 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 | --- | --- | --- | --- |
 | 0002 | Can a canvas draw a 500-line ANSI at cell zoom and modem speed at 60 fps on a mid-range phone? | 2 h | modem-speed playback |
 | 0003 | Can Paraglide build offline (vendored inlang plugins)? | 1 h | known debt below |
+| 0004 | Can a white background keep a work legible and faithful? Palette mappings (inverted value, swapped black/white, ink on paper) on 30 works across content kinds and colour families, judged side by side | 3 h | white-background profile |
+| 0005 | Does a vision model see what an ANSI shows? The ten Calvin and Hobbes works of works v5 (title or text says so) and controls, blind then with context, at 4 sizes, PNG and JPEG: recognition rate, and what the descriptions get wrong | 4 h | any model-written text on the site |
 
 ## M0 tasks that need a person (Nicolas)
 
