@@ -75,6 +75,8 @@ Later, deliberately (nothing depends on them yet):
 Every question, hypothesis, idea and curiosity is written in [leads.md](leads.md) when it comes,
 even when it would lead too far; a lead taken up moves here or into a study. Next in line:
 
+- I25, the 331 textfiles.com packs without a 16colo namesake: the fastest new source
+  ([register](sources/README.md)).
 - I2 is done (text layer v2, `tm text`, table `text` of `works` v4, explorer search). Next from
   it: classify lines (I22) and a greets graph (I23), signatures (Q12), a language detector (Q10).
 - I21, an author-signal benchmark: H3 explored on the train packs found a weak signal in
@@ -111,7 +113,7 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 - [x] Add `devcontainer` to the required checks of the `main` ruleset
 - [x] Repository description and topics
 
-- [ ] Before M4: contacts with 16colo.rs, Demozoo, IF Archive (access, API limits, terms); not needed before, packs and API are public. Access, limits and terms of 16colo are checked in its [source note](sources/16colo.md) (contact@16colo.rs)
+- [ ] Before M4: contacts with 16colo.rs, Demozoo, IF Archive (access, API limits, terms); not needed before, packs and API are public. Access, limits and terms are checked in the [source register](sources/README.md) and the notes on 16colo, Demozoo (daily dump, no data license stated: ask before republishing), textfiles.com and Wikipedia
 - [ ] Radios: Nectarine, SLAY Radio, Ericade, Kohina, BitJam (agreement, HTTPS stream); until then the site links out to the station instead of embedding its stream
 - [ ] First artists and groups for display permission
 - [ ] Before M3: inform 16colo and Demozoo of the project (Claude drafts, Nicolas sends)
@@ -132,5 +134,6 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 | Embedding tables not in the schema | their dimension depends on models not chosen yet | add with research workstream 1 |
 | About 1,600 pictures, programs and modules stamped with an ANSI SAUCE record were ingested as works before the fix (artifact rows are immutable) | they stay `single` works whose decoding is `binary_content`; catalogue counts of art include them | a correction mechanism for misclassified artifacts (an assertion, not an update), before M3 |
 | XBIN, BIN, RIP, ADF, IDF, PCBoard, Avatar and Tundra are recorded as `unsupported_format` | their works have no grid, so no rendering and no features | decoders by count of files in the catalogue; ASCII is read by the ANSI decoder, as ansilove does |
+| Planner estimates of the `work_split` view (an aggregate) are wrong by orders of magnitude, even after `analyze` | a filter `x in (subquery)` over a corpus-wide dataset query ran for minutes (D1 build) | write such filters as `= any(array(…))`, computed once; revisit if the views become tables |
 | The `web` CI job sometimes spends 20 minutes installing Playwright's system packages | slows every merge | cache the browsers, or install without `--with-deps` on a runner that has them |
 | OpenTofu for staging / production not written | needed from M4 | after the host decision |
