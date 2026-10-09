@@ -50,8 +50,10 @@ HOST, PORT = "127.0.0.1", 8737
 PAGE_SIZE = 120
 NEIGHBOURS = 10  # as the graph build (k), so that the wall and the graph agree
 SHA = re.compile(r"^[0-9a-f]{64}$")
+SEED = re.compile(r"^[0-9A-Za-z_-]{1,32}$")
+DEFAULT_SEED = "explorer"  # the shuffle every visitor sees first
 ORDERS = {
-    "random": "hash(sha256 || 'explorer')",
+    "random": "hash(sha256 || ?)",  # shuffled by the seed (`_seed`)
     "year": "year, pack, path",
     "colours": "n_colors desc nulls last",
     "entropy": "glyph_entropy desc nulls last",
@@ -176,7 +178,7 @@ class Corpus:
             "(select text from lines l where l.sha256 = w.sha256 and folded like ?"
             " order by row limit 1)"
         )
-        order = ORDERS.get(query.get("order", "random"), ORDERS["random"])
+        order, order_params = _order(query)
         offset = max(0, int(query.get("offset", "0")))
         total = self.db.cursor().execute(f"select count(*) from w where {where}", params)
         total = total.fetchone()
@@ -187,9 +189,13 @@ class Corpus:
             " (select shown from visit_rules v where v.sha256 = w.sha256) as display,"
             f" {hit if words else 'null'} as hit from w"
             f" where {where} order by {order}, sha256 limit {PAGE_SIZE} offset {offset}",
-            ([f"%{words}%"] if words else []) + params,
+            ([f"%{words}%"] if words else []) + params + order_params,
         )
         return {"total": total[0] if total else 0, "offset": offset, "works": works}
+
+    def surprise(self, query: dict[str, str]) -> dict[str, str] | None:
+        """One work drawn by the seed among the filtered works whose files may be shown."""
+        return surprise(self.db, query)
 
     def work(self, sha: str) -> dict[str, Any] | None:
         found = self.rows("select * from w where sha256 = ?", [sha])
@@ -334,6 +340,33 @@ class Corpus:
         return {"works": entries}
 
 
+def _seed(query: dict[str, str]) -> str:
+    seed = query.get("seed") or DEFAULT_SEED
+    if not SEED.match(seed):
+        raise ValueError("seed: 1 to 32 letters, digits, - or _")
+    return seed
+
+
+def _order(query: dict[str, str]) -> tuple[str, list[Any]]:
+    """The wall's order and its parameters: `random` is a shuffle a seed makes reproducible."""
+    name = query.get("order") or "random"
+    order = ORDERS.get(name, ORDERS["random"])
+    return order, [_seed(query)] if order == ORDERS["random"] else []
+
+
+def surprise(db: duckdb.DuckDBPyConnection, query: dict[str, str]) -> dict[str, str] | None:
+    """The first work of the seeded shuffle that is decoded and may be shown with its files."""
+    where, params = _conditions(query)
+    seed = _seed(query)
+    found = db.execute(
+        "select sha256 from w join visit_rules v using (sha256)"
+        f" where {where} and v.shown = 'files' and w.decoding = 'ok'"
+        " order by hash(sha256 || ?), sha256 limit 1",
+        [*params, seed],
+    ).fetchone()
+    return {"sha256": found[0], "seed": seed} if found else None
+
+
 def _fold(text: str) -> str:
     """Lower case without accents, as `lines.folded`: `nao` finds `não`."""
     decomposed = unicodedata.normalize("NFKD", text.strip().lower())
@@ -384,18 +417,27 @@ class Handler(BaseHTTPRequestHandler):
             self.route_files(parts[1:])
             return
         match parts:
+            case ["api", *_]:
+                self.route_api(parts, query)
+            case ["image", kind, sha] if SHA.match(sha) and kind in (*MODES, "full"):
+                self.png(_image(self.corpus, sha, kind))
+            case _:
+                self.route_page(parts)
+
+    def route_api(self, parts: list[str], query: dict[str, str]) -> None:
+        match parts:
             case ["api", "graph", _]:
                 self.route_graph(parts)
             case ["api", "facets"]:
                 self.json(self.corpus.facets())
             case ["api", "works"]:
                 self.json(self.corpus.wall(query))
+            case ["api", "surprise"]:
+                self.json(self.corpus.surprise(query))
             case ["api", "work", sha] if SHA.match(sha):
                 self.json(self.corpus.work(sha))
             case ["api", "text", sha] if SHA.match(sha):
                 self.json(self.corpus.text(sha))
-            case ["image", kind, sha] if SHA.match(sha) and kind in (*MODES, "full"):
-                self.png(_image(self.corpus, sha, kind))
             case _:
                 self.route_page(parts)
 

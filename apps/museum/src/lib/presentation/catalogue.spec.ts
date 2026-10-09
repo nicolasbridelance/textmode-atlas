@@ -81,4 +81,14 @@ describe('public collection search', () => {
 		expect(result.get('format')).toBe('ansi');
 		expect(result.has('author')).toBe(false);
 	});
+	it('shuffles by the seed when no order is chosen, and sends the seed to the corpus', () => {
+		const seeded = { ...emptyFilters(), seed: 'abc234' };
+		const once = filterEntries(works, seeded).map((entry) => entry.sha256);
+		expect(filterEntries(works, seeded).map((entry) => entry.sha256)).toEqual(once);
+		expect([...once].sort()).toEqual(['a', 'b', 'c']);
+		expect(filterEntries(works, { ...seeded, order: 'year' }).map((entry) => entry.sha256)).toEqual(
+			['a', 'c', 'b']
+		);
+		expect(new URLSearchParams(researchQuery(seeded)).get('seed')).toBe('abc234');
+	});
 });

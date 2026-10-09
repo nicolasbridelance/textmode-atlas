@@ -158,3 +158,33 @@ test('a failed corpus request is visible and reset retries it', async ({ page })
 	await page.locator('.reset').click();
 	await expect(page.locator('.pin')).toHaveCount(3);
 });
+
+test('chance: reshuffle keeps the filters, and a draw opens one work', async ({ page }) => {
+	await files(page);
+	let drawn = '';
+	await page.route('**/api/surprise?*', (route) => {
+		const query = new URL(route.request().url()).searchParams;
+		drawn = `${query.get('year')}:${query.get('seed')}`;
+		return route.fulfill({
+			contentType: 'application/json',
+			body: JSON.stringify({ sha256: 'c'.repeat(64), seed: query.get('seed') })
+		});
+	});
+	await page.goto('/explore?view=pinterest&year=1996');
+	await expect(page.locator('.pin')).toHaveCount(3);
+	await page.locator('.chance button').first().click();
+	await expect(page).toHaveURL(/seed=[a-z2-9]{6}/);
+	await expect(page).toHaveURL(/year=1996/);
+	await expect(page.locator('.filter-chips button')).toHaveCount(1); // the seed is no filter
+	await page.locator('.chance button').last().click();
+	await expect(page).toHaveURL(/\/work\?w=c{64}/);
+	expect(drawn).toMatch(/^1996:[a-z2-9]{6}$/);
+});
+
+test('chance in the public collection draws among the listed works', async ({ page }) => {
+	await files(page);
+	await page.goto('/explore?view=pinterest&source=public');
+	await expect(page.locator('.pin')).toHaveCount(3);
+	await page.locator('.chance button').last().click();
+	await expect(page).toHaveURL(/\/work\?w=(a{64}|b{64}|c{64})/);
+});
