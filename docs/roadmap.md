@@ -59,6 +59,46 @@ Next, in this order:
 8. [x] Work screen, first version: canvas renderer from the grid and the bitmap font (pixel for pixel the conservation PNG), arrival at 2,400 baud, credit as signed, audience badges, source link, "withdraw or claim" on every record (ADR 0009); `/work?w=<sha256>`
    - [ ] Owner's choices on the [museography proposal](museography.md) (rooms, games, feeds): the work screen is its first room
 
+Session 8 order (2026-10-09, owner's requests: a viewer that is a snapshot of the visit, the
+nearest-works graph, Wikipedia, the words in the works). Each step is one branch; a step that
+needs the one before says so.
+
+9. [ ] Explorer thumbnails: "best fit" (the whole work scaled into the card, since most works are
+   long portraits and the first screen misrepresents them) with the first screen as an option, and
+   the whole work in a corner of a first-screen card (I47). Small, and every later look at the
+   corpus goes through it.
+10. [ ] Wikipedia and Wikidata, downloaded politely: the articles of the source note in every
+    language that has one, with revision ids, and their Wikidata items, into `data/wikipedia/`
+    (local, CC BY-SA text never republished), one request at a time with our User-Agent (I50).
+    Runs in the background while the next steps go on.
+11. [ ] Work screen, second pass: a snapshot of what visitors will get (foundation document,
+    "Expérience du visiteur"; museography room 1). Entrance on a work (work of the day), five-line
+    label opening by levels (context, analysis, bytes), keys (`?`, space, arrows, `r`), full width
+    on a phone redrawn from the grid, zoom to the cell, the words of the work as text for screen
+    readers, ways out that need no new data (next in the pack, same author, same month);
+    typography and layout with care; checked in screenshots, desktop and phone, both locales.
+12. [ ] Nearest-works graph: k nearest neighbours on features v1 (standardized, versioned, train
+    packs), stored as a dataset table; studied as a social network: degree, communities,
+    homophily by year, group, archive, content kind, and country where Demozoo gives one; what
+    the projections show, written in an exploration note (I48, exploratory). Feeds I21.
+13. [ ] Corpus as a graph to explore (local research tool, not public): every work a node, edges
+    from step 12 (and pack, group, greets later), WebGL, thumbnails drawn on nodes when zoomed in,
+    a click opens the work (I49).
+14. [ ] Work screen: "nearest in style" as a way out, from step 12, published by `tm export`
+    (marked as computed, dotted, foundation document).
+15. [ ] Reading the words in the works, plan then first layer: zones of text in the grid, line
+    classes (I22: greets, credits, BBS ad, news, dedication, prose), entities (handles, groups,
+    BBS, phone numbers, dates, places) as `inferred` assertions; lettering drawn in blocks read
+    against TheDraw fonts; a per-work reading exported as Parquet for NLP and as Markdown for
+    people (I51). ADR before code.
+16. [ ] Nomenclature from Wikipedia and Wikidata: a controlled vocabulary (kinds, techniques,
+    formats, tools, groups) with QIDs and labels in every language, as data in `corpus/`, used by
+    the records and the explorer (I27, I50). ADR before code.
+17. [ ] Where is the adult material? An exploratory note on Q36: what keyword inference misses,
+    what dedicated collections exist (textfiles.com, Defacto2, Discmaster), what 16colo kept.
+18. [ ] Then, as planned before: the review queue (D2) for inferred ratings and the rule 4
+    sample; Discmaster over the 16colo archives (I33).
+
 Later, deliberately (nothing depends on them yet):
 
 | Item | When | Why it can wait |
