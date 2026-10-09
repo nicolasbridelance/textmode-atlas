@@ -54,12 +54,14 @@ Readings, all to be tested on the test packs before they are claimed:
 1. **Technique first.** 95% of edges stay within a content kind, and the communities are kinds
    cut into palettes and textures (below). Features v1 mostly measure which glyph classes and
    which colours a work uses, so this is partly what the instrument can see.
-2. **The artist survives the controls; the group mostly does not.** Within the same kind and
+2. **The artist survives the controls; the group signal is weak.** Within the same kind and
    era, neighbours share an author 6.7 times more often than chance. They share a group 1.8
-   times more often, and a pack 2.4 times. A hand is visible in these crude measures, while a
-   "house style" of a group barely is. This matches H3 explored in works.md (2.3% same author
-   among nearest works, 0.6% by chance) and is the baseline any style representation has to
-   beat (I21).
+   times more often, and a pack 2.4 times. A hand is visible in these crude measures; a group's
+   "house style" is a weak signal under features v1, which is not evidence that groups had
+   none. Homophily is not classification accuracy either: whether a work's author or group can
+   be predicted needs its own test on held-out packs, with duplicate grids controlled. This
+   matches H3 explored in works.md (2.3% same author among nearest works, 0.6% by chance) and is
+   the baseline any style representation has to beat (I21).
 3. **Within an era, the year adds nothing.** Neighbours share their exact year less often than
    two works of the same kind and five-year era picked at random (lift 0.7). Change over time,
    as these features see it, is slow; the eras of works.md are the right grain.
@@ -127,6 +129,8 @@ What they show:
 
 ## Cautions
 
+- Communities are visual similarity under one representation: never schools, nations or
+  attributions.
 - Train packs only, one representation, one k, one seed. Leiden and UMAP are stochastic; the
   seeds make this run reproducible, not the partition true.
 - The same artwork saved twice with other bytes counts twice (I40): 0.5% of edges join two

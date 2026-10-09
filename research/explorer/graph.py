@@ -27,6 +27,7 @@ VGA = np.array(
     dtype=np.float64,
 )  # fmt: skip
 INK_FLOOR = 60  # the darkest ink a node may have, so that it still glows on black
+ASSETS = ("manifest.json", "nodes.parquet", "edges.parquet", "communities.json")
 
 
 class Graph:
@@ -36,29 +37,54 @@ class Graph:
 
     @staticmethod
     def exists(build: Path) -> bool:
-        return (build / "nodes.parquet").exists()
+        return all((build / name).exists() for name in ASSETS)
 
-    def _rows(self) -> list[tuple[Any, ...]]:
-        return (
+    def check(self, works_manifest: dict[str, Any]) -> None:
+        """Fail fast when the graph was built from another works dataset than the explorer's:
+        its nodes would not match the wall's works."""
+        built_from = json.loads((self.build / "manifest.json").read_text())["works"]["version"]
+        if built_from != works_manifest["version"]:
+            reads = works_manifest["version"]
+            raise SystemExit(f"graph from works v{built_from}, explorer reads v{reads}: just graph")
+
+    def neighbours(self) -> dict[str, list[str]]:
+        """Each work's nearest works in the graph, nearest first."""
+        found: dict[str, list[str]] = {}
+        for source, target in (
             duckdb.connect()
             .execute(
-                "select n.sha256, n.x, n.y, n.community, n.in_degree, w.year, w.content_kind,"
-                " w.sauce_group, w.sauce_author, w.pack, w.path, w.archive, w.sauce_title,"
-                " f.fg_hist"
-                f" from '{self.build / 'nodes.parquet'}' n"
-                f" join '{self.works / 'works.parquet'}' w using (sha256)"
-                f" join '{self.works / 'features.parquet'}' f using (sha256)"
-                " order by n.sha256"
+                f"select source, target from '{self.build / 'edges.parquet'}' order by source, rank"
             )
             .fetchall()
-        )
+        ):
+            found.setdefault(source, []).append(target)
+        return found
+
+    def _rows(self) -> list[tuple[Any, ...]]:
+        """Every node in the order of the edge indices, with its metadata: a left join, so that
+        a work missing from the dataset cannot shift the indices; any mismatch fails."""
+        db = duckdb.connect()
+        count = db.execute(f"select count(*) from '{self.build / 'nodes.parquet'}'").fetchone()
+        rows = db.execute(
+            "select n.sha256, n.x, n.y, n.community, n.in_degree, w.year, w.content_kind,"
+            " w.sauce_group, w.sauce_author, w.pack, w.path, w.archive, w.sauce_title,"
+            " f.fg_hist"
+            f" from '{self.build / 'nodes.parquet'}' n"
+            f" left join '{self.works / 'works.parquet'}' w using (sha256)"
+            f" left join '{self.works / 'features.parquet'}' f using (sha256)"
+            " order by n.sha256"
+        ).fetchall()
+        if count is None or len(rows) != count[0]:
+            raise ValueError("graph nodes and works do not join one to one: rebuild the graph")
+        return rows
 
     @cached_property
     def nodes(self) -> bytes:
         """Columns of every node as JSON: one list per field, in the order of the edges."""
         rows = self._rows()
         columns = list(zip(*rows, strict=True))
-        ink = _ink(np.array(columns[13], dtype=np.float64))
+        hists = [hist if hist is not None else [0] * len(VGA) for hist in columns[13]]
+        ink = _ink(np.array(hists, dtype=np.float64))
         names = ["sha256", "x", "y", "community", "in_degree", "year", "kind", "group",
                  "author", "pack", "path", "archive", "title"]  # fmt: skip
         payload: dict[str, Any] = {name: list(columns[i]) for i, name in enumerate(names)}
