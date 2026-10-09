@@ -15,7 +15,8 @@ packs nobody has examined.
 
 ## Composition
 
-- `works`: one row per art file of the **train** packs (view `work_split`): metadata, SAUCE as
+- `works`: one row per art file of the **train** packs of every scene archive (view
+  `work_split`, ADR 0018): metadata, the archive of its pack and every archive holding it, SAUCE as
   recorded, decoding, and the key of its conservation rendering once `tm render` has run.
 - `features`: one row per decoded grid of those files, from the feature extractor
   (`manifest.json` names its version; definitions in ADR 0016). Published as `features.parquet`.
@@ -29,10 +30,12 @@ packs nobody has examined.
 
 ## Collection and processing
 
-- Packs come from 16colo's mirror, as released by the scene ([source note](../../docs/sources/16colo.md)).
+- Packs come from the mirrors of 16colo and, from v5, textfiles.com, as released by the scene
+  ([source notes](../../docs/sources/README.md)). A file met in both archives is placed in its
+  earliest pack, 16colo first in the same year.
 - **Split.** A pack is `test` when the first byte of its archive's SHA-256 is below 52 (about one
-  pack in five), the same rule as dataset `catalogue`. A file is `train` only when every pack
-  holding it is `train`, so about a fifth of the works are left out, and stay unexamined
+  pack in five), the same rule as dataset `catalogue`, in every archive. A file is `train` only
+  when every pack holding it, in any archive, is `train`, so about a fifth of the works are left out, and stay unexamined
   ([research program](../../docs/research-program.md), rule 3).
 - ANSI and ASCII are decoded by the ANSI decoder; other formats carry `unsupported_format` and
   have no features. A SAUCE record with corrupt binary fields gives no width (ADR 0015).
@@ -43,7 +46,7 @@ packs nobody has examined.
 
 - Coverage: as for `catalogue`; 16colo holds what was submitted to it, and the gap register is
   empty, so the coverage of this dataset is unknown.
-- `year` is the year 16colo files the pack under, not a release date.
+- `year` is the year the archive files the pack under, not a release date.
 - The text layer reads letters cell by cell: a word drawn in blocks or in a custom font is not
   text to it, letters used as shading are; accented letters outside CP437 (ã, õ, Polish or
   Nordic letters in other code pages) come out as other glyphs or not at all, and tags shorter than three characters (`rs`) are

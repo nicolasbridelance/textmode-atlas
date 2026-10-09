@@ -3,8 +3,8 @@
 #
 # Built by `tm dataset build works`. Datasheet: DATASHEET.md.
 name: works
-version: "4"
-description: The art files of the 16colo train packs, with their decoding, rendering, grid features and text layer.
+version: "5"
+description: The art files of the train packs of every scene archive, with their decoding, rendering, grid features and text layer.
 
 tables:
   works:
@@ -13,10 +13,13 @@ tables:
     columns:
       - { name: sha256, type: string, description: SHA-256 of the art file }
       - { name: pack_sha256, type: string, description: "The earliest pack holding the file (by year, then path)" }
+      - { name: archive, type: string, description: "Scene archive of that pack: 16colo, textfiles" }
+      - { name: pack_url, type: string, description: "Where that archive shows the pack (scene publication, ADR 0009)" }
       - { name: pack, type: string, description: "Pack name: the archive name without extension" }
-      - { name: year, type: int32, description: "Year 16colo files that pack under; null outside a year directory" }
+      - { name: year, type: int32, description: "Year the archive files that pack under; null outside a year directory" }
       - { name: path, type: string, description: Path inside that pack }
       - { name: packs, type: int32, description: Packs holding the same file }
+      - { name: archives, type: "list<string>", description: "Scene archives holding the file, in any of their packs" }
       - { name: format, type: string, description: "Art format: ansi, ascii, xbin, bin, rip…" }
       - { name: bytes, type: int64, description: Size of the file }
       - { name: sauce_title, type: string, description: SAUCE title }

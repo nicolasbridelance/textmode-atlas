@@ -29,7 +29,7 @@ building and checking instruments, not for estimating anything about the corpus 
 ## Collection and processing
 
 - **Frame** ([frame.sql](frame.sql)): train packs of 16colo whose archive was read whole, 4,559
-  on 2026-10-09. Strata: seven eras of filing year (1990–93, 1994–95, 1996–97, 1998–99, 2000–04,
+  on 2026-10-09; other archives are left out by name (ADR 0018, v2: same sample, new columns). Strata: seven eras of filing year (1990–93, 1994–95, 1996–97, 1998–99, 2000–04,
   2005–12, 2013–26), bounded by the mass of packs.
 - **Draw**: three packs per era, systematic from a random start (seed 20261009) over the packs
   sorted by dominant content kind, then by number of files. Each drawn pack has inclusion

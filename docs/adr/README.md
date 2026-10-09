@@ -56,3 +56,4 @@ What becomes easier, what becomes harder, what we must now do.
 | [0015](0015-set-aside-corrupt-sauce-records.md) | Set aside SAUCE records whose binary fields are corrupt | Accepted |
 | [0016](0016-features-in-the-database.md) | Store grid features in a database table, publish them as `features.parquet` | Accepted |
 | [0017](0017-d1-pilot-sampling.md) | Draw the D1 pilot by era, three packs per stratum, systematically within it | Accepted |
+| [0018](0018-split-every-archive.md) | Split the packs of every scene archive by the same rule, and name the archive | Accepted |

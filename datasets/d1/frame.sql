@@ -2,7 +2,8 @@
 -- SPDX-License-Identifier: CC0-1.0
 --
 -- Sampling frame of D1 (ADR 0017): the train packs of 16colo whose archive was read whole, one
--- row per pack. `era` is the stratum, bounded by the mass of packs (works note, constraint 2;
+-- row per pack; other archives are left out by name, since the sample was drawn on 16colo alone
+-- (ADR 0018). `era` is the stratum, bounded by the mass of packs (works note, constraint 2;
 -- archives note); `dominant_kind` and `members` order the packs inside a stratum, so that the
 -- systematic draw spreads over content and size.
 with packs as (
@@ -13,7 +14,7 @@ with packs as (
   join version v on v.id = a.version_id
   join work w on w.id = v.work_id
   join expansion e on e.sha256 = a.sha256 and e.status = 'ok'
-  where p.split = 'train' and v.date_min is not null
+  where p.split = 'train' and p.archive = '16colo' and v.date_min is not null
 ),
 kinds as (
   select m.set_work_id,
