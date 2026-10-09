@@ -79,8 +79,8 @@ Later, deliberately (nothing depends on them yet):
 Every question, hypothesis, idea and curiosity is written in [leads.md](leads.md) when it comes,
 even when it would lead too far; a lead taken up moves here or into a study. Next in line:
 
-- I25, the 331 textfiles.com packs without a 16colo namesake: the fastest new source
-  ([register](sources/README.md)).
+- I33, Discmaster: search the 16colo archives by hash for dated copies on CD-ROMs and FTP sites,
+  the independent witness Q21 needs ([register](sources/README.md)). I25 (textfiles) is done.
 - I2 is done (text layer v2, `tm text`, table `text` of `works` v4, explorer search). Next from
   it: classify lines (I22) and a greets graph (I23), signatures (Q12), a language detector (Q10).
 - I21, an author-signal benchmark: H3 explored on the train packs found a weak signal in
