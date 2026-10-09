@@ -17,6 +17,7 @@ import html
 import re
 import sys
 import time
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -60,7 +61,7 @@ def main() -> None:
             continue
         target.parent.mkdir(exist_ok=True)
         try:
-            data = fetch(f"{BASE}{year}/{name}")
+            data = fetch(f"{BASE}{year}/{urllib.parse.quote(name)}")  # `#` in names
         except OSError as err:
             print(f"failed {year}/{name}: {err}")
             continue
