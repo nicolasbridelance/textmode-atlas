@@ -62,3 +62,30 @@ PEGI, so we neither use them nor imitate them.
 - Nothing is rated yet. The next steps are a keyword pass that writes inferred ratings, a
   review queue in D2, and `audience()` beside `can_display()` in `tm export` and the API,
   following the rooms and the age check that ADR 0019 leaves to the owner and the lawyer.
+
+## Amendment 1 (2026-10-09): rule 4 becomes a watched trial
+
+The first wording of rule 4 counted every unreviewed work as 16, which leaves the rooms for
+every audience empty until people have reviewed a corpus of 115,308 files. The owner accepted a
+relaxation as a trial, "with watching that it is acceptable":
+
+- **Rule (grid v2).** A work no one has reviewed is shown at its inferred level, and at 12 at
+  the least. In particular, a work in which no program finds anything is shown up to 12, never
+  lower. `audience()` (`tm.audience`, held at 100% branch coverage) applies it.
+- **What we measure.** The escape rate: among works shown at 12 without review because no
+  program found anything, the share that a person rates 16 or more. Drawn nudity without a word
+  is the expected case.
+- **How.** A random sample of those works, drawn with a fixed seed and stratified by era as D1
+  is, reviewed by named people who do not see what the programs found. The reviews are written
+  as `reviewed` ratings, so the sample also rates the works it reads.
+- **Threshold.** The trial holds while the one-sided 95% upper bound (Clopper–Pearson) of the
+  escape rate stays at or below **1%**. That means no escape in 299 reviewed works, at most one
+  in 473, two in 628, or three in 773. Above that, the strict rule returns, or a second
+  program (an image classifier, lead I46) has to filter first.
+- **Hard stop.** One work in the sample that calls for `withheld`, or for 18 for sexual content,
+  pauses the trial until the method is reviewed.
+- **Visitors.** Requests to rate a work again are answered one by one. Their rate is followed
+  per 10,000 works shown, but it is not the threshold: few visitors report. A cluster on one
+  pack or group triggers an audit of that pack.
+- **When.** Nothing is public yet. The first sample is reviewed before `tm export` publishes
+  any work at 12 or below.
