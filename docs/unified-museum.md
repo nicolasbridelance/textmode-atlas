@@ -20,6 +20,10 @@ is a compatibility alias. The existing machine-local Wi-Fi forwarding still work
   header directly links the three discovery modes, Collection, Constellation and
   Research. There is no second layout menu or separate research collection switch.
   All open the same work screen.
+  Chance: without a chosen order the collection is shuffled by `seed` (default
+  `explorer`, so first visits agree); "Reshuffle" writes a new seed in the URL, so a
+  shuffle can be shared. "A work at random" asks `/api/surprise?<filters>&seed=` for
+  one decoded work whose files may be shown, within the current filters.
 - `/fr/constellation` and `/constellation`: the scientific graph, its communities,
   neighbourhoods and existing interactive views. Selecting a work opens the shared screen.
 - `/fr/research` and `/research`: existing dated reports and research programme.
