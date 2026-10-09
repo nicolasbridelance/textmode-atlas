@@ -15,7 +15,8 @@
 		"test:unit": "vitest",
 		"test": "vitest --run",
 		"test:e2e": "playwright test",
-		"screenshots": "node scripts/screenshots.ts"
+		"screenshots": "node scripts/screenshots.ts",
+		"lexicon:check": "node scripts/lexicon.spec.ts"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",

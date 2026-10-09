@@ -124,3 +124,7 @@ lexicon *args:
 # Whole-token concordance with optional year and raw SAUCE credit filters
 concordance *args:
     uv run --group research python research/lexicon/concordance.py {{args}}
+
+# Check the offline lexical report on desktop and mobile, and save screenshots
+lexicon-shots:
+    pnpm --filter museum run lexicon:check

@@ -15,6 +15,7 @@ just lexicon
 # Open datasets/build/lexicon/1/output/report.html in a browser; no server is needed.
 just concordance sysop --year-max 1993 --limit 10
 just concordance greets --group mistigris --limit 10
+just lexicon-shots  # needs the museum's installed Playwright browser
 ```
 
 The builder defaults to `datasets/build/works/5`, verifies both Parquet files against their
