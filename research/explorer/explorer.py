@@ -16,6 +16,7 @@ import json
 import logging
 import re
 import sys
+import unicodedata
 from functools import lru_cache
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -77,7 +78,7 @@ class Corpus:
             "create table w as select * from works left join features using (sha256, cols, rows)"
         )
         self.db.execute(  # the words written in the works, folded once for search (leads I2)
-            f"create table lines as select sha256, row, text, lower(text) as folded"
+            f"create table lines as select sha256, row, text, strip_accents(lower(text)) as folded"
             f" from '{build / 'text.parquet'}'"
         )
         cfg = settings()
@@ -133,7 +134,7 @@ class Corpus:
 
     def wall(self, query: dict[str, str]) -> dict[str, Any]:
         where, params = _conditions(query)
-        words = query.get("words", "").strip().lower()
+        words = _fold(query.get("words", ""))
         hit = (  # the first line that matches, shown on the card
             "(select text from lines l where l.sha256 = w.sha256 and folded like ?"
             " order by row limit 1)"
@@ -214,6 +215,12 @@ class Corpus:
         return Image.open(io.BytesIO(drawn.png))
 
 
+def _fold(text: str) -> str:
+    """Lower case without accents, as `lines.folded`: `nao` finds `não`."""
+    decomposed = unicodedata.normalize("NFKD", text.strip().lower())
+    return "".join(c for c in decomposed if not unicodedata.combining(c))
+
+
 def _conditions(query: dict[str, str]) -> tuple[str, list[Any]]:
     """The wall's filters as SQL conditions on `w`, with their parameters."""
     where, params = ["true"], []
@@ -230,7 +237,7 @@ def _conditions(query: dict[str, str]) -> tuple[str, list[Any]]:
             " like ? or lower(pack) like ? or lower(path) like ?)"
         )
         params.extend([f"%{text}%"] * 4)
-    if words := query.get("words", "").strip().lower():
+    if words := _fold(query.get("words", "")):
         where.append("sha256 in (select sha256 from lines where folded like ?)")
         params.append(f"%{words}%")
     return " and ".join(where), params

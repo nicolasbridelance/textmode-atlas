@@ -74,4 +74,4 @@ tables:
     columns:
       - { name: sha256, type: string, description: The art file (works.sha256) }
       - { name: row, type: int32, description: Grid row of the line }
-      - { name: text, type: string, description: "Printable ASCII cells that show, gaps of four spaces or more cut to three; only rows holding a word of three letters or digits (tm_analysis.text)" }
+      - { name: text, type: string, description: "Cells that show printable ASCII or a CP437 letter (é, ü, ñ, ß…), gaps of four spaces or more cut to three; only rows holding a word of three letters or digits, one of them ASCII (tm_analysis.text)" }

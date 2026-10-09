@@ -6,4 +6,4 @@
 """
 
 FEATURES_VERSION = "1"  # features.py
-TEXT_VERSION = "1"  # text.py
+TEXT_VERSION = "2"  # text.py

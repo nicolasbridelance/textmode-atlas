@@ -21,3 +21,8 @@ def test_wide_gaps_are_shortened_and_hidden_letters_dropped() -> None:
 
 def test_an_empty_grid_has_no_text() -> None:
     assert text_lines(Grid(80, 2, {})) == []
+
+
+def test_cp437_letters_are_kept_and_texture_is_not_text() -> None:
+    grid = decode("año é\r\nÑÑÑÑ ¢¢¢\r\nGrüße\r\n".encode("cp437")).grid
+    assert text_lines(grid) == [TextLine(0, "año é"), TextLine(2, "Grüße")]
