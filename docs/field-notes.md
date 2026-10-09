@@ -18,7 +18,7 @@ session"). Newest first.
 
 ## 2026-10-09 — Graffiti crews released artpacks
 
-**Train writers used the art scene's format.** Of the 289 textfiles.com archives that hold files
+**Train writers used the art scene's format.** Of the first 289 textfiles.com archives found to hold files
 16colo lacks, 168 are photo packs of graffiti, 1997–2000: Die Kranken Bomber's "Hannover
 Pieces" and "KVB Metro", Writaz Express's numbered "Photo Pack #08: Route 16 Cologne-Bonn",
 The Aeroholics' "Graffiti Pack #27: Chrome Series", Freeside's compilations from Brisbane, Omen's
@@ -45,7 +45,7 @@ second network, the Internet before the Web.*
 ## 2026-10-09 — The archives copy each other
 
 **Three archives, one lineage.** 16colo, textfiles.com's artscene and Demozoo all put the peak
-of artpacks in 1996–97 and halve by 2000. But 92% of textfiles' 3,989 artpacks have a pack of
+of artpacks in 1996–97 and halve by 2000. But 91% of textfiles' 3,989 artpacks have a pack of
 the same name in 16colo, and from 2000 on their yearly counts are nearly equal (199 and 199 in
 2000, 109 and 103 in 2004); Demozoo links a quarter of its artpacks to 16colo. The history of
 the scene's output has, so far, one witness copied three times. *Evidence: directory listings of
