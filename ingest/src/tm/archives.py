@@ -105,7 +105,7 @@ def _zip_recovered(path: Path, err: zipfile.BadZipFile) -> Expanded:
     listing = _run(["7zz", "l", "-slt", "-ba", "-tzip", str(path)])
     entries = [
         fields
-        for fields in map(_fields, listing.stdout.split(b"\n\n"))
+        for fields in map(_fields, listing.stdout.replace(b"\r\n", b"\n").split(b"\n\n"))
         if b"Path" in fields
         and fields.get(b"Folder") != b"+"
         and not fields.get(b"Attributes", b"").startswith(b"D")
@@ -148,7 +148,7 @@ def _sevenzip(path: Path) -> Expanded:
     listing = _run(["7zz", "l", "-slt", "-ba", str(path)])
     names = [
         _dos_name(block.split(b"\n", 1)[0].removeprefix(b"Path = "))
-        for block in listing.stdout.split(b"\n\n")
+        for block in listing.stdout.replace(b"\r\n", b"\n").split(b"\n\n")
         if block.startswith(b"Path = ") and b"\nAttributes = D" not in block
     ]
     with tempfile.TemporaryDirectory() as tmp:
@@ -194,9 +194,9 @@ def _dos_name(raw: bytes) -> str:
     """Tools pass DOS names through as raw bytes when they are not UTF-8: read those as CP437,
     the character set of the period, as Python does for ZIP names."""
     try:
-        return raw.decode("utf-8")
+        return raw.decode("utf-8").replace("\\", "/")
     except UnicodeDecodeError:
-        return raw.decode("cp437")
+        return raw.decode("cp437").replace("\\", "/")
 
 
 def _run(args: list[str]) -> subprocess.CompletedProcess[bytes]:

@@ -136,3 +136,7 @@ def test_an_unknown_format_is_unsupported(tmp_path: Path) -> None:
 def test_dos_names_are_read_as_cp437() -> None:
     assert archives._dos_name(b"art-core!/\xa1CE.MOD") == "art-core!/íCE.MOD"  # pyright: ignore[reportPrivateUsage]
     assert archives._dos_name("A∙C∙E.ANS".encode()) == "A∙C∙E.ANS"  # pyright: ignore[reportPrivateUsage]
+
+
+def test_dos_paths_use_portable_separators() -> None:
+    assert archives._dos_name(b"SUB\\FILE_ID.DIZ") == "SUB/FILE_ID.DIZ"  # pyright: ignore[reportPrivateUsage]
