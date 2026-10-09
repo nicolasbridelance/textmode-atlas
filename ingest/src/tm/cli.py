@@ -13,6 +13,7 @@ from sqlalchemy import create_engine
 from tm_render.conservation import MAX_SCALE, BitmapFont
 
 from tm import corpus as corpus_mod
+from tm import ratings
 from tm.config import settings
 from tm.datasets import DatasetError, build, draw_sample
 from tm.decode import decode_artifact, pending_artifacts
@@ -37,11 +38,13 @@ app.add_typer(dev_app, name="dev")
 app.add_typer(ingest_app, name="ingest")
 
 CorpusRoot = Annotated[Path, typer.Option(help="Root of the corpus/ directory.")]
+DocsRoot = Annotated[Path, typer.Option(help="Where the grid's pages are written.")]
+FONT = Path("ibm-vga-8x16.f16")
 
 
 @corpus_app.command("check")
-def corpus_check(root: CorpusRoot = Path("corpus")) -> None:
-    """Validate every profile, collection and the radio list."""
+def corpus_check(root: CorpusRoot = Path("corpus"), docs: DocsRoot = Path("docs")) -> None:
+    """Validate every corpus file, and check that what is derived from them is current."""
     errors = 0
     for path in corpus_mod.corpus_files(root):
         try:
@@ -60,6 +63,9 @@ def corpus_check(root: CorpusRoot = Path("corpus")) -> None:
     for name in stale:
         errors += 1
         typer.echo(f"✗ corpus/schema/{name} is out of date: run `tm corpus schema`", err=True)
+    for path in _stale_ratings(root, docs):
+        errors += 1
+        typer.echo(f"✗ {path} is out of date: run `tm corpus ratings`", err=True)
     if errors:
         raise typer.Exit(1)
 
@@ -71,6 +77,31 @@ def corpus_schema(root: CorpusRoot = Path("corpus")) -> None:
     for name, content in corpus_mod.json_schemas().items():
         (root / "schema" / name).write_text(content, encoding="utf-8")
         typer.echo(f"wrote corpus/schema/{name}")
+
+
+@corpus_app.command("ratings")
+def corpus_ratings(root: CorpusRoot = Path("corpus"), docs: DocsRoot = Path("docs")) -> None:
+    """Write the audience grid's badges and pages from corpus/ratings/grid.yaml."""
+    for path, content in _ratings_files(root, docs).items():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content, encoding="utf-8")
+        typer.echo(f"wrote {path}")
+
+
+def _ratings_files(root: Path, docs: Path) -> dict[Path, str]:
+    grid = corpus_mod.load_grid(root / "ratings" / "grid.yaml")
+    font = BitmapFont.load(root / "fonts" / FONT)
+    return ratings.written(grid, font, root, docs)
+
+
+def _stale_ratings(root: Path, docs: Path) -> list[Path]:
+    if not (root / "ratings" / "grid.yaml").exists():
+        return []
+    return [
+        path
+        for path, content in _ratings_files(root, docs).items()
+        if not path.exists() or path.read_text(encoding="utf-8") != content
+    ]
 
 
 @dataset_app.command("build")

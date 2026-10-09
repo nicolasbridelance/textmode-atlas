@@ -1,0 +1,239 @@
+{
+  "$defs": {
+    "Colours": {
+      "additionalProperties": false,
+      "properties": {
+        "background": {
+          "maximum": 15,
+          "minimum": 0,
+          "title": "Background",
+          "type": "integer"
+        },
+        "ink": {
+          "maximum": 15,
+          "minimum": 0,
+          "title": "Ink",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "background",
+        "ink"
+      ],
+      "title": "Colours",
+      "type": "object"
+    },
+    "Descriptor": {
+      "additionalProperties": false,
+      "description": "Something a work shows, and the level each degree of it calls for.",
+      "properties": {
+        "code": {
+          "pattern": "^[a-z]+(_[a-z]+)*$",
+          "title": "Code",
+          "type": "string"
+        },
+        "glyph": {
+          "maximum": 255,
+          "minimum": 0,
+          "title": "Glyph",
+          "type": "integer"
+        },
+        "label": {
+          "patternProperties": {
+            "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$": {
+              "type": "string"
+            }
+          },
+          "title": "Label",
+          "type": "object"
+        },
+        "levels": {
+          "additionalProperties": {
+            "patternProperties": {
+              "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "minProperties": 1,
+          "propertyNames": {
+            "enum": [
+              "3",
+              "7",
+              "12",
+              "16",
+              "18",
+              "withheld"
+            ]
+          },
+          "title": "Levels",
+          "type": "object"
+        }
+      },
+      "required": [
+        "code",
+        "glyph",
+        "label",
+        "levels"
+      ],
+      "title": "Descriptor",
+      "type": "object"
+    },
+    "Level": {
+      "additionalProperties": false,
+      "description": "An age at which a work may be shown, or `withheld`: never shown.",
+      "properties": {
+        "code": {
+          "enum": [
+            "3",
+            "7",
+            "12",
+            "16",
+            "18",
+            "withheld"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "min_age": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Min Age"
+        },
+        "colour": {
+          "$ref": "#/$defs/Colours"
+        },
+        "label": {
+          "patternProperties": {
+            "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$": {
+              "type": "string"
+            }
+          },
+          "title": "Label",
+          "type": "object"
+        },
+        "summary": {
+          "patternProperties": {
+            "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$": {
+              "type": "string"
+            }
+          },
+          "title": "Summary",
+          "type": "object"
+        }
+      },
+      "required": [
+        "code",
+        "min_age",
+        "colour",
+        "label",
+        "summary"
+      ],
+      "title": "Level",
+      "type": "object"
+    },
+    "Notice": {
+      "additionalProperties": false,
+      "description": "A warning for every visitor, whatever the level.",
+      "properties": {
+        "code": {
+          "pattern": "^[a-z]+(_[a-z]+)*$",
+          "title": "Code",
+          "type": "string"
+        },
+        "glyph": {
+          "maximum": 255,
+          "minimum": 0,
+          "title": "Glyph",
+          "type": "integer"
+        },
+        "label": {
+          "patternProperties": {
+            "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$": {
+              "type": "string"
+            }
+          },
+          "title": "Label",
+          "type": "object"
+        },
+        "text": {
+          "patternProperties": {
+            "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$": {
+              "type": "string"
+            }
+          },
+          "title": "Text",
+          "type": "object"
+        }
+      },
+      "required": [
+        "code",
+        "glyph",
+        "label",
+        "text"
+      ],
+      "title": "Notice",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The museum's audience grid (ADR 0020), adapted from PEGI.",
+  "properties": {
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "levels": {
+      "items": {
+        "$ref": "#/$defs/Level"
+      },
+      "title": "Levels",
+      "type": "array"
+    },
+    "descriptors": {
+      "items": {
+        "$ref": "#/$defs/Descriptor"
+      },
+      "title": "Descriptors",
+      "type": "array"
+    },
+    "notices": {
+      "items": {
+        "$ref": "#/$defs/Notice"
+      },
+      "title": "Notices",
+      "type": "array"
+    },
+    "rules": {
+      "items": {
+        "patternProperties": {
+          "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "minItems": 1,
+      "title": "Rules",
+      "type": "array"
+    }
+  },
+  "required": [
+    "version",
+    "levels",
+    "descriptors",
+    "notices",
+    "rules"
+  ],
+  "title": "Grid",
+  "type": "object"
+}
