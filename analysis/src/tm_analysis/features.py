@@ -136,7 +136,7 @@ class _Arrays:
         return cls(
             row=column([r for (r, _), _ in ordered]),
             col=column([c for (_, c), _ in ordered]),
-            codepoint=column([cell.codepoint for _, cell in ordered]),
+            codepoint=column([cell.glyph for _, cell in ordered]),
             fg=column([cell.fg for _, cell in ordered]),
             bg=column([cell.bg for _, cell in ordered]),
             blink=np.array([cell.blink for _, cell in ordered], dtype=np.bool_),

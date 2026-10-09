@@ -91,9 +91,9 @@ def decode_artifact(
     conn.execute(
         text(
             "insert into decoding (sha256, decoder, decoder_version, status, grid_sha256, cols,"
-            " rows, sauce_problems, writes, overwrites, clears) values (:sha256, :decoder,"
-            " :version, 'ok', :grid_sha256, :cols, :rows, :problems, :writes, :overwrites,"
-            " :clears)"
+            " rows, sauce_problems, writes, overwrites, clears, document_kind, system, charset)"
+            " values (:sha256, :decoder, :version, 'ok', :grid_sha256, :cols, :rows, :problems,"
+            " :writes, :overwrites, :clears, 'grid', :system, :charset)"
         ),
         {
             **row,
@@ -104,6 +104,8 @@ def decode_artifact(
             "writes": stream.writes,
             "overwrites": stream.overwrites,
             "clears": stream.clears,
+            "system": grid.header.system,
+            "charset": grid.header.charset,
         },
     )
     return Decoded(path, sha256, None, grid.cols, grid.rows, grid.digest(), problems)

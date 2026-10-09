@@ -10,17 +10,19 @@ from pathlib import Path
 import pytest
 from sqlalchemy import Connection, text
 from stores import Stores
-from tm import features, text_layer
+from tm import features, render, text_layer
 from tm.decode import DECODER
 from tm.storage import IntegrityError, grid_key
 from tm_analysis.features import extract
 from tm_analysis.text import text_lines
 from tm_analysis.versions import FEATURES_VERSION, TEXT_VERSION
 from tm_render.ansi import decode
+from tm_render.conservation import BitmapFont
 from tm_render.grid import Grid, to_parquet
 from tm_render.versions import DECODER_VERSION
 
-GOLDEN = Path(__file__).resolve().parents[2] / "tests" / "golden"
+ROOT = Path(__file__).resolve().parents[2]
+GOLDEN = ROOT / "tests" / "golden"
 HORIZON = (GOLDEN / "ansi" / "horizon.ans").read_bytes()
 EMPTY = Grid(80, 1, {})
 
@@ -91,3 +93,17 @@ def test_a_grid_that_differs_from_its_decoding_row_stops_the_run(
     stores.derived.put(grid_key(horizon, DECODER, DECODER_VERSION), to_parquet(EMPTY))
     with pytest.raises(IntegrityError, match="does not match its decoding row"):
         run(db, stores)
+
+
+def test_the_v1_extractors_and_the_renderer_leave_other_systems_alone(
+    db: Connection, stores: Stores, horizon: str
+) -> None:
+    """Features v1, text v2 and the conservation renderer read VGA and CP437 (ADR 0026)."""
+    db.execute(
+        text("update decoding set system = 'c64', charset = 'petscii-upper' where sha256 = :s"),
+        {"s": horizon},
+    )
+    assert measure_all(db, stores) == []
+    assert read_all(db, stores) == []
+    font = BitmapFont.load(ROOT / "corpus" / "fonts" / "ibm-vga-8x16.f16")
+    assert render.pending_renderings(db, font, 1) == []

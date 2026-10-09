@@ -14,7 +14,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
-from tm_render.grid import Cell, Grid
+from tm_render.grid import BLINK, Cell, Grid
 from tm_render.sauce import Sauce, split
 from tm_render.signatures import binary_format
 
@@ -94,7 +94,7 @@ class _State:
         self.written.add((self.row, self.col))
         fg, bg = (self.bg, self.fg) if self.inverse else (self.fg, self.bg)
         self.cells[(self.row, self.col)] = Cell(
-            codepoint, fg + (BRIGHT if self.bold else 0), bg, self.blink, offset
+            codepoint, fg + (BRIGHT if self.bold else 0), bg, offset, BLINK if self.blink else 0
         )
         self.max_row = max(self.max_row, self.row)
         self.col += 1

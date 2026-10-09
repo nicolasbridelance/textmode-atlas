@@ -608,7 +608,7 @@ Les musées numériques échouent le plus souvent pour quatre raisons : ils imit
 
 **Regarder**
 
-- Une seule œuvre à la fois, à l'échelle entière, sur fond noir.
+- Une seule œuvre à la fois, à l'échelle entière, sur fond noir par défaut. Le visiteur peut choisir un thème clair, sombre ou système, un fond de galerie et un cadre. Les réinterprétations algorithmiques sont optionnelles, signalées comme telles et exportables avec leur recette ; elles ne modifient jamais la source.
 - Le cartel fait cinq lignes. Le reste s'ouvre par niveaux : contexte, analyse, octets.
 - Les œuvres longues se font défiler. Un ANSI de 500 lignes est un format natif du défilement ; c'est le geste d'origine.
 - Le zoom descend jusqu'à la cellule, pour voir comment c'est fait.

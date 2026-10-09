@@ -7,6 +7,10 @@ When this fails after a change to the code in COVERS:
   1. raise the version in `tm_render/versions.py` (or `tm_analysis/versions.py`) by one;
   2. add the new digest (printed below) under that version in PINS;
   3. keep the old entries: they are the history of what each version was.
+
+A change of code that leaves every output bit for bit the same (a rename) may instead add its
+digest to the pins of the same version, as a tuple, when `scripts/same_outputs.py` has shown no
+difference on a corpus sample; the comment beside it names that proof (ADR 0012, amended).
 """
 
 from __future__ import annotations
@@ -49,18 +53,33 @@ DECLARED = {
     "ratings": RATING_VERSION,
     "neighbours": NEIGHBOURS_VERSION,
 }
-PINS = {
+# Second digests below: the grid v2 rename, same outputs on 3,000 corpus files (ADR 0026).
+PINS: dict[str, dict[str, str | tuple[str, ...]]] = {
     "decoder": {
         "1": "44389ece653d37c069bc8bf98d8e4bdea16f8506ee4a5411cf83acbfbe8205eb",
         "2": "2d265d8cbef4796364a6523b815a21156f2573ef354eae5a811038fc4b64b574",
         "3": "1f9b38b8579d77499978944519e3973949758b66fe274a1b2e045b0b53cde4e7",
         "4": "d900f99aaf924896396e079ffa9826cc876328c9ed9fe89bf892e960485aa058",
+        "5": "b130c770c8df53872b2bc5a049a5a3238841599c9d344a005f4c3ac013b58fa5",  # grid v2
     },
-    "renderer": {"1": "acf2f900bd645c61dac80da37121cceab3abb36ae5bbbc627da178422e6d5c28"},
-    "features": {"1": "6722aeabbaa4cbee87caa167ef6d32a9abb8adfea9aa36ecb889ffa357271079"},
+    "renderer": {
+        "1": (
+            "acf2f900bd645c61dac80da37121cceab3abb36ae5bbbc627da178422e6d5c28",
+            "fb2470257105a0f47ffe507ccc84b54cf57da01752e71dafe9b51ebfad79c21b",
+        ),
+    },
+    "features": {
+        "1": (
+            "6722aeabbaa4cbee87caa167ef6d32a9abb8adfea9aa36ecb889ffa357271079",
+            "312a904433848fcbfa79ee57449113d605391aac2d8a600ee6c9244fadb0b8a9",
+        ),
+    },
     "text": {
         "1": "0a8ac6e2384a40190cbe4b256a4a6633e76e86cb2b4976fdb2b97bf7e7f5e334",
-        "2": "ad4835bcf0f9cb2f5e65e71264a999d013ee57b13dd97ef07c1caf97c9c3bdca",
+        "2": (
+            "ad4835bcf0f9cb2f5e65e71264a999d013ee57b13dd97ef07c1caf97c9c3bdca",
+            "5df6679bcd18651ef9e94880136d2639c6fb722340c5973761c7a2e24ea6424d",
+        ),
     },
     "ratings": {
         "1": "2af3e3e774b3f95fd976d6eba4d21f25af81d39dc2d3d6701b165a1663424373",
@@ -117,8 +136,9 @@ def test_declared_version_is_the_latest_pinned(kind: str) -> None:
 
 @pytest.mark.parametrize("kind", COVERS)
 def test_code_matches_the_pin_of_its_version(kind: str) -> None:
-    pinned = PINS[kind].get(DECLARED[kind])
-    assert covered_digest(kind) == pinned, (
+    pin = PINS[kind].get(DECLARED[kind], ())
+    pinned = (pin,) if isinstance(pin, str) else pin
+    assert covered_digest(kind) in pinned, (
         f"the {kind} code changed without a new version (ADR 0012): "
         f'raise it and pin "{covered_digest(kind)}"'
     )

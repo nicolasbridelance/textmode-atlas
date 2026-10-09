@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+title:
+  en: IBM PC and compatibles, VGA text mode
+  fr: IBM PC et compatibles, mode texte VGA
+charsets: [cp437]
+palettes: [vga16]
+fonts: [ibm-vga-8x16]
+cell: 8x16
+attributes: [blink]
+sources:
+  - "IBM VGA Technical Reference (1987): mode 3, 720×400, 9×16 cell from an 8×16 font"

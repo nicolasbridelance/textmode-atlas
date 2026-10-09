@@ -1,7 +1,8 @@
 # SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 # SPDX-License-Identifier: Apache-2.0
 """Models for the YAML files in `corpus/`: rendering profiles, collections, radios, the
-audience grid.
+audience grid, and the registries a grid's header names (ADR 0026): character systems,
+character sets, palettes.
 
 Pydantic models are the source of truth. The JSON Schemas in `corpus/schema/` are derived from
 them by `tm corpus schema`; CI checks that they are current and that every YAML file conforms.
@@ -16,6 +17,7 @@ from typing import Annotated, Any, Literal
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator, model_validator
+from tm_render.grid import ATTRIBUTES
 
 from tm.i18n import LocalizedText
 
@@ -70,6 +72,72 @@ class Collection(BaseModel):
     description: LocalizedText | None = None
     where: dict[Literal["usage", "system", "scene", "channel", "function"], list[str]]
     order_by: Literal["date_min", "date_max", "title"] = "date_min"
+
+
+GlyphClass = Literal[
+    "blank", "block", "half_block", "shade", "line", "mosaic", "letter", "digit", "punctuation",
+    "symbol", "control",
+]  # fmt: skip
+Size = Annotated[str, Field(pattern=r"^\d+x\d+$")]
+
+
+class CharsetGlyph(BaseModel):
+    """One character of a set: its number, what Unicode calls it when it can, its class."""
+
+    model_config = ConfigDict(extra="forbid", populate_by_name=True)
+
+    index: Annotated[int, Field(ge=0)]
+    unicode: Annotated[str, Field(pattern=r"^[0-9A-F]{4,6}$")] | None
+    glyph_class: GlyphClass = Field(alias="class")
+
+
+class Charset(BaseModel):
+    """The repertoire a grid's glyph numbers index (ADR 0026)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    title: LocalizedText
+    size: Annotated[int, Field(gt=0)]
+    glyphs: list[CharsetGlyph]
+    sources: list[str] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _every_glyph_once(self) -> Charset:
+        if [glyph.index for glyph in self.glyphs] != list(range(self.size)):
+            raise ValueError(f"glyphs must list indexes 0 to {self.size - 1} in order")
+        return self
+
+
+class Palette(BaseModel):
+    """The colours a grid's `fg` and `bg` index, in index order."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    title: LocalizedText
+    colours: list[Annotated[str, Field(pattern=r"^#[0-9A-F]{6}$")]] = Field(min_length=2)
+    sources: list[str] = Field(min_length=1)
+
+
+class CharacterSystem(BaseModel):
+    """A machine or medium a grid belongs to: what its charsets, palettes and fonts can be."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    title: LocalizedText
+    charsets: list[Slug] = Field(min_length=1)
+    palettes: list[Slug] = Field(min_length=1)
+    fonts: list[Slug] = Field(min_length=1)
+    cell: Size
+    attributes: list[str]
+    sources: list[str] = Field(min_length=1)
+
+    @field_validator("attributes")
+    @classmethod
+    def _known_attributes(cls, names: list[str]) -> list[str]:
+        unknown = sorted(set(names) - set(ATTRIBUTES))
+        if unknown:
+            raise ValueError(f"unknown attributes {unknown}; known: {sorted(ATTRIBUTES)}")
+        return names
 
 
 class Radio(BaseModel):
@@ -177,6 +245,9 @@ class Grid(BaseModel):
 
 
 KINDS: dict[str, type[BaseModel]] = {
+    "system": CharacterSystem,
+    "charset": Charset,
+    "palette": Palette,
     "profile": Profile,
     "collection": Collection,
     "radios": Radios,
@@ -184,9 +255,14 @@ KINDS: dict[str, type[BaseModel]] = {
 }
 
 
+REGISTRIES = {"systems": "system", "charsets": "charset", "palettes": "palette"}
+
+
 def kind_of(path: Path) -> str:
     if path.name == "radios.yaml":
         return "radios"
+    if path.parent.name in REGISTRIES:
+        return REGISTRIES[path.parent.name]
     if path.parent.name == "profiles":
         return "profile"
     if path.parent.name == "collections":
@@ -206,7 +282,8 @@ def load_grid(path: Path) -> Grid:
 
 
 def corpus_files(root: Path) -> list[Path]:
-    files = sorted([*root.glob("profiles/*.yaml"), *root.glob("collections/*.yaml")])
+    folders = ["profiles", "collections", *REGISTRIES]
+    files = sorted(path for folder in folders for path in root.glob(f"{folder}/*.yaml"))
     extra = [root / "radios.yaml", root / "ratings" / "grid.yaml"]
     return files + [path for path in extra if path.exists()]
 
@@ -218,3 +295,17 @@ def json_schemas() -> dict[str, str]:
         + "\n"
         for kind, model in KINDS.items()
     }
+
+
+def broken_references(root: Path) -> list[str]:
+    """What a character system names that the corpus does not hold."""
+    problems: list[str] = []
+    for path in sorted(root.glob("systems/*.yaml")):
+        system = CharacterSystem.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))
+        wanted = [
+            *(root / "charsets" / f"{name}.yaml" for name in system.charsets),
+            *(root / "palettes" / f"{name}.yaml" for name in system.palettes),
+            *(root / "fonts" / f"{name}.f16" for name in system.fonts),
+        ]
+        problems.extend(f"{path}: no {item}" for item in wanted if not item.exists())
+    return problems

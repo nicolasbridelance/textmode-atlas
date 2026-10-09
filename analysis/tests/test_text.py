@@ -13,9 +13,9 @@ def test_rows_with_words_are_kept_and_blocks_are_not() -> None:
 
 
 def test_wide_gaps_are_shortened_and_hidden_letters_dropped() -> None:
-    cells = {(0, c): Cell(ord(x), 7, 0, False, c) for c, x in enumerate("call") if x != " "}
-    cells |= {(0, 20 + c): Cell(ord(x), 7, 0, False, 20 + c) for c, x in enumerate("now")}
-    cells[(0, 30)] = Cell(ord("x"), 0, 0, False, 30)  # black on black: not shown
+    cells = {(0, c): Cell(ord(x), 7, 0, c) for c, x in enumerate("call") if x != " "}
+    cells |= {(0, 20 + c): Cell(ord(x), 7, 0, 20 + c) for c, x in enumerate("now")}
+    cells[(0, 30)] = Cell(ord("x"), 0, 0, 30)  # black on black: not shown
     assert text_lines(Grid(80, 1, cells)) == [TextLine(0, "call   now")]
 
 

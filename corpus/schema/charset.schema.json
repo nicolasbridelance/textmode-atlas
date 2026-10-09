@@ -1,0 +1,92 @@
+{
+  "$defs": {
+    "CharsetGlyph": {
+      "additionalProperties": false,
+      "description": "One character of a set: its number, what Unicode calls it when it can, its class.",
+      "properties": {
+        "index": {
+          "minimum": 0,
+          "title": "Index",
+          "type": "integer"
+        },
+        "unicode": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9A-F]{4,6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Unicode"
+        },
+        "class": {
+          "enum": [
+            "blank",
+            "block",
+            "half_block",
+            "shade",
+            "line",
+            "mosaic",
+            "letter",
+            "digit",
+            "punctuation",
+            "symbol",
+            "control"
+          ],
+          "title": "Class",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index",
+        "unicode",
+        "class"
+      ],
+      "title": "CharsetGlyph",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The repertoire a grid's glyph numbers index (ADR 0026).",
+  "properties": {
+    "title": {
+      "patternProperties": {
+        "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$": {
+          "type": "string"
+        }
+      },
+      "title": "Title",
+      "type": "object"
+    },
+    "size": {
+      "exclusiveMinimum": 0,
+      "title": "Size",
+      "type": "integer"
+    },
+    "glyphs": {
+      "items": {
+        "$ref": "#/$defs/CharsetGlyph"
+      },
+      "title": "Glyphs",
+      "type": "array"
+    },
+    "sources": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Sources",
+      "type": "array"
+    }
+  },
+  "required": [
+    "title",
+    "size",
+    "glyphs",
+    "sources"
+  ],
+  "title": "Charset",
+  "type": "object"
+}

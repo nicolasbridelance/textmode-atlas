@@ -30,7 +30,7 @@ def test_horizon_round_trip() -> None:
             if got is None:  # trailing blanks are not written, as editors save files
                 assert (want.char, want.bg) == (SPACE, BLACK), (row, col)
                 continue
-            assert (got.codepoint, got.fg, got.bg) == (want.char, want.fg, want.bg), (row, col)
+            assert (got.glyph, got.fg, got.bg) == (want.char, want.fg, want.bg), (row, col)
 
 
 def test_horizon_sauce() -> None:
