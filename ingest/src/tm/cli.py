@@ -25,7 +25,8 @@ from tm.export import ExportError, Outcome, export_work, exportable
 from tm.features import extract_artifact, pending_features
 from tm.ingest import ingest_golden
 from tm.lists import collect, write_lists
-from tm.packs import PACK_SOURCES, PackIngested, ingest_pack, pack_archives
+from tm.loose import LooseIngested, ingest_loose, loose_files
+from tm.packs import PACK_SOURCES, PackIngested, PackSource, ingest_pack, pack_archives
 from tm.pilots import SampleError
 from tm.render import pending_renderings, render_artifact
 from tm.shards import Shard
@@ -44,6 +45,9 @@ app.add_typer(ingest_app, name="ingest")
 
 CorpusRoot = Annotated[Path, typer.Option(help="Root of the corpus/ directory.")]
 DocsRoot = Annotated[Path, typer.Option(help="Where the grid's pages are written.")]
+SiteRoot = Annotated[
+    Path | None, typer.Option(help="Root of a mirror laid out as the archive's site (ADR 0024).")
+]
 FONT = Path("ibm-vga-8x16.f16")
 
 
@@ -336,18 +340,60 @@ def ingest_pack_command(
     source: Annotated[
         str, typer.Option(help=f"Archive mirrored: {', '.join(PACK_SOURCES)}.")
     ] = "16colo",
+    site_root: SiteRoot = None,
 ) -> None:
     """Store packs from a local mirror and record them: the set, its files, the art."""
-    if source not in PACK_SOURCES:
-        raise typer.BadParameter(f"unknown source {source!r}", param_hint="--source")
+    pack_source = _pack_source(source)
     cfg = settings()
     store = S3Store(s3_client(), cfg.originals_bucket)
     engine = create_engine(cfg.database_url)
     archives = pack_archives(paths)
     for archive in archives:
         with engine.begin() as conn:  # one transaction per pack
-            typer.echo(_pack_summary(ingest_pack(conn, store, archive, PACK_SOURCES[source])))
+            ingested = ingest_pack(conn, store, archive, pack_source, site_root)
+            typer.echo(_pack_summary(ingested))
     typer.echo(f"{len(archives)} packs")
+
+
+@ingest_app.command("files")
+def ingest_files_command(
+    paths: Annotated[list[Path], typer.Argument(help="Loose files, or directories of them.")],
+    site_root: Annotated[
+        Path, typer.Option(help="Root of the mirror, laid out as the archive's site.")
+    ],
+    source: Annotated[
+        str, typer.Option(help=f"Archive mirrored: {', '.join(PACK_SOURCES)}.")
+    ] = "textfiles",
+    declared: Annotated[
+        str | None,
+        typer.Option(help="Art kind the archive gives these trees, for text files (ascii, rtty)."),
+    ] = None,
+) -> None:
+    """Store the files an archive holds loose, outside packs (ADR 0024): art becomes works."""
+    pack_source = _pack_source(source)
+    cfg = settings()
+    store = S3Store(s3_client(), cfg.originals_bucket)
+    engine = create_engine(cfg.database_url)
+    files = loose_files(paths)
+    results: list[LooseIngested] = []
+    with engine.begin() as conn:
+        for path in files:
+            results.append(
+                ingest_loose(
+                    conn, store, path, site_root=site_root, source=pack_source, declared=declared
+                )
+            )
+    new = [r for r in results if r.new]
+    typer.echo(
+        f"{len(files)} files: {len(new)} new, {sum(r.work for r in new)} works,"
+        f" {len(files) - len(new)} already held"
+    )
+
+
+def _pack_source(name: str) -> PackSource:
+    if name not in PACK_SOURCES:
+        raise typer.BadParameter(f"unknown source {name!r}", param_hint="--source")
+    return PACK_SOURCES[name]
 
 
 def _pack_summary(item: PackIngested) -> str:
