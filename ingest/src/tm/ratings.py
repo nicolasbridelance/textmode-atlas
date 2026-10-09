@@ -5,7 +5,8 @@ documents, one per required locale.
 
 Badges are drawn cell by cell in the VGA font and palette of the works, as SVG rectangles, so
 that they look the same everywhere and need no font. Everything here is derived from the grid:
-`tm corpus ratings` writes it, and `tm corpus check` fails when a written file differs.
+`tm corpus ratings` writes it, and `tm corpus check` fails when a written file differs. The
+site reads `grid.json`, the same grid as JSON.
 """
 
 from __future__ import annotations
@@ -227,5 +228,7 @@ def written(grid: Grid, font: BitmapFont, corpus: Path, docs: Path) -> dict[Path
     """Every file the grid publishes, by path."""
     folder = corpus / "ratings" / "badges"
     files = {folder / name: text for name, text in badges(grid, font).items()}
+    # For the site, which reads JSON: the same grid, nothing added.
+    files[corpus / "ratings" / "grid.json"] = grid.model_dump_json(indent=2) + "\n"
     files.update({docs / name: text for name, text in documents(grid).items()})
     return files
