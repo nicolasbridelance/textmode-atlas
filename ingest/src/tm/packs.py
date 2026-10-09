@@ -1,12 +1,14 @@
 # SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 # SPDX-License-Identifier: Apache-2.0
-"""Ingestion of 16colo artpacks from the local mirror (`rsync://16colo.rs/archive-pack/`).
+"""Ingestion of artpacks from a local mirror of a scene archive: 16colo
+(`rsync://16colo.rs/archive-pack/`) or textfiles.com (`scripts/mirror_textfiles.py`).
 
 A pack is a `set` work. Its archive is stored whole, and so is every member, each addressed by
 its SHA-256; `set_member` lists them in archive order. The same file in two packs is one
 artifact and two `set_member` rows. Textmode art members are also `single` works; other members
-(NFO, music, images, programs) are artifacts only. Rights record the scene publication on 16colo
-(ADR 0009). Run twice, it leaves the same state: a pack whose archive is known is skipped.
+(NFO, music, images, programs) are artifacts only. Rights record the scene publication on the
+archive the pack came from (ADR 0009); a file already met through another archive keeps its
+first source. Run twice, it leaves the same state: a pack whose archive is known is skipped.
 
 Archives are read as ADR 0013 says (`tm.archives`). One that cannot be read at all is still
 stored and recorded with no members; a member that cannot be read is not recorded. Either way
@@ -32,16 +34,35 @@ from tm.records import (
     insert_artifact,
     insert_work,
 )
-from tm.rights import Rights, ScenePublication
+from tm.rights import Rights, SceneArchive, ScenePublication
 from tm.storage import ObjectStore, put_original, sha256_hex
 
-SOURCE = "16colo"
-SOURCE_URL = "https://16colo.rs/"
-SOURCE_NOTE = (
+
+@dataclass(frozen=True)
+class PackSource:
+    """A scene archive of artpacks, and where it shows one pack (`{stem}`, `{path}` replaced)."""
+
+    name: SceneArchive
+    url: str
+    note: str
+    pack_url: str
+
+
+SIXTEEN_COLO = PackSource(
+    "16colo",
+    "https://16colo.rs/",
     "Scene archive of ANSI and ASCII artpacks. Mirroring invited by its FAQ; artwork remains the"
-    " author's property (docs/sources/16colo.md)."
+    " author's property (docs/sources/16colo.md).",
+    "https://16colo.rs/pack/{stem}/",
 )
-PACK_URL = "https://16colo.rs/pack/{name}/"
+TEXTFILES = PackSource(
+    "textfiles",
+    "http://artscene.textfiles.com/",
+    "Art scene section of textfiles.com, collected from BBS file areas and FTP sites; no terms"
+    " stated, removal on request (docs/sources/textfiles.md).",
+    "http://artscene.textfiles.com/artpacks/{path}",
+)
+PACK_SOURCES = {source.name: source for source in (SIXTEEN_COLO, TEXTFILES)}
 ARCHIVES = {".zip": "zip", ".rar": "rar", ".lha": "lha", ".lzh": "lzh", ".arj": "arj"}
 # Textmode art: each member becomes a work. Extension first, as the scene named the file.
 ART = {
@@ -91,7 +112,9 @@ def pack_archives(paths: list[Path]) -> list[Path]:
     return sorted(found)
 
 
-def ingest_pack(conn: Connection, store: ObjectStore, path: Path) -> PackIngested:
+def ingest_pack(
+    conn: Connection, store: ObjectStore, path: Path, source: PackSource = SIXTEEN_COLO
+) -> PackIngested:
     """Record a pack, or complete one recorded before: members already listed are left alone,
     members an earlier run could not read are added."""
     year = path.parent.name if _is_year(path.parent.name) else None
@@ -100,11 +123,14 @@ def ingest_pack(conn: Connection, store: ObjectStore, path: Path) -> PackIngeste
     sha256 = sha256_hex(data)
     rights = Rights(
         scene_publication=ScenePublication.model_validate(
-            {"archive": "16colo", "url": PACK_URL.format(name=path.stem)}
+            {
+                "archive": source.name,
+                "url": source.pack_url.format(stem=path.stem, path=source_path),
+            }
         )
     )
     dating = _year_dating(year)
-    source_id = ensure_source(conn, "archive", SOURCE, SOURCE_URL, SOURCE_NOTE)
+    source_id = ensure_source(conn, "archive", source.name, source.url, source.note)
     pack = _Pack(source_id, source_path, dating, rights)
     set_work = _set_work_of(conn, sha256)
     result = PackIngested(source_path, sha256, new=set_work is None)
@@ -272,7 +298,7 @@ def _is_year(name: str) -> bool:
 
 
 def _year_dating(year: str | None) -> Dating:
-    """The pack's year on 16colo, as an interval: the release date is rarely more precise."""
+    """The pack's year in the archive, as an interval: the release date is rarely more precise."""
     if year is None:
         return Dating()
     return Dating(dt.date(int(year), 1, 1), dt.date(int(year), 12, 31), "pack")

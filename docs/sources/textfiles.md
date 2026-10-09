@@ -28,8 +28,12 @@ SHA-256 comes with ingestion.
 
 ## Access
 
-Static HTTP directories, no API. Mirrors in Texas (`artscene.tqhosting.com`) and Virginia
-(`psg.mtu.edu/tf/artscene`). Download politely: one request at a time.
+Static HTTP directories, no API; each year's listing gives the file, its size and a description
+that names the group and often the month of release. The mirrors once listed in Texas
+(`artscene.tqhosting.com`) and Virginia (`psg.mtu.edu/tf/artscene`) no longer resolve
+(2026-10-09). Download politely: one request at a time. `scripts/mirror_textfiles.py` mirrors
+the artpacks into `data/textfiles/artpacks/<year>/` (3.4 GB) and keeps the listing as
+`index.tsv`; about 1 MB/s.
 
 ## Terms
 
