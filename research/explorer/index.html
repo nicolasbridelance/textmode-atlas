@@ -7,13 +7,14 @@ SPDX-License-Identifier: Apache-2.0
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>16colo explorer</title>
+<title>Corpus explorer</title>
 <style>
   :root {
     --bg: #0b0b0d; --panel: #15151a; --line: #2a2a33; --text: #d8d8de; --dim: #8a8a96;
     --accent: #55ffff; --warn: #ffff55;
   }
   * { box-sizing: border-box; }
+  a { color: var(--accent); }
   body { margin: 0; background: var(--bg); color: var(--text);
     font: 14px/1.4 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
   header { position: sticky; top: 0; z-index: 5; background: var(--bg);
@@ -81,7 +82,8 @@ SPDX-License-Identifier: Apache-2.0
 </head>
 <body>
 <header>
-  <h1>16colo · explorer</h1>
+  <h1>corpus · explorer</h1>
+  <select id="archive"><option value="">all archives</option></select>
   <select id="year"><option value="">all years</option></select>
   <select id="format"><option value="">all formats</option></select>
   <select id="kind"><option value="">all contents</option></select>
@@ -125,7 +127,7 @@ const arrival = (bytes, baud) => {
 };
 
 function filters() {
-  return {year: $("year").value, format: $("format").value, kind: $("kind").value, q: $("q").value,
+  return {archive: $("archive").value, year: $("year").value, format: $("format").value, kind: $("kind").value, q: $("q").value,
     words: $("words").value, order: $("order").value};
 }
 function saveHash(work) {
@@ -136,16 +138,17 @@ function saveHash(work) {
 
 async function facets() {
   const f = await (await fetch("api/facets")).json();
+  for (const a of f.archives) $("archive").add(new Option(`${a.archive} (${a.works})`, a.archive));
   for (const y of f.years) $("year").add(new Option(`${y.year} (${y.works})`, y.year));
   for (const x of f.formats) $("format").add(new Option(`${x.format} (${x.works})`, x.format));
   for (const x of f.kinds) $("kind").add(new Option(`${x.kind.replace("_", " ")} (${x.works})`, x.kind));
   for (const o of f.orders) $("order").add(new Option(ORDER_LABELS[o] || o, o));
   const d = f.dataset;
   $("note").textContent = `Dataset works v${d.version}: ${d.works.toLocaleString()} art files of`
-    + ` the train packs, ${d.measured.toLocaleString()} measured. Exploratory: the test packs`
+    + ` the train packs of every archive, ${d.measured.toLocaleString()} measured. Exploratory: the test packs`
     + ` are not here. Extractors ${JSON.stringify(d.extractors)}.`;
   const hash = new URLSearchParams(location.hash.slice(1));
-  for (const k of ["year", "format", "kind", "q", "words", "order"]) if (hash.get(k)) $(k).value = hash.get(k);
+  for (const k of ["archive", "year", "format", "kind", "q", "words", "order"]) if (hash.get(k)) $(k).value = hash.get(k);
   state.ready = true;
   await reload();
   if (hash.get("work")) open(hash.get("work"));
@@ -186,7 +189,7 @@ function card(w) {
   el.innerHTML = `<div class="thumb">${thumb}</div><div class="meta">
     <div class="name" title="${esc(w.path)}">${esc(file)}</div>
     <div class="who">${esc(w.sauce_author || "?")} / ${esc(w.sauce_group || "?")}</div>
-    <div class="who">${esc(w.pack)} · ${w.year ?? "?"}${w.cols ? ` · ${w.cols}×${w.rows}` : ""}</div>
+    <div class="who">${esc(w.pack)} · ${esc(w.archive)} · ${w.year ?? "?"}${w.cols ? ` · ${w.cols}×${w.rows}` : ""}</div>
     ${w.hit ? `<div class="hit" title="${esc(w.hit)}">${esc(w.hit)}</div>` : ""}</div>`;
   el.onclick = () => open(w.sha256);
   el.onkeydown = (e) => { if (e.key === "Enter") open(w.sha256); };
@@ -230,7 +233,8 @@ function side(w) {
   const preview = w.decoding === "ok" && !w.rendering_sha256
     ? `<p class="warn">Preview drawn from the grid: no stored rendering yet (8-pixel letters).</p>` : "";
   return `<h2>${esc(w.path.split("/").pop())}</h2>
-  <div style="color:var(--dim)">${esc(w.pack)} · ${w.year ?? "?"}</div>${preview}
+  <div style="color:var(--dim)">${esc(w.pack)} · ${w.year ?? "?"} ·
+    <a href="${esc(w.pack_url)}" target="_blank" rel="noopener">${esc(w.archive)}</a></div>${preview}
   <h3>Record</h3><dl>
     <dt>title</dt><dd>${esc(w.sauce_title || "–")}</dd>
     <dt>author</dt><dd>${esc(w.sauce_author || "–")}</dd>
@@ -244,7 +248,7 @@ function side(w) {
       ${w.cols ? ` · ${num(w.bytes / (w.cols * w.rows), 1)} bytes/cell` : ""}</dd>
     <dt>stream</dt><dd>${w.writes == null ? "–" : `${w.writes.toLocaleString()} writes · ${pct(w.overwrites / Math.max(w.writes, 1))} redrawn · ${w.clears} clears`}</dd>
     <dt>to arrive</dt><dd>${arrival(w.bytes, 2400)} at 2400 baud · ${arrival(w.bytes, 14400)} at 14400</dd>
-    <dt>packs</dt><dd>${w.packs}</dd>
+    <dt>packs</dt><dd>${w.packs} · held by ${esc(w.archives.join(", "))}</dd>
     <dt>sha256</dt><dd style="font-size:11px">${w.sha256}</dd>
   </dl>
   <h3>Text in the work (rows with words)</h3><pre class="textlayer" id="textlayer">…</pre>
@@ -289,7 +293,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowRight") step(1);
   if (e.key === "ArrowLeft") step(-1);
 });
-for (const id of ["year", "format", "kind", "order"]) $(id).onchange = reload;
+for (const id of ["archive", "year", "format", "kind", "order"]) $(id).onchange = reload;
 let typing;
 $("q").oninput = $("words").oninput = () => { clearTimeout(typing); typing = setTimeout(reload, 350); };
 new IntersectionObserver((e) => { if (e[0].isIntersecting) more(); }, {rootMargin: "800px"}).observe($("more"));

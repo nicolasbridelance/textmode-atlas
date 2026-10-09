@@ -1,10 +1,10 @@
 # SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 # SPDX-License-Identifier: Apache-2.0
-"""Corpus explorer: a local wall of works to look at 16colo together (roadmap step 5).
+"""Corpus explorer: a local wall of works to look at the corpus together (roadmap step 5).
 
-A research tool, not the museum: it reads the `works` dataset (train packs only, so the test
-packs stay unexamined) and the private derived bucket, and listens on 127.0.0.1 only. Works not
-rendered yet are previewed from their grid, without storing anything.
+A research tool, not the museum: it reads the `works` dataset (train packs of every scene archive
+only, so the test packs stay unexamined) and the private derived bucket, and listens on 127.0.0.1
+only. Works not rendered yet are previewed from their grid, without storing anything.
 
     uv run --group research python research/explorer/explorer.py   # or: just explore
 """
@@ -33,7 +33,7 @@ from tm_render.conservation import BitmapFont, Settings, render
 from tm_render.grid import Grid, from_parquet
 
 ROOT = Path(__file__).resolve().parents[2]
-BUILD = ROOT / "datasets" / "build" / "works" / "4"
+BUILD = ROOT / "datasets" / "build" / "works" / "5"
 FONT = ROOT / "corpus" / "fonts" / "ibm-vga-8x16.f16"
 PAGE = Path(__file__).with_name("index.html")
 HOST, PORT = "127.0.0.1", 8737
@@ -118,6 +118,11 @@ class Corpus:
                 "select format, count(*) as works from works group by format order by works desc",
                 [],
             ),
+            "archives": self.rows(
+                "select archive, count(*) as works from (select unnest(archives) as archive"
+                " from works) group by archive order by works desc",
+                [],
+            ),
             "kinds": self.rows(
                 "select content_kind as kind, count(*) as works from works"
                 " where content_kind is not null group by 1 order by works desc",
@@ -144,8 +149,9 @@ class Corpus:
         total = self.db.cursor().execute(f"select count(*) from w where {where}", params)
         total = total.fetchone()
         works = self.rows(
-            "select sha256, pack, year, path, format, content_kind, sauce_title, sauce_author,"
-            " sauce_group, cols, rows, decoding, rendering_sha256 is not null as rendered,"
+            "select sha256, archive, pack, year, path, format, content_kind, sauce_title,"
+            " sauce_author, sauce_group, cols, rows, decoding,"
+            " rendering_sha256 is not null as rendered,"
             f" {hit if words else 'null'} as hit from w"
             f" where {where} order by {order}, sha256 limit {PAGE_SIZE} offset {offset}",
             ([f"%{words}%"] if words else []) + params,
@@ -231,6 +237,9 @@ def _conditions(query: dict[str, str]) -> tuple[str, list[Any]]:
         if query.get(field):
             where.append(f"{column} = ?")
             params.append(query[field])
+    if query.get("archive"):  # held by that archive, in any of its packs
+        where.append("list_contains(archives, ?)")
+        params.append(query["archive"])
     if text := query.get("q", "").strip().lower():
         where.append(
             "(lower(coalesce(sauce_group, '')) like ? or lower(coalesce(sauce_author, ''))"
