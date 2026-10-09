@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+from collections import Counter
 from pathlib import Path
 from typing import Annotated
 
@@ -20,6 +21,7 @@ from tm.config import settings
 from tm.datasets import DatasetError, build, draw_sample
 from tm.decode import decode_artifact, pending_artifacts
 from tm.dev import storage_init
+from tm.export import ExportError, Outcome, export_work, exportable
 from tm.features import extract_artifact, pending_features
 from tm.ingest import ingest_golden
 from tm.packs import PACK_SOURCES, PackIngested, ingest_pack, pack_archives
@@ -261,6 +263,32 @@ def text_command(
             lines = read_artifact(conn, derived, row)
         typer.echo(f"{row.source_path} {len(lines)} lines")
     typer.echo(f"{len(todo)} read")
+
+
+@app.command("export")
+def export_command(
+    shard: Annotated[str, typer.Option(help=SHARD_HELP)] = "0/1",
+    limit: Annotated[int, typer.Option(help="Stop after this many works (0: all).")] = 0,
+) -> None:
+    """Publish what may be shown to the public bucket, and remove what may no longer be."""
+    cfg = settings()
+    client = s3_client()
+    derived = S3Store(client, cfg.derived_bucket)
+    public = S3Store(client, cfg.public_bucket)
+    engine = create_engine(cfg.database_url)
+    with engine.connect() as conn:
+        rows = exportable(conn, _shard(shard))
+    outcomes: Counter[Outcome] = Counter()
+    refused = 0
+    for row in rows[:limit] if limit else rows:
+        with engine.begin() as conn:
+            try:
+                outcomes[export_work(conn, derived, public, row, cfg.withdraw_url)] += 1
+            except ExportError as err:
+                refused += 1
+                typer.echo(f"refused {err}", err=True)
+    shown = ", ".join(f"{name}: {outcomes[name]}" for name in ("files", "record", "nothing"))
+    typer.echo(f"{shown}, refused: {refused}")
 
 
 @app.command("rate")

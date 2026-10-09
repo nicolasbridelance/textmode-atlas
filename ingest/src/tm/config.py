@@ -19,6 +19,8 @@ class Settings(BaseModel):
     originals_bucket: str = "tm-originals"
     derived_bucket: str = "tm-derived"
     public_bucket: str = "tm-public"
+    # Where a visitor asks for a work to be withdrawn or rated again (ADR 0009, 0020).
+    withdraw_url: str = "https://github.com/nicolasbridelance/textmode-atlas/blob/main/TAKEDOWN.md"
     # Garage administration: local environment only.
     garage_admin_url: str = "http://localhost:3903"
     garage_admin_token: str = "tm-local-admin-token"
