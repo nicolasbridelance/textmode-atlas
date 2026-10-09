@@ -30,7 +30,7 @@ Ranked by what they bring for the effort. All are downloadable in bulk, so no cr
 | 2 | **textfiles.com artscene** (artscene.textfiles.com) | A second archive of PC artpacks, sorted by year, plus ACiD and iCE collections, ASCII art, BBS-era documents | 3,989 artpack archives 1992–2008; 3,625 have a 16colo pack of the same name, **364 do not**; by hash, 3,464 namesakes are the same bytes, and 327 archives bring files 16colo lacks, mostly pictures (archives note) | Static HTTP directories; mirrors in Texas and Virginia | No stated terms; Jason Scott's archive, long open to mirroring | [textfiles.md](textfiles.md) |
 | 3 | **Wikipedia and Wikidata** | Reference articles in up to 44 languages, Wikidata identifiers to link groups, tools and formats to the rest of the web | 29 topic articles followed in 70 languages | API (Wikimedia asks for a `name/version (url)` User-Agent, otherwise 429) | Wikipedia text CC BY-SA 4.0; Wikidata CC0 | [wikipedia.md](wikipedia.md) |
 | 4 | **Pouët** (pouet.net) | Demoscene productions, votes, party placings; bbstros and cracktros; cross-ids to Demozoo and CSDb | 102,973 productions (7,830 bbstros, 11,323 cracktros); no ANSI or artpack type | Weekly JSON dumps, [data.pouet.net](https://data.pouet.net/) (prods 15 MB) | Not stated on the dump page | register only, until needed |
-| 5 | **Defacto2** (defacto2.net) | PC warez and art scene: NFO, DIZ, BBStros, group histories; Demozoo links 3,800 productions to it | "thousands of records" (claimed) | Daily SQL export on GitHub ([defacto2/database](https://github.com/defacto2/database)); REST API | Not stated in the repository | to measure |
+| 5 | **Defacto2** (defacto2.net) | PC warez and art scene: NFO, DIZ, BBStros, group histories; Demozoo links 1,706 BBStros, 1,357 cracktros, 169 artpacks to it | "thousands of records" (claimed); not measured, the site refuses the codespace | Daily SQL export (`defacto2.net/sql/files.sql`), REST API, both behind a Cloudflare challenge (403 here, 2026-10-09) | Not stated in the repository | [defacto2.md](defacto2.md) |
 | 6 | **Discmaster** (discmaster.textfiles.com) | Files extracted from the CD-ROMs, disks and FTP captures on the Internet Archive, each with its file date and the disc or site it sits on: a dated witness of where a pack travelled (Q21, Q26, I33) | 1,883,127,002 indexed files from 43,856 items (its home page, 2026-10-09) | Search by BLAKE3 hash (`&b3sum=`), JSON output (`&outputAs=json`); one request per file | none stated; run by textfiles.com (sysop@textfiles.com); only errors and hit counts are logged | [discmaster.md](discmaster.md) |
 
 **Discmaster, first probe (2026-10-09).** 16colo's `acid-50a.zip` is byte-identical (BLAKE3) to
@@ -44,16 +44,17 @@ existed outside the art archives, a witness that does not descend from 16colo.
 | --- | --- | --- | --- |
 | scene.org files (files.scene.org) | PETSCII, ATASCII and teletext compo entries (1,092 files, ~150 MB); `mirrors/artpacks/` (2,951 pack files, 3.2 GB, 59 without a 16colo namesake) | rsync, HTTP `/get/` → mirrors, FTP; mirroring encouraged | rights stay with the authors; [scene-org.md](scene-org.md) |
 | CSDb (csdb.dk) | C64 scene: PETSCII (1,153 productions only there), releases, sceners, groups (M5, platform C64) | Web service, XML, one entry per request, depth ≤ 4, undocumented | robots.txt closes downloads to all robots and the whole site to AI agents: ask admin[at]csdb.dk first; [csdb.md](csdb.md) |
-| asciiarena.se | ASCII art releases (new school), 715 Demozoo links | Website | access and terms not checked |
+| asciiarena.se | 3,993 ASCII collys (293 MB), 808 artists, 489 crews, dated by year; only 7 % share a name with the corpus: a near-independent lineage (Q21) | Public JSON API (`/api/collys?page=n`), robots allow all | no terms stated; tell the admins (Discord) before the bulk fetch; [asciiarena.md](asciiarena.md) |
 | Internet Archive | BBS collections, scans, CD-ROM images of BBS file areas | advancedsearch API | few hits by keyword (84 items `subject:ansi` and software); collections to find by hand |
-| roysac.com | ANSI and ASCII galleries, TheDraw fonts, histories | Website | single-person site; contact before any reuse |
+| roysac.com | TheDraw fonts collection (118.8 MB ZIP) and `.TDF` specification (lead I52); galleries, histories | Static HTTP, robots allow | single-person site; ask Carsten Cumbrowski before downloading; [roysac.md](roysac.md) |
 | Modland, Nectarine, AMP | Music of the packs (MOD, S3M, XM) | Mirrors, APIs | out of scope until the work screen plays music (radios, M0) |
 
 ## Later: other platforms and neighbouring practices (M5 and beyond)
 
 | Domain (cartography section) | Candidate source | Status |
 | --- | --- | --- |
-| Teletext art | teletextart.com; the International Teletext Art Festival (ITAF) | answers (301); not examined |
+| Teletext art | edit.tf URLs, scene.org compo entries, teletextart.co.uk (TARL), teletextart.com (MUTA, ITAF); broadcast recoveries (teletextarchaeologist.org, teletextarchive.com, zxnet.co.uk) | [teletext.md](teletext.md): pages survive mostly as images; files are few |
+| ASCII art of Usenet and the early web | Internet Archive Giganews mbox (alt.ascii-art 2003–2015, rec.arts.ascii); asciiart.eu's Usenet archive (128,008 messages, 1993–2013, no scraping); chris.com via the Wayback Machine | [ascii-usenet.md](ascii-usenet.md) |
 | RTTY art | rtty.com gallery (`.pix` / `.pox`) | answers; a few hundred files claimed |
 | ZX Spectrum, Atari, Amiga | ZXArt (zxart.ee), Atarimania, amigascne mirror on scene.org | ZXArt answers; Demozoo links 1,700 productions to it |
 | PETSCII | scene.org party compos, then CSDb; petscii.krissz.hu (an editor, not an archive) | [scene-org.md](scene-org.md), [csdb.md](csdb.md) |

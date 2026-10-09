@@ -16,6 +16,31 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-09 — Another scene, the same peak; teletext inside a PC pack
+
+**The colly scene peaks when the ANSI scene does.** aSCIIaRENA, the archive of ASCII
+collections ("collys", largely Amiga), dates 889 collys to 1995 and 827 to 1996, against 249 in
+1994 and 421 in 1997. Only 269 of its 3,993 file names are names of files the museum holds from
+16colo and textfiles, so this curve does not come from their lineage. Two scenes, different
+machines and archives, one peak: a hint that 1995–96 was the high point of text art in the BBS
+era, not only of 16colo's collecting. Caveats: dates entered by submitters, 403 undated; names
+compared, not bytes. *Evidence: asciiarena.se `/api/collys`, all 160 pages, 2026-10-09; source
+note [asciiarena.md](sources/asciiarena.md); leads Q21, I66.*
+
+**Teletext came into a PC artpack.** Mistigris' pack of November 2016 (`mist1116`) carries 12
+teletext pages by Illarterate as files (11 `.EP1`, one `.TTI` named `MISTFAX16`): an ANSI group
+of the 1990s opening its pack to a broadcast medium's art, the year TARL's teletext block
+parties began (Cambridge, 2016). TARL also hosts Mistigris' teletext templates and an
+anniversary pack (2019). The practices met inside the pack, the old form of the PC scene.
+*Evidence: `set_member` paths of `mist1116`; teletextart.co.uk media listing (WordPress API);
+source note [teletext.md](sources/teletext.md); leads I54, I68.*
+
+**Usenet's ASCII artists tagged their posts.** In `alt.ascii-art`, subjects carry `[PIC]` (336
+posts), `[FAQ]`, `[DIS]`, `[ANN]`, `[REQ]`: a newsgroup's own genres, set by convention, much as
+16colo's tags are set by curators. Coverage: Giganews' capture, 2003 onwards only. *Evidence:
+`alt.ascii-art.20140611.mbox.csv.gz`, Internet Archive item `usenet-alt.ascii-art`; source note
+[ascii-usenet.md](sources/ascii-usenet.md).*
+
 ## 2026-10-09 — PETSCII and ATASCII were made for the compo
 
 **PETSCII and ATASCII live in party compos, not in packs.** Of Demozoo's download links to
