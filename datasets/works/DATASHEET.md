@@ -27,6 +27,9 @@ packs nobody has examined.
   it locally by the notebooks. `text` does quote the works: it is an excerpt of each, and is
   the first reason this dataset stays local.
 - A file held by several packs appears once, in its earliest pack; `packs` counts the others.
+- From v6, files an archive holds loose, outside any pack (textfiles.com's BBS ANSI and ASCII,
+  RTTY, VT100; ADR 0024), with no pack, `packs` = 0 and their path on the site; and the grid's
+  `system` and `charset` (ADR 0026), all `pc-vga` and `cp437` so far.
 
 ## Collection and processing
 
@@ -36,7 +39,8 @@ packs nobody has examined.
 - **Split.** A pack is `test` when the first byte of its archive's SHA-256 is below 52 (about one
   pack in five), the same rule as dataset `catalogue`, in every archive. A file is `train` only
   when every pack holding it, in any archive, is `train`, so about a fifth of the works are left out, and stay unexamined
-  ([research program](../../docs/research-program.md), rule 3).
+  ([research program](../../docs/research-program.md), rule 3). A file held loose is split by
+  its directory on the site, with the same threshold (ADR 0024).
 - ANSI and ASCII are decoded by the ANSI decoder; other formats carry `unsupported_format` and
   have no features. A SAUCE record with corrupt binary fields gives no width (ADR 0015).
 - Features are measured on the grid, never on pixels. `t` keeps the last write of each cell, so
@@ -49,6 +53,9 @@ packs nobody has examined.
   are listed in [seen-then-test.yaml](seen-then-test.yaml); a confirmatory test leaves them out
   (ADR 0018).
 
+- **Loose files are a different population.** They were gathered by textfiles.com from BBSes and
+  FTP sites, not released in packs: undated unless their SAUCE says, and grouped by the curator's
+  directories. Compare them with pack files only knowing that.
 - Coverage: as for `catalogue`; 16colo holds what was submitted to it, and the gap register is
   empty, so the coverage of this dataset is unknown.
 - `year` is the year the archive files the pack under, not a release date.
