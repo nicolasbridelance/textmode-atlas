@@ -35,13 +35,14 @@ SPDX-License-Identifier: Apache-2.0
 	const workId = $derived(
 		browser ? (page.url.searchParams.get('w') ?? museumContext.workId) : null
 	);
-	function exploreHref(view: string): string {
+	/** The collection, keeping the current display and filters, and the work it came from. */
+	function exploreHref(): string {
 		const query = new SvelteURLSearchParams(
 			browser && page.url.pathname.endsWith('/explore') ? page.url.search : ''
 		);
-		query.set('view', view);
 		if (workId && !query.has('w')) query.set('w', workId);
-		return `${resolve(localizeHref('/explore') as Path)}?${query}`;
+		const search = query.toString();
+		return `${resolve(localizeHref('/explore') as Path)}${search ? `?${search}` : ''}`;
 	}
 	const localeNames: Record<string, () => string> = {
 		en: m.locale_name_en,
@@ -62,24 +63,10 @@ SPDX-License-Identifier: Apache-2.0
 			aria-current={page.url.pathname === localizeHref('/') ? 'page' : undefined}>{m.nav_today()}</a
 		>
 		<a
-			href={exploreHref('grid')}
-			aria-current={page.url.pathname.endsWith('/explore') &&
-			(!browser || page.url.searchParams.get('view') === 'grid')
-				? 'page'
-				: undefined}>{m.atlas_collection()}</a
+			href={exploreHref()}
+			aria-current={page.url.pathname.endsWith('/explore') ? 'page' : undefined}
+			>{m.atlas_collection()}</a
 		>
-		{#each ['pinterest', 'instagram', 'tinder'] as discoveryView (discoveryView)}
-			<a
-				href={exploreHref(discoveryView)}
-				aria-current={browser &&
-				page.url.pathname.endsWith('/explore') &&
-				(page.url.searchParams.get('view') ?? 'pinterest') === discoveryView
-					? 'page'
-					: undefined}
-			>
-				{discoveryView.slice(0, 1).toUpperCase() + discoveryView.slice(1)}
-			</a>
-		{/each}
 		<a href={localizeHref('/constellation')}>{m.atlas_constellation()}</a>
 		<a href={localizeHref('/research')}>{m.atlas_research()}</a>
 	</nav>

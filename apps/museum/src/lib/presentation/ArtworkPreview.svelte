@@ -6,7 +6,11 @@ SPDX-License-Identifier: Apache-2.0
 	import { previewUrl } from './catalogue';
 	import type { Entry } from '../work/visit';
 	import { m } from '#lib/paraglide/messages.js';
-	let { entry, eager = false }: { entry: Entry; eager?: boolean } = $props();
+	let {
+		entry,
+		eager = false,
+		crop = false
+	}: { entry: Entry; eager?: boolean; crop?: boolean } = $props();
 	let failed = $state(false);
 	const CELL_WIDTH = 8;
 	const CELL_HEIGHT = 16;
@@ -17,6 +21,7 @@ SPDX-License-Identifier: Apache-2.0
 
 <div
 	class="artwork"
+	class:crop
 	style:--ratio={`${Math.max(1, entry.cols) * CELL_WIDTH} / ${Math.max(1, entry.rows) * CELL_HEIGHT}`}
 >
 	{#if failed || previewUrl(entry) === null}
@@ -50,6 +55,14 @@ SPDX-License-Identifier: Apache-2.0
 		height: 100%;
 		object-fit: contain;
 		image-rendering: pixelated;
+	}
+	/* Cropped: every card the same shape, the work seen from its first screen. */
+	.crop {
+		aspect-ratio: 4 / 3;
+	}
+	.crop img {
+		object-fit: cover;
+		object-position: top;
 	}
 	.unavailable {
 		padding: 2rem;

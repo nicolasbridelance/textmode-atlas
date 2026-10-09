@@ -215,16 +215,16 @@ for (const [locale, width] of [
 		await page.locator('.workshop summary').click();
 		await expect(selects.nth(1)).toHaveValue('density');
 		await page.locator('.views a').nth(1).click();
-		await expect(page).toHaveURL(new RegExp(`/explore\\?view=grid&w=${A}`));
+		await expect(page).toHaveURL(new RegExp(`/explore\\?w=${A}`));
 		await page.locator('.toolbar select').first().selectOption('pack');
-		await expect(page.locator('.grid .thumbnail')).toHaveCount(2);
+		await expect(page.locator('.card')).toHaveCount(2);
 		await page.goto(`${locale === 'fr' ? '/fr' : ''}/explore?view=relations&w=${A}&scope=pack`);
-		await expect(page.locator('.cluster svg a')).toHaveCount(2);
+		await expect(page.locator('.card')).toHaveCount(2); // the former view's address still works
 		await page.screenshot({
 			path: testInfo.outputPath(`constellation-${locale}.png`),
 			fullPage: true
 		});
-		await page.locator('.cluster svg a').last().click();
+		await page.locator('.card .title').last().click();
 		await expect(page.getByRole('heading', { level: 1 })).toHaveText('second');
 	});
 }

@@ -14,12 +14,14 @@ is a compatibility alias. The existing machine-local Wi-Fi forwarding still work
 
 - `/fr/explore` and `/explore` (English; `/en/…` redirects there): the collection, metadata and decoded-text search,
   archive/year/format/kind filters, feature ordering and rendering choices.
-  Its `view=pinterest`, `view=instagram` and `view=tinder` layouts share the same
-  gated corpus and browser-local selection; `view=grid` is the compact gallery,
-  while legacy `view=relations` URLs still show metadata relationships. The single
-  header directly links the three discovery modes, Collection, Constellation and
-  Research. There is no second layout menu or separate research collection switch.
-  All open the same work screen.
+  One gallery, several ways of looking: `layout=wall` (whole works in columns, the
+  default), `grid` (aligned, cropped to the first screen), `feed` (one large work at a
+  time) and `deck` (keep or pass, one by one). Each layout starts from a preset, and
+  `cols` (0 = auto, 1–6), `fit` (`whole`, `crop`), `caption` (`none`, `short`, `full`)
+  and `paper` (`light`, `dark`, `museum`) override it; only what differs from the
+  preset is written in the URL. Former `view=pinterest|instagram|tinder|grid|relations`
+  addresses still open the matching layout. The selection is one, kept in the browser,
+  across every layout. The header has one Collection link.
   Chance: without a chosen order the collection is shuffled by `seed` (default
   `explorer`, so first visits agree); "Reshuffle" writes a new seed in the URL, so a
   shuffle can be shared. "A work at random" asks `/api/surprise?<filters>&seed=` for
