@@ -18,7 +18,7 @@ from pathlib import Path
 import pytest
 import tm_analysis
 import tm_render
-from tm_analysis.versions import FEATURES_VERSION, TEXT_VERSION
+from tm_analysis.versions import FEATURES_VERSION, RATING_VERSION, TEXT_VERSION
 from tm_render.versions import DECODER_VERSION, RENDERER_VERSION
 
 RENDER = Path(tm_render.__file__).parent
@@ -33,12 +33,14 @@ COVERS = {
     "renderer": (RENDER / "conservation.py",),
     "features": (ANALYSIS / "features.py",),
     "text": (ANALYSIS / "text.py",),
+    "ratings": (ANALYSIS / "ratings.py",),
 }
 DECLARED = {
     "decoder": DECODER_VERSION,
     "renderer": RENDERER_VERSION,
     "features": FEATURES_VERSION,
     "text": TEXT_VERSION,
+    "ratings": RATING_VERSION,
 }
 PINS = {
     "decoder": {
@@ -52,6 +54,10 @@ PINS = {
     "text": {
         "1": "0a8ac6e2384a40190cbe4b256a4a6633e76e86cb2b4976fdb2b97bf7e7f5e334",
         "2": "ad4835bcf0f9cb2f5e65e71264a999d013ee57b13dd97ef07c1caf97c9c3bdca",
+    },
+    "ratings": {
+        "1": "2af3e3e774b3f95fd976d6eba4d21f25af81d39dc2d3d6701b165a1663424373",
+        "2": "e6ca80bc32e9494668775b7ac896124d9b8b73bdac34fff0779bd7c78423cb1f",
     },
 }
 

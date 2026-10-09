@@ -135,3 +135,5 @@ def test_a_work_takes_its_highest_current_level(db: Connection) -> None:
         {"r": rejection, "i": inferred},
     )
     assert tuple(db.execute(text(audience)).one())[:2] == ("12", ["fear"])
+    reviewed = "select reviewed from work_audience"
+    assert db.execute(text(reviewed)).scalar() is True  # a person rejected one descriptor
