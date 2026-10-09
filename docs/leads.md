@@ -137,6 +137,7 @@ Rules:
 | I57 | Minitel and videotex: pages survive as V.23 modem tones on cassette, archive.org screen captures (Viatel 1985–86), a Lost Media forum group's repository, the Minitel Research Lab (Indiana University, physical); no bulk source of `.vdt` pages found yet | I54 | open |
 | I58 | Shift_JIS art (AA) and kaomoji: no open corpus found by search; 2channel AA collections (AA wikis, Mona font sites) to find with Japanese keywords; proportional font (MS PGothic) means a different grid model | I54 | open |
 | I59 | ATASCII: Break Into Chat's AtasciiTube (BBS animations), the pigwa.net Atari FTP archive (886 GB), atariuptodate's ascii-art category | I54 | open |
+| I60 | Rebuild teletext pages from their screenshots: not OCR but exact matching of each 40 × 25 cell against the SAA5050 glyphs and mosaics, checked by redrawing and comparing pixel for pixel. Limits: control codes take cells and several byte sequences draw the same image, so the result is *a* page, `inferred` with an `algo:` author (invariants 5, 9: ADR and owner first); screenshots are Demozoo's (no data license). Spike first on pages that have both a screenshot and an edit.tf original: exact-match rate | owner, 2026-10-09 | open, after I56 |
 
 ## Curiosities
 
