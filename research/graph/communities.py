@@ -24,15 +24,14 @@ from __future__ import annotations
 import collections
 import json
 import logging
-from pathlib import Path
 from typing import Any
 
 import duckdb
 import numpy as np
+from build import OUT as GRAPH  # next to this file: the graph build this names
+from build import ROOT
 from tm_analysis.neighbours import COLOURS, PROFILE, profile
 
-ROOT = Path(__file__).resolve().parents[2]
-GRAPH = ROOT / "datasets" / "build" / "graph" / "1"
 NAMER = "algo:graph-communities@1"
 TYPICAL = 5
 ENDS = 2

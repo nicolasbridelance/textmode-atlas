@@ -195,7 +195,7 @@ function card(w) {
   el.innerHTML = `<div class="thumb">${thumb}</div><div class="meta">
     <div class="name" title="${esc(w.path)}">${esc(file)}</div>
     <div class="who">${esc(w.sauce_author || "?")} / ${esc(w.sauce_group || "?")}</div>
-    <div class="who">${esc(w.pack)} · ${esc(w.archive)} · ${w.year ?? "?"}${w.cols ? ` · ${w.cols}×${w.rows}` : ""}</div>
+    <div class="who">${esc(w.pack ?? "loose file")} · ${esc(w.archive)} · ${w.year ?? "?"}${w.cols ? ` · ${w.cols}×${w.rows}` : ""}</div>
     ${w.hit ? `<div class="hit" title="${esc(w.hit)}">${esc(w.hit)}</div>` : ""}</div>`;
   el.onclick = () => open(w.sha256);
   el.onkeydown = (e) => { if (e.key === "Enter") open(w.sha256); };
@@ -239,7 +239,7 @@ function side(w) {
   const preview = w.decoding === "ok" && !w.rendering_sha256
     ? `<p class="warn">Preview drawn from the grid: no stored rendering yet (8-pixel letters).</p>` : "";
   return `<h2>${esc(w.path.split("/").pop())}</h2>
-  <div style="color:var(--dim)">${esc(w.pack)} · ${w.year ?? "?"} ·
+  <div style="color:var(--dim)">${esc(w.pack ?? "loose file")} · ${w.year ?? "?"} ·
     <a href="${esc(w.pack_url)}" target="_blank" rel="noopener">${esc(w.archive)}</a></div>${preview}
   <h3>Record</h3><dl>
     <dt>title</dt><dd>${esc(w.sauce_title || "–")}</dd>
