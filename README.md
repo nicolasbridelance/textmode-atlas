@@ -39,6 +39,16 @@ The project is dedicated to the people who made the textmode scene.
 - **Tours** of 12 to 20 works written by named people, and the scene's own radio stations
   playing along.
 
+## Who it is for
+
+<img src="corpus/ratings/badges/level-3.svg" alt="Every audience" height="32"> <img src="corpus/ratings/badges/level-7.svg" alt="7 and over" height="32"> <img src="corpus/ratings/badges/level-12.svg" alt="12 and over" height="32"> <img src="corpus/ratings/badges/level-16.svg" alt="16 and over" height="32"> <img src="corpus/ratings/badges/level-18.svg" alt="Adults only" height="32"> <img src="corpus/ratings/badges/level-withheld.svg" alt="Withheld" height="32">
+
+The scene was made largely by teenagers, and some of its works are violent, sexual, hateful or
+about crime. Every work gets an audience level, as games do with PEGI: the museum's own
+[audience grid](docs/audience-grid.md) says, descriptor by descriptor, what may be shown to whom.
+The server applies it, the grid is the same from this page down to the database, and anyone can
+ask for a work to be rated again.
+
 ## Where it stands
 
 Under construction, in the open. The repository runs on its target architecture:

@@ -29,6 +29,7 @@ Neuf règles sont vérifiées par le code, pas seulement par convention.
 | Un calcul n'est jamais présenté comme un fait | contrainte SQL : `nature = 'inferred'` exige `asserted_by` de type `algo:` |
 | Aucun fichier affiché ni joué sans droit | fonction `can_display()` appliquée par `tm export` et par l'API, jamais par le frontend ; elle couvre l'image comme le son |
 | Aucun lien pseudo → état civil sans consentement | table `person` hors de l'API publique |
+| Aucune œuvre montrée hors de son public | [grille des publics](audience-grid.fr.md) adaptée de PEGI, une seule source (`corpus/ratings/grid.yaml`) ; classements en ajout seul (`content_rating`), niveau calculé par la base (`work_audience`) ; `withheld` jamais exporté ; appliquée par `tm export` et l'API, jamais par le frontend ([ADR 0020](adr/0020-the-audience-grid.md)) |
 | Tout contenu généré par un modèle est marqué | `level = 'interpretation'` et `asserted_by = 'algo:…'` |
 | Aucune œuvre n'est générée « à la manière de » | les modèles mesurent et prédisent ; une grille produite par un modèle n'est jamais rendue ni exportée (`tm export` refuse toute `representation` sans `sha256` d'artefact acquis) |
 
@@ -666,6 +667,8 @@ Sites à étudier avant le prototype : Radio Garden (errance sans barre de reche
 ## Droits et vie privée
 
 Les droits sont appliqués à l'export et par l'API, à partir de deux blocs par œuvre. Le bloc `rights` du schéma initial est repris tel quel ; un bloc `privacy` s'y ajoute.
+
+À côté des droits, le public. Chaque œuvre reçoit un niveau de la [grille des publics](audience-grid.fr.md) (3, 7, 12, 16, 18 ans, ou `withheld`), à partir de descripteurs (violence, peur, sexe et nudité, langage, drogues, discrimination, délits, personnes réelles) qu'un programme déduit, qu'une personne nommée relit et que l'artiste peut déclarer. La grille est adaptée de PEGI, consensus européen sur ce qui est acceptable pour les publics protégés ; elle est publiée depuis le README et copiée telle quelle dans la base ([ADR 0020](adr/0020-the-audience-grid.md)).
 
 ```yaml
 privacy:
