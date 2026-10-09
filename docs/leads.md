@@ -56,6 +56,7 @@ Rules:
 | Q33 | Does a vision model recognize a subject drawn in characters (Calvin and Hobbes, a dragon, a face) as a viewer does by squinting? At which size does recognition appear, and does downsampling help as squinting does? | owner, 2026-10-09 | spike 0005: ten Calvin works found by title and text (`SMI-C&HT.ANS`, `PHN-CALV.ANS`, `TT-PG.ICE`…), blind, sizes from the cell grid to a thumbnail | open |
 | Q34 | Where are the Minitel's adult services (the 3615 "messageries roses") kept, if anywhere: pages, screen captures, recordings, ads? | owner, 2026-10-09 | BnF and INA (to search, not confirmed), collectors and emulation communities, press of the time; ADR 0019 for how they would be handled | open |
 | Q20 | How alike are the works of one pack? Do packs have a house style, a template header or footer? | explorer | within-pack distances against between-pack | open |
+| Q36 | Why so little sexual material? Inferred ratings find 953 works at 18 for sexual words (of 24,186 works with an inferred rating), and what the owner saw at 16 looked tame. Hypotheses: keywords miss drawings without words; the art groups and 16colo kept such work out; it circulated elsewhere (BBS adult areas, ASCII collections, private trades) and was lost or never archived | owner, 2026-10-09 | an image classifier on a sample (I46), the textfiles.com art directories and Discmaster by keyword, NFO rules of the big groups | open |
 
 ## Hypotheses (to pre-register before a confirmatory test)
 
@@ -122,6 +123,13 @@ Rules:
 | I43 | A museum of rooms with their own mood (gallery, release party, BBS, labels, Midnight, arcade, feeds borrowed from social apps), on the same works and rights: [museography proposal](museography.md), four questions to the owner | owner, 2026-10-09 ("c'est tristoune") | open |
 | I19 | D1 sampling design: strata bounded by the mass, equal (or square-root) allocation per stratum so that thin years are over-represented, and each pack's inclusion weight recorded so that statistics can be reweighted to the corpus | owner: over-represent thin years | taken (roadmap step 6) |
 | I18 | Detect the artist's handle in NFO and in-grid text and link it to SAUCE authors, with confidence | linkage R1 | open |
+| I47 | Explorer thumbnails "best fit": most works are long portraits, so the first screen misrepresents them; scale the whole work into the card, and put the whole work small in a corner of a first-screen card | owner, 2026-10-09 | taken (roadmap step 9) |
+| I48 | The nearest-works graph (features v1) studied as a social network: communities, homophily, and what projects onto it (year, group, archive, content kind, country). Do groups form style communities, do eras? | owner, 2026-10-09; H3, I21 | taken (roadmap step 12) |
+| I49 | The corpus as a large graph to wander: one node per work, thumbnails on the nodes when zoomed in, a click opens the work; edges from neighbours, packs, groups, greets | owner, 2026-10-09 | taken (roadmap step 13) |
+| I50 | Wikipedia and Wikidata downloaded politely (relevant articles in every language, with revision ids) and used for a classification and a nomenclature of the field | owner, 2026-10-09 | taken (roadmap steps 10, 16) |
+| I51 | The works as documents: the text inside them (dedications, news, credits, working conditions, "he is working on…") read methodically. Layers: text zones, line classes, entities, block lettering, then NLP (topics, embeddings, NER, dating) over a per-work reading stored as rows and Parquet, rendered as Markdown for people | owner, 2026-10-09 ("c'est tout à fait monstrueux") | taken (roadmap step 15) |
+| I52 | Read lettering drawn with blocks (logos, titles) by matching TheDraw (`.TDF`) fonts cell by cell: exact, explainable, and it names the font used | I51 | open |
+| I53 | A concordance (keyword in context) over the text layer, by year and group, in the explorer: the first tool for reading 1.17 million lines by hand | I51 | open |
 
 ## Curiosities
 
