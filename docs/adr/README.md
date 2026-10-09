@@ -61,3 +61,4 @@ What becomes easier, what becomes harder, what we must now do.
 | [0020](0020-the-audience-grid.md) | The museum's audience grid, adapted from PEGI, from one source to every layer | Accepted |
 | [0021](0021-provenance-of-acquisitions.md) | Record where and when every original was fetched, and carry it into what we publish | Accepted |
 | [0022](0022-the-public-export.md) | What `tm export` publishes: a record, a compact grid and a PNG per work, nothing else | Accepted |
+| [0023](0023-lists-for-the-visit.md) | Export the lists a visit walks through, and the words of a shown work | Accepted |

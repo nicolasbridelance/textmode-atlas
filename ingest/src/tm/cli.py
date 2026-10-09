@@ -24,6 +24,7 @@ from tm.dev import storage_init
 from tm.export import ExportError, Outcome, export_work, exportable
 from tm.features import extract_artifact, pending_features
 from tm.ingest import ingest_golden
+from tm.lists import collect, write_lists
 from tm.packs import PACK_SOURCES, PackIngested, ingest_pack, pack_archives
 from tm.pilots import SampleError
 from tm.render import pending_renderings, render_artifact
@@ -289,6 +290,18 @@ def export_command(
                 typer.echo(f"refused {err}", err=True)
     shown = ", ".join(f"{name}: {outcomes[name]}" for name in ("files", "record", "nothing"))
     typer.echo(f"{shown}, refused: {refused}")
+
+
+@app.command("lists")
+def lists_command() -> None:
+    """Write the lists a visit walks through (packs, signatures, years, the work of the day),
+    naming only works whose files are shown (ADR 0023). Run after `tm export`."""
+    cfg = settings()
+    public = S3Store(s3_client(), cfg.public_bucket)
+    with create_engine(cfg.database_url).connect() as conn:
+        lists = collect(exportable(conn))
+    counts = write_lists(lists, public)
+    typer.echo(", ".join(f"{name}: {count}" for name, count in counts.items()))
 
 
 @app.command("rate")
