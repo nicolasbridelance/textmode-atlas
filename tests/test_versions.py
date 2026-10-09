@@ -49,7 +49,10 @@ PINS = {
     },
     "renderer": {"1": "acf2f900bd645c61dac80da37121cceab3abb36ae5bbbc627da178422e6d5c28"},
     "features": {"1": "6722aeabbaa4cbee87caa167ef6d32a9abb8adfea9aa36ecb889ffa357271079"},
-    "text": {"1": "0a8ac6e2384a40190cbe4b256a4a6633e76e86cb2b4976fdb2b97bf7e7f5e334"},
+    "text": {
+        "1": "0a8ac6e2384a40190cbe4b256a4a6633e76e86cb2b4976fdb2b97bf7e7f5e334",
+        "2": "ad4835bcf0f9cb2f5e65e71264a999d013ee57b13dd97ef07c1caf97c9c3bdca",
+    },
 }
 
 

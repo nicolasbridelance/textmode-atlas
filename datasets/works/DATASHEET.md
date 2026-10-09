@@ -45,7 +45,8 @@ packs nobody has examined.
   empty, so the coverage of this dataset is unknown.
 - `year` is the year 16colo files the pack under, not a release date.
 - The text layer reads letters cell by cell: a word drawn in blocks or in a custom font is not
-  text to it, letters used as shading are, and tags shorter than three characters (`rs`) are
+  text to it, letters used as shading are; accented letters outside CP437 (ã, õ, Polish or
+  Nordic letters in other code pages) come out as other glyphs or not at all, and tags shorter than three characters (`rs`) are
   left out unless a longer word shares their row.
 - Excluding files shared with test packs removes more of the widely circulated files (logos,
   intros, group ads) than of the others; counts of such files are biased down.
