@@ -28,7 +28,7 @@ import numpy as np
 import pyarrow as pa
 from access import load_access
 from graph import Graph  # next to this file
-from museum import asset
+from museum import asset, english
 from PIL import Image
 from readings import readings
 from thumbnails import MODES, thumbnail  # next to this file
@@ -442,6 +442,9 @@ class Handler(BaseHTTPRequestHandler):
                 self.route_page(parts)
 
     def route_page(self, parts: list[str]) -> None:
+        if (unprefixed := english(parts)) is not None:
+            self.redirect(unprefixed)
+            return
         if parts == ["atlas-graph.js"]:
             self.send(HTTPStatus.OK, "text/javascript", GRAPH_SCRIPT.read_bytes())
             return
@@ -471,6 +474,13 @@ class Handler(BaseHTTPRequestHandler):
                 self.png(_image(self.corpus, sha, "full"))
             case _:
                 self.send(HTTPStatus.NOT_FOUND, "text/plain", b"not found")
+
+    def redirect(self, path: str) -> None:
+        query = urlparse(self.path).query
+        self.send_response(HTTPStatus.PERMANENT_REDIRECT)
+        self.send_header("Location", f"{path}?{query}" if query else path)
+        self.send_header("Content-Length", "0")
+        self.end_headers()
 
     def binary(self, data: bytes | None) -> None:
         if data is None:

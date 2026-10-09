@@ -12,7 +12,7 @@ is a compatibility alias. The existing machine-local Wi-Fi forwarding still work
 
 ## Rooms and records
 
-- `/fr/explore` and `/en/explore`: the collection, metadata and decoded-text search,
+- `/fr/explore` and `/explore` (English; `/en/…` redirects there): the collection, metadata and decoded-text search,
   archive/year/format/kind filters, feature ordering and rendering choices.
   Its `view=pinterest`, `view=instagram` and `view=tinder` layouts share the same
   gated corpus and browser-local selection; `view=grid` is the compact gallery,
@@ -20,9 +20,9 @@ is a compatibility alias. The existing machine-local Wi-Fi forwarding still work
   header directly links the three discovery modes, Collection, Constellation and
   Research. There is no second layout menu or separate research collection switch.
   All open the same work screen.
-- `/fr/constellation` and `/en/constellation`: the scientific graph, its communities,
+- `/fr/constellation` and `/constellation`: the scientific graph, its communities,
   neighbourhoods and existing interactive views. Selecting a work opens the shared screen.
-- `/fr/research` and `/en/research`: existing dated reports and research programme.
+- `/fr/research` and `/research`: existing dated reports and research programme.
   Source documents retain their original language and dataset scope.
 - `/fr/work?w=<sha256>` and its English equivalent: conservation, credit, audience,
   withdrawal, measured features, computed neighbours and signed readings.
