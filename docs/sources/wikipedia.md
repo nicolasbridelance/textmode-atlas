@@ -72,6 +72,30 @@ ANSI art has articles in de, en, fa, fi, fr, ko, pl, ru, sv, uk. The French one 
   Mistigris, PabloDraw, ACiDDraw (mentioned only inside other articles), teletext art as a
   practice.
 
+## Local copy (2026-10-09)
+
+`scripts/fetch_wikipedia.py` fetched, into `data/wikipedia/2026-10-09/` (local, never in Git):
+
+- **Seeds:** the 34 topics above (29 surveyed and five formats or tools) and the members of six
+  English categories with one level of subcategories: 333 English articles.
+- **Every language that has them:** 1,902 distinct articles in 126 languages, 16.7 MB of
+  wikitext, each with its page id, revision id and timestamp. Most covered after English (321):
+  German 98, French 97, Russian 79, Finnish 72, Spanish 70, Italian 61, Japanese 58, Chinese 54,
+  Polish 52, Swedish 49, Ukrainian 48.
+- **Wikidata:** the 323 items these articles point to, whole (labels in every language,
+  statements, links to other databases).
+- **Fetches:** 267 requests, each logged with its time, URL, status and the SHA-256 of the
+  body. Wikidata answered `maxlag` several times in a row: the script waits up to a minute
+  between tries.
+
+What it is for: the nomenclature of roadmap step 16 (kinds, techniques, formats, tools, groups,
+with Wikidata identifiers and labels in every language) and the "see also" of records (I27).
+
+**People.** 42 of the items are people (`P31 = Q5`), and their articles often give a civil
+name next to a handle. The copy is research material: nothing from it may link a handle to a
+civil identity in anything the museum publishes (invariant 7). The nomenclature keeps groups,
+tools, formats and techniques; people stay out of it.
+
 ## Access and terms
 
 - API: `https://<lang>.wikipedia.org/w/api.php` and `https://www.wikidata.org/w/api.php`.
