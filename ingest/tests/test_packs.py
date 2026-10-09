@@ -9,7 +9,7 @@ import pytest
 from sqlalchemy import Connection, text
 from stores import Stores
 from tm.archives import Expanded
-from tm.packs import ingest_pack, pack_archives
+from tm.packs import TEXTFILES, ingest_pack, pack_archives
 from tm.rights import Privacy, Rights, can_display
 from tm.storage import get_original, sha256_hex
 
@@ -127,6 +127,25 @@ def test_a_file_in_two_packs_is_one_artifact(
     assert rows(db, f"select count(*) from artifact where sha256 = '{sha}'") == [(1,)]
     assert rows(db, f"select count(*) from set_member where sha256 = '{sha}'") == [(2,)]
     assert rows(db, "select count(*) from work where kind = 'single'") == [(2,)]
+
+
+def test_a_pack_from_textfiles_is_shown_as_released_there(
+    db: Connection, stores: Stores, tmp_path: Path
+) -> None:
+    ingest_pack(db, stores.originals, make_pack(tmp_path / "1995" / "a.zip", MEMBERS))
+    other = {"HORIZON.ANS": HORIZON, "OTHER.ANS": LOGO + b" "}
+    pack = make_pack(tmp_path / "textfiles" / "1996" / "b.zip", other)
+    ingest_pack(db, stores.originals, pack, TEXTFILES)
+    sources = rows(
+        db,
+        "select a.source_path, s.name, w.rights -> 'scene_publication' ->> 'url' from artifact a"
+        " join source s on s.id = a.source_id join version v on v.id = a.version_id"
+        " join work w on w.id = v.work_id where a.source_path like '1996/%' order by 1",
+    )
+    url = "http://artscene.textfiles.com/artpacks/1996/b.zip"
+    assert sources == [("1996/b.zip", "textfiles", url), ("1996/b.zip/OTHER.ANS", "textfiles", url)]
+    first = rows(db, f"select source_path from artifact where sha256 = '{sha256_hex(HORIZON)}'")
+    assert first == [("1995/a.zip/HORIZON.ANS",)]  # a file met before keeps its first source
 
 
 def test_an_archive_that_cannot_be_read_is_still_recorded(

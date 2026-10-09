@@ -19,7 +19,7 @@ from tm.decode import decode_artifact, pending_artifacts
 from tm.dev import storage_init
 from tm.features import extract_artifact, pending_features
 from tm.ingest import ingest_golden
-from tm.packs import PackIngested, ingest_pack, pack_archives
+from tm.packs import PACK_SOURCES, PackIngested, ingest_pack, pack_archives
 from tm.pilots import SampleError
 from tm.render import pending_renderings, render_artifact
 from tm.shards import Shard
@@ -233,15 +233,20 @@ def text_command(
 @ingest_app.command("pack")
 def ingest_pack_command(
     paths: Annotated[list[Path], typer.Argument(help="Pack archives, or directories of them.")],
+    source: Annotated[
+        str, typer.Option(help=f"Archive mirrored: {', '.join(PACK_SOURCES)}.")
+    ] = "16colo",
 ) -> None:
-    """Store 16colo packs from the local mirror and record them: the set, its files, the art."""
+    """Store packs from a local mirror and record them: the set, its files, the art."""
+    if source not in PACK_SOURCES:
+        raise typer.BadParameter(f"unknown source {source!r}", param_hint="--source")
     cfg = settings()
     store = S3Store(s3_client(), cfg.originals_bucket)
     engine = create_engine(cfg.database_url)
     archives = pack_archives(paths)
     for archive in archives:
         with engine.begin() as conn:  # one transaction per pack
-            typer.echo(_pack_summary(ingest_pack(conn, store, archive)))
+            typer.echo(_pack_summary(ingest_pack(conn, store, archive, PACK_SOURCES[source])))
     typer.echo(f"{len(archives)} packs")
 
 

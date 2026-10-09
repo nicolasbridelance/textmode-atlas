@@ -37,3 +37,9 @@ def test_corpus_check_reports_stale_schema_then_schema_fixes_it(tmp_path: Path) 
     assert runner.invoke(app, ["corpus", "check", "--root", str(root)]).exit_code == 1
     assert runner.invoke(app, ["corpus", "schema", "--root", str(root)]).exit_code == 0
     assert runner.invoke(app, ["corpus", "check", "--root", str(root)]).exit_code == 0
+
+
+def test_ingest_pack_refuses_an_unknown_source(tmp_path: Path) -> None:
+    result = runner.invoke(app, ["ingest", "pack", str(tmp_path), "--source", "nowhere"])
+    assert result.exit_code == 2
+    assert "unknown source" in result.output
