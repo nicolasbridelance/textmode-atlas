@@ -52,6 +52,7 @@ Rules:
 | Q29 | Which scholarship exists on the art scene beyond Gleb J. Albert (WiderScreen 2017)? A bibliography, read at the source. | cartography, sources register | Albert's references, WiderScreen, Google Scholar, theses on BBS culture | open |
 | Q30 | How precisely can a pack be dated? textfiles' listings describe most packs with a month ("ACME Release #5 (January, 1996)"), 16colo files them by year only. | textfiles mirror (`index.tsv`) | parse the descriptions, compare with SAUCE dates and NFO dates of the same pack | open |
 | Q31 | Were the BBSes advertised in the works real and where? BBS ads give a name, a number and often a network address; FidoNet nodelists and BBS lists of the time give the same with a date. An independent witness of the scene's geography. | sources discussion, 2026-10-09 | match ad text (text layer) with textfiles.com/bbs/BBSLISTS and archived nodelists | open |
+| Q32 | How did graffiti photo packs (168 at textfiles, 1997–2000, mostly German crews) enter the art scene's channels? Same BBSes, same couriers, members shared with ANSI groups? | textfiles ingestion, field notes | NFO and DIZ of those packs (now ingested), greets and member lists, Demozoo groups | open |
 | Q20 | How alike are the works of one pack? Do packs have a house style, a template header or footer? | explorer | within-pack distances against between-pack | open |
 
 ## Hypotheses (to pre-register before a confirmatory test)
@@ -93,7 +94,7 @@ Rules:
 | I22 | Classify the lines of the text layer: greets, BBS ad, signature, title, prose, credits | Q12, Q25, the greets graph (I23) | open |
 | I23 | A greets graph: who greets whom, by year, from `greets:` lines (3,728 train works hold the word) | R1 linkage, D5 graph, Q6 | open |
 | I24 | Explorer header on a phone: the dataset note runs past the right edge | screenshot of the text search | open |
-| I25 | Ingest the 331 textfiles.com artpacks that have no 16colo namesake, as a second source; compare all 3,956 by hash | Q21, Q26, corpus coverage | open |
+| I25 | Ingest the 331 textfiles.com artpacks that have no 16colo namesake, as a second source; compare all 3,956 by hash | Q21, Q26, corpus coverage | **taken**: 289 archives with files 16colo lacks ingested; hash comparison in the archives note |
 | I26 | Resolve SAUCE author strings with Demozoo's nicks and aliases (165,502 nicks) | I20, H3, R1 | open |
 | I27 | Wikidata identifiers on records of groups, tools and formats (CC0), for "see also" across languages | museum, authority control | open |
 | I28 | An independent witness of how many packs were released per year: BBS file lists, art magazines' release lists, member lists in NFOs | H8, Q21 | open |
@@ -107,6 +108,7 @@ Rules:
 | I36 | Usenet (`usenet-alt` on the Internet Archive; alt.ascii-art, alt.binaries.* and comp.bbs.* groups): ASCII art posted with a date and a sender, and release announcements of packs | sources discussion | open |
 | I37 | Teletext Archive (teletextarchive.com): pages recovered from VHS tapes, a source for platform teletext (R6) beside teletextart.com | sources discussion | open |
 | I38 | Today's scene on social networks and its own sites (Blocktronics, Mistigris, ANSI artists on Mastodon and Bluesky): where living artists can be asked for permission and testimony | sources discussion | open |
+| I39 | Freeze the list of files seen as train then held out (the 354 of works v4 not in v5) beside the research program, so a confirmatory test can exclude them without rebuilding v4 | ADR 0018 | open |
 | I19 | D1 sampling design: strata bounded by the mass, equal (or square-root) allocation per stratum so that thin years are over-represented, and each pack's inclusion weight recorded so that statistics can be reweighted to the corpus | owner: over-represent thin years | taken (roadmap step 6) |
 | I18 | Detect the artist's handle in NFO and in-grid text and link it to SAUCE authors, with confidence | linkage R1 | open |
 

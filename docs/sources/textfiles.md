@@ -17,13 +17,13 @@ and FTP sites from the late 1990s on.
 
 | Directory | Content |
 | --- | --- |
-| `artpacks/1992` … `artpacks/2008` | 3,956 archives: 16, 105, 357, 435, 638, 690, 548, 397, 199, 140, 140, 125, 103, 39, 12, 6, 6 per year |
+| `artpacks/1992` … `artpacks/2008` | 3,989 archives: 16, 105, 357, 435, 639, 706, 563, 398, 199, 140, 140, 125, 103, 39, 12, 6, 6 per year |
 | `ascii/` | 564 entries (ASCII artpacks) |
 | `asciiart/` | 304 entries |
 | `acid/`, `ice/`, `ansi/`, `intros/`, `ansimusic/`, `emags/`, `history/` | collections and documents, not counted yet |
 
-**Against 16colo:** 3,625 of the 3,956 artpack archives (92%) have a 16colo pack of the same name
-(lower case, extension removed); 331 do not. Same names are not same files: the comparison by
+**Against 16colo:** 3,650 of the 3,989 artpack archives (92%) have a 16colo pack of the same name
+(lower case, extension removed); 339 do not. Same names are not same files: the comparison by
 SHA-256 comes with ingestion.
 
 ## Access
@@ -42,8 +42,10 @@ for removal. ADR 0009 applies: released freely by the scene, held by a scene arc
 
 ## How the museum uses it
 
-- The 331 archives without a 16colo namesake are the first candidates for a second source of
-  packs (`tm ingest pack` reads them as they are).
+- Ingested 2026-10-09: the 289 archives that hold at least one file 16colo lacks, by hash
+  (`scripts/compare_archives.py`), as packs with `--source textfiles`. Most of what they add
+  are graffiti photographs; 61 are textmode works ([archives note](../../research/exploration/archives.md)).
+  Archives that add no file are not ingested: they would only duplicate a set.
 - Q21 and R2: textfiles is **not independent** of 16colo, so it cannot serve as a second capture
   for a capture–recapture estimate.
 - The `history/` directory: primary documents for the scene's history (leads).

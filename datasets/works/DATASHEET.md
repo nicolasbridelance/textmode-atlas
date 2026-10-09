@@ -44,6 +44,10 @@ packs nobody has examined.
 
 ## Known limits
 
+- **Seen, then held out.** When textfiles entered (v5, 2026-10-09), 354 files already explored
+  as `train` through 16colo became `test`, because a textfiles test pack also holds them. They
+  are the v4 works missing from v5; a confirmatory test leaves them out (ADR 0018).
+
 - Coverage: as for `catalogue`; 16colo holds what was submitted to it, and the gap register is
   empty, so the coverage of this dataset is unknown.
 - `year` is the year the archive files the pack under, not a release date.
