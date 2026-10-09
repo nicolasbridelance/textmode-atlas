@@ -131,6 +131,12 @@ Rules:
 | I51 | The works as documents: the text inside them (dedications, news, credits, working conditions, "he is working on…") read methodically. Layers: text zones, line classes, entities, block lettering, then NLP (topics, embeddings, NER, dating) over a per-work reading stored as rows and Parquet, rendered as Markdown for people | owner, 2026-10-09 ("c'est tout à fait monstrueux") | taken (roadmap step 15) |
 | I52 | Read lettering drawn with blocks (logos, titles) by matching TheDraw (`.TDF`) fonts cell by cell: exact, explainable, and it names the font used | I51 | open |
 | I53 | A concordance (keyword in context) over the text layer, by year and group, in the explorer: the first tool for reading 1.17 million lines by hand | I51 | taken in part: offline `just concordance`, lexical report and raw credit registries (`research/lexicon/`); explorer integration remains open |
+| I54 | Does the corpus hold a representative of every practice Wikipedia names? Checked 2026-10-09 against the 34 topics: ANSI, ASCII (scene), artpacks, NFO, CP437, box-drawing and block elements are well held (16colo); RTTY, VT100 and BBS ASCII arrive with textfiles' collections; teletext, Minitel/videotex, PETSCII, ATASCII, Shift_JIS art and kaomoji have no work at all; typewriter art and concrete poetry are physical | owner, 2026-10-09 | open: one source per missing practice, below |
+| I55 | PETSCII, teletext and ATASCII through Demozoo: its dump tags 2,118 productions `petscii`, 447 `teletext`, 111 `atascii`, each with download links (CSDb, scene.org, Pokefinder); a corpus of each in one pass, decoders per platform (M5) | I54 | open |
+| I56 | Teletext art: teletextart.co.uk (artists, MUTA, Yle Text exhibitions), the teletext archive recoveries (teletextarchaeologist.org, T42 captures), Battle of the Bits `.tti` entries: which one holds files, under what terms | I54 | open |
+| I57 | Minitel and videotex: pages survive as V.23 modem tones on cassette, archive.org screen captures (Viatel 1985–86), a Lost Media forum group's repository, the Minitel Research Lab (Indiana University, physical); no bulk source of `.vdt` pages found yet | I54 | open |
+| I58 | Shift_JIS art (AA) and kaomoji: no open corpus found by search; 2channel AA collections (AA wikis, Mona font sites) to find with Japanese keywords; proportional font (MS PGothic) means a different grid model | I54 | open |
+| I59 | ATASCII: Break Into Chat's AtasciiTube (BBS animations), the pigwa.net Atari FTP archive (886 GB), atariuptodate's ascii-art category | I54 | open |
 
 ## Curiosities
 
