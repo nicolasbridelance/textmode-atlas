@@ -81,7 +81,7 @@ needs the one before says so.
     packs), stored as a dataset table; studied as a social network: degree, communities,
     homophily by year, group, archive, content kind, and country where Demozoo gives one; what
     the projections show, written in an exploration note (I48, exploratory). Feeds I21.
-13. [ ] Corpus as a graph to explore (local research tool, not public): every work a node, edges
+13. [x] Corpus as a graph to explore (local research tool, not public): every work a node, edges
     from step 12 (and pack, group, greets later), WebGL, thumbnails drawn on nodes when zoomed in,
     a click opens the work (I49).
 14. [ ] Work screen: "nearest in style" as a way out, from step 12, published by `tm export`

@@ -89,6 +89,32 @@ schools. One community stands out by period: **7**, monochrome block art of 1999
 when ANSI groups turned to ASCII and "blocky" one-colour work (works.md, era 2000–04). It is the
 only community whose quartiles miss 1996.
 
+## Archetypes and variability
+
+`research/graph/communities.py` (run by `just graph`) describes each community in the same
+profile space. Its archetype is the work nearest the community's centre, followed by the four
+next most typical works. Its spread is the mean distance of its works to the centre (corpus:
+5.0). Its main axis of variation is the first principal component inside it, with works at both
+ends (2nd and 98th percentiles). Its name is computed from the measures where it stands furthest
+from the corpus and is signed `algo:graph-communities@1` (invariant 8): a description until a
+person names it. The cards are in the graph explorer (`just explore`, then "constellation").
+
+What they show:
+
+- **The coloured block art sorts by hue.** Communities 2, 3, 4, 6, 8, 9 and 10 are reds,
+  blues, greens, magentas, cyans, yellows and browns. Inside each, the main axis opposes the dark
+  and the bright version of the same hue (12–29% of the variation): the shading ramp an artist
+  chose. Groups and years are spread across all of them.
+- **Text art varies by density, not by colour.** Community 0 (text, 13,059 works) varies from
+  "many glyphs, letters, weight high" to "few glyphs, no letters": from text-heavy NFO-like
+  screens to sparse line drawings.
+- **Tight small communities are genres of utility.** Spread near 0: 52 one-line separators
+  (`──ZIP──`, `──ANS──`) made for BBS file lists, one pack's house template (`ztart01`), and
+  the info files of a monthly pack (`IMPURE34.INF` to `IMPURE44.INF`) (field notes).
+- **The loosest communities are mixed bags**, kept together by one strong trait: bright
+  backgrounds (17, spread 10.0), drawing strictly line by line (19, 8.8). They are the first to split
+  with better features.
+
 ## What to project next
 
 - **The greets graph (I23) on this one:** do groups that greet each other draw closer in style

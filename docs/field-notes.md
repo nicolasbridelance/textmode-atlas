@@ -16,6 +16,24 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-09 — Colour families, and the genres of utility
+
+**The coloured block art of the 1990s sorts by hue.** Read as a graph of nearest works (features
+v1), the coloured block art splits into communities of one dominant colour family: reds, blues,
+greens, magentas, cyans, yellows, browns. Inside each family, the main variation is dark against
+bright of the same hue: the shading ramp an artist chose. Groups and years are spread across all
+of them. *How found: community profiles of the nearest-works graph
+([neighbours.md](../research/exploration/neighbours.md)). Evidence: `communities.json` of graph
+build 1, train packs only. Story: "a red piece, a blue piece": how artists thought in palettes.*
+
+**Small, tight communities are genres of utility, not styles.** One gathers 52 one-line works
+(80 × 1) such as `──ZIP──` and `──ANS──`: separator bars made for BBS file lists, released in
+packs (`ea_1195`, `iris9506`, `plain06`). Another is one pack's house template (`ztart01`,
+several `.ZTA` files on the same 80 × 20 frame). Another is the info file of a monthly pack
+(`IMPURE34.INF` to `IMPURE44.INF`, 2003–04), the same layout issue after issue. *How found: same
+graph, communities whose works sit almost on their centre (spread 0.0–0.5). Story: the art made
+for the BBS's own furniture, and packs with a house layout.*
+
 ## 2026-10-09 — Graffiti crews released artpacks
 
 **Train writers used the art scene's format.** Of the first 289 textfiles.com archives found to hold files

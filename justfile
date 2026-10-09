@@ -108,9 +108,10 @@ shots *paths:
 notebook path="research":
     uv run --group research marimo edit {{path}}
 
-# Nearest-works graph of the train packs into datasets/build/graph (reads the works dataset)
+# Nearest-works graph of the train packs, and its communities, into datasets/build/graph
 graph:
     uv run --group research python research/graph/build.py
+    uv run --group research python research/graph/communities.py
 
 # Corpus explorer on http://127.0.0.1:8737 (reads the works dataset and the derived bucket)
 explore:

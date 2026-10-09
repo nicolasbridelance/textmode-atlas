@@ -26,6 +26,7 @@ from urllib.parse import parse_qs, urlparse
 
 import duckdb
 import numpy as np
+from graph import Graph  # next to this file
 from PIL import Image
 from thumbnails import MODES, thumbnail  # next to this file
 from tm.config import settings
@@ -37,6 +38,8 @@ ROOT = Path(__file__).resolve().parents[2]
 BUILD = ROOT / "datasets" / "build" / "works" / "5"
 FONT = ROOT / "corpus" / "fonts" / "ibm-vga-8x16.f16"
 PAGE = Path(__file__).with_name("index.html")
+GRAPH_PAGE = Path(__file__).with_name("graph.html")
+GRAPH = ROOT / "datasets" / "build" / "graph" / "1"
 HOST, PORT = "127.0.0.1", 8737
 PAGE_SIZE = 120
 NEIGHBOURS = 12
@@ -252,6 +255,7 @@ class Handler(BaseHTTPRequestHandler):
     """Routes: the page, the JSON endpoints, and images (cards for the wall, or the work)."""
 
     corpus: Corpus
+    graph: Graph | None = None
 
     def do_GET(self) -> None:
         url = urlparse(self.path)
@@ -265,6 +269,8 @@ class Handler(BaseHTTPRequestHandler):
         match parts:
             case [""]:
                 self.send(HTTPStatus.OK, "text/html; charset=utf-8", PAGE.read_bytes())
+            case ["graph"] | ["api", "graph", _]:
+                self.route_graph(parts)
             case ["api", "facets"]:
                 self.json(self.corpus.facets())
             case ["api", "works"]:
@@ -277,6 +283,16 @@ class Handler(BaseHTTPRequestHandler):
                 self.png(_image(self.corpus, sha, kind))
             case _:
                 self.send(HTTPStatus.NOT_FOUND, "text/plain", b"not found")
+
+    def route_graph(self, parts: list[str]) -> None:
+        """The graph page and its three payloads (nodes, edges, communities)."""
+        if parts == ["graph"]:
+            self.send(HTTPStatus.OK, "text/html; charset=utf-8", GRAPH_PAGE.read_bytes())
+        elif self.graph and parts[-1] in ("nodes", "edges", "communities"):
+            kind = "application/octet-stream" if parts[-1] == "edges" else "application/json"
+            self.send(HTTPStatus.OK, kind, getattr(self.graph, parts[-1]), cache=True)
+        else:
+            self.send(HTTPStatus.NOT_FOUND, "text/plain", b"no graph: run `just graph`")
 
     def json(self, value: object) -> None:
         if value is None:
@@ -314,6 +330,8 @@ def main() -> None:
         sys.exit("No works dataset: run `uv run tm dataset build works` first.")
     corpus = Corpus(BUILD)
     Handler.corpus = corpus
+    if Graph.exists(GRAPH):
+        Handler.graph = Graph(GRAPH, BUILD)
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     log.info("Corpus explorer on http://%s:%d (%s works)", HOST, PORT, len(corpus.order))
     server.serve_forever()
