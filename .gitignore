@@ -28,3 +28,6 @@ apps/museum/static/data/
 .env
 .env.*
 !.env.example
+
+# Machine-local files (tools, private backups, evidence, worktrees), all in one folder
+/.local/

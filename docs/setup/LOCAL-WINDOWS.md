@@ -2,7 +2,8 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # Windows migration
 
-Private backup: `.local-migration/`; original ZIP is retained at the root.
+Private backup: `.local-migration/` (to move under `.local/migration/` once no
+process holds it); the original ZIP is kept in `.local/archives/`.
 Its SHA-256 is `9f4b86b73302ff105ef2b5fdb036ca91a31f9dfc7868ab33b7282cad339e35b6`.
 The bundle and source snapshot restored the principal branch exactly, including
 four tracked edits and two untracked research files. Other snapshots must remain
@@ -12,9 +13,15 @@ Use `uv sync --all-groups --frozen` for Python dependencies. Native commands in
 `justfile` require the Git Bash shell for POSIX recipes. Do not run the aggregate
 setup or migration recipe before SQL restoration.
 
-On this machine, run `. ./.local-env.ps1` in PowerShell to select the installed
+On this machine, run `. ./.local/env.ps1` in PowerShell to select the installed
 Node 24 and pnpm shims, the Python virtual environment and UTF-8 defaults.
 Read `JOURNAL.md` and `REPRISE.md` for current checks and remaining work.
+
+Everything machine-local lives in the ignored `.local/` folder: `env.ps1`, `tools/`
+(pnpm shims, 7-Zip), `validation-tools/` (a `just` shim that runs inside the Linux
+validation container, put on `PATH` only for a push), `worktrees/`, `archives/`,
+`evidence/<date>/` (screenshots, logs, audits), `scripts/` (one-off checks, Wi-Fi
+enable/disable) and `coordination/` (notes left by other agents).
 
 PostgreSQL/pgvector and Garage are defined in `compose.yaml`; Docker is required
 for that environment. Node 20 does not satisfy the web manifest. Do not replace
