@@ -113,22 +113,27 @@ def pack_archives(paths: list[Path]) -> list[Path]:
 
 
 def ingest_pack(
-    conn: Connection, store: ObjectStore, path: Path, source: PackSource = SIXTEEN_COLO
+    conn: Connection,
+    store: ObjectStore,
+    path: Path,
+    source: PackSource = SIXTEEN_COLO,
+    site_root: Path | None = None,
 ) -> PackIngested:
     """Record a pack, or complete one recorded before: members already listed are left alone,
-    members an earlier run could not read are added."""
+    members an earlier run could not read are added.
+
+    With `site_root`, the root of a mirror laid out as the archive's site, the pack's path is
+    its path on the site and its URL the site's (ADR 0024); otherwise its year and name."""
     year = path.parent.name if _is_year(path.parent.name) else None
-    source_path = f"{year}/{path.name}" if year else path.name
+    if site_root is not None:
+        source_path = path.relative_to(site_root).as_posix()
+        url = source.url + source_path
+    else:
+        source_path = f"{year}/{path.name}" if year else path.name
+        url = source.pack_url.format(stem=path.stem, path=source_path)
     data = path.read_bytes()
     sha256 = sha256_hex(data)
-    rights = Rights(
-        scene_publication=ScenePublication.model_validate(
-            {
-                "archive": source.name,
-                "url": source.pack_url.format(stem=path.stem, path=source_path),
-            }
-        )
-    )
+    rights = scene_rights(source, url)
     dating = _year_dating(year)
     source_id = ensure_source(conn, "archive", source.name, source.url, source.note)
     pack = _Pack(source_id, source_path, dating, rights)
@@ -155,6 +160,13 @@ def ingest_pack(
             _add_member(conn, store, pack, set_work, member)
             result.members += 1
     return result
+
+
+def scene_rights(source: PackSource, url: str) -> Rights:
+    """Rights of a file the scene released, as held by that archive at that URL (ADR 0009)."""
+    return Rights(
+        scene_publication=ScenePublication.model_validate({"archive": source.name, "url": url})
+    )
 
 
 def _record_expansion(conn: Connection, result: PackIngested) -> None:
@@ -230,7 +242,7 @@ def _add_member(
     sha256, _ = put_original(store, data)
     if not artifact_known(conn, sha256):
         sauce = split(data)[1]
-        art = _art_format(name, sauce, data)
+        art = art_format(name, sauce, data)
         version_id = None
         if art:
             title = sauce.title if sauce and sauce.title else PurePosixPath(name).name
@@ -241,7 +253,7 @@ def _add_member(
             ArtifactRow(
                 sha256=sha256,
                 bytes=len(data),
-                format=art or doc or _extension(name),
+                format=art or doc or extension(name),
                 charset=CHARSET if art or doc else None,
                 sauce=sauce,
                 source_id=pack.source_id,
@@ -258,29 +270,38 @@ def _add_member(
     )
 
 
-def _art_format(name: str, sauce: Sauce | None, data: bytes) -> str | None:
-    """Art format by extension, as the scene named the file; else by SAUCE; else by content.
+def art_format(
+    name: str, sauce: Sauce | None, data: bytes, declared: str | None = None
+) -> str | None:
+    """Art format by extension, as the scene named the file; else by SAUCE; else the kind the
+    archive declares for the tree the file sits in (ADR 0024), for a file that reads as text;
+    else by content.
 
     A file that starts with a binary signature (picture, program, archive, module) is not art,
     even when a tool stamped it with a SAUCE record of type ANSI.
 
     Before SAUCE (1994) groups often signed files with their tag as extension (`.MIR`, `.SDA`):
     a file with escape sequences and no NUL byte (which programs have) is ANSI whatever its name.
+    The archive's word comes before that guess: VT100 art has escape sequences too.
     """
     suffix = PurePosixPath(name).suffix.lower()
     if suffix in ART:
         return ART[suffix]
-    if suffix in DOCUMENTS or binary_format(data):  # pictures and programs stamped with SAUCE
-        return None
+    if binary_format(data) or (suffix in DOCUMENTS and not declared):
+        return None  # pictures and programs stamped with SAUCE
     if sauce is not None:
         # BinaryText stores the width in the file type, so the type alone names the format.
         file_type = None if sauce.data_type == SAUCE_BINARY_TEXT else sauce.file_type
-        return SAUCE_ART.get((sauce.data_type, file_type))
+        by_sauce = SAUCE_ART.get((sauce.data_type, file_type))
+        if by_sauce or not declared:
+            return by_sauce
+    if declared:
+        return None if b"\x00" in data else declared
     shown = data.split(EOF_BYTE, 1)[0]  # DOS `type` stops at the first EOF byte
     return "ansi" if CSI in shown and b"\x00" not in shown else None
 
 
-def _extension(name: str) -> str | None:
+def extension(name: str) -> str | None:
     suffix = PurePosixPath(name).suffix.lower()
     return suffix.removeprefix(".") or None
 

@@ -20,7 +20,13 @@ and FTP sites from the late 1990s on.
 | `artpacks/1992` … `artpacks/2008` | 3,989 archives: 16, 105, 357, 435, 639, 706, 563, 398, 199, 140, 140, 125, 103, 39, 12, 6, 6 per year |
 | `ascii/` | 564 entries (ASCII artpacks) |
 | `asciiart/` | 304 entries |
-| `acid/`, `ice/`, `ansi/`, `intros/`, `ansimusic/`, `emags/`, `history/` | collections and documents, not counted yet |
+| `ascii/` | ASCII artpacks in one directory per group (564 entries), with `.descs` files dating many packs to the month |
+| `asciiart/` | loose ASCII art from BBSes and the Internet, including `ASCIIPR0N/` (212 files), `FIGLETS/`, `LOGOS/`, `NFOS/` |
+| `ansi/` | loose ANSI from BBSes: `artwork`, `bbs`, `welcomes`, `holiday`, `logos`, `scene`, `unsorted`, `information` |
+| `acid/`, `ice/` | the groups' own collections ("contributed directly by RaD_Man", "official versions"): artpacks by year, BBS mods, extras |
+| `rtty/` | RTTY art: `COLLECTION/ARTWORK-01` … `08`, `PANELS`, `RTTYCOM`, `SLATER` |
+| `vt100/` | 93 VT100 art and animation files |
+| `intros/`, `ansimusic/`, `emags/`, `litpacks/`, `music/`, `history/`, `information/` | programs, music and documents, not mirrored yet |
 
 **Against 16colo:** 3,625 of the 3,989 artpack archives (91%) have a 16colo pack of the same name
 (lower case, extension removed); 364 do not. Same names are not same files: the comparison by
@@ -33,7 +39,9 @@ that names the group and often the month of release. The mirrors once listed in 
 (`artscene.tqhosting.com`) and Virginia (`psg.mtu.edu/tf/artscene`) no longer resolve
 (2026-10-09). Download politely: one request at a time. `scripts/mirror_textfiles.py` mirrors
 the artpacks into `data/textfiles/artpacks/<year>/` (3.4 GB) and keeps the listing as
-`index.tsv`; about 1 MB/s.
+`index.tsv`; about 1 MB/s. `scripts/mirror_textfiles_collections.py` walks the other trees into
+`data/textfiles/<path on the site>/`, `.descs` included, one request at a time (about one file a
+second).
 
 ## Terms
 
@@ -46,6 +54,10 @@ for removal. ADR 0009 applies: released freely by the scene, held by a scene arc
   (`scripts/compare_archives.py`), as packs with `--source textfiles`. Most of what they add
   are graffiti photographs; 95 are textmode works ([archives note](../../research/exploration/archives.md)).
   Archives that add no file are not ingested: they would only duplicate a set.
+- The other trees, from 2026-10-09 (ADR 0024): packs with `tm ingest pack --source textfiles
+  --site-root data/textfiles`, loose files with `tm ingest files … --site-root data/textfiles`,
+  with `--declared ascii`, `rtty` or `vt100` for the trees the archive gives as one kind of art.
+  RTTY and VT100 are practices the corpus held nothing of (lead I54); no decoder reads them yet.
 - Q21 and R2: textfiles is **not independent** of 16colo, so it cannot serve as a second capture
   for a capture–recapture estimate.
 - The `history/` directory: primary documents for the scene's history (leads).
