@@ -1,9 +1,10 @@
 -- SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 -- SPDX-License-Identifier: CC0-1.0
 --
--- One row per art file of the train packs (view work_split), whatever its format. A file in
--- several packs is placed in the earliest one (by year, then path), and `packs` says how many
--- hold it. SAUCE fields are as recorded; `sauce_problems` says when the decoder set them aside.
+-- One row per art file of the train packs (view work_split), whatever its format and whichever
+-- scene archive holds it (ADR 0018). A file in several packs is placed in the earliest one (by
+-- year, then archive, then path); `packs` says how many hold it, `archives` in which archives.
+-- SAUCE fields are as recorded; `sauce_problems` says when the decoder set them aside.
 --
 -- `content_kind` says what the grid holds, since the extension does not (works note): text or
 -- blocks (a quarter of the visible glyphs or more are █▄▀▌▐░▒▓; the share is bimodal, with its
@@ -11,22 +12,26 @@
 -- black). Null when the grid was not measured.
 with placed as (
   select distinct on (m.sha256)
-    m.sha256, p.pack_sha256, pa.source_path as pack_path, w.title as pack,
+    m.sha256, p.pack_sha256, p.archive, w.rights -> 'scene_publication' ->> 'url' as pack_url,
+    pa.source_path as pack_path, w.title as pack,
     extract(year from v.date_min)::int as year, m.path
   from set_member m
   join pack_split p on p.set_work_id = m.set_work_id
   join work w on w.id = p.set_work_id
   join version v on v.work_id = w.id
   join artifact pa on pa.sha256 = p.pack_sha256
-  order by m.sha256, year nulls last, pa.source_path, m.path
+  order by m.sha256, year nulls last, p.archive, pa.source_path, m.path
 )
 select
   a.sha256,
   pl.pack_sha256,
+  pl.archive,
+  pl.pack_url,
   pl.pack,
   pl.year,
   pl.path,
   s.packs,
+  s.archives,
   a.format,
   a.bytes,
   a.sauce ->> 'title' as sauce_title,

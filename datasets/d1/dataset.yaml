@@ -4,7 +4,7 @@
 # Drawn by `tm dataset draw d1` into sample.yaml (committed), built by `tm dataset build d1`.
 # Design: ADR 0017. Datasheet: DATASHEET.md.
 name: d1
-version: "1"
+version: "2"
 description: "Pilot: 16colo train packs drawn by era with a fixed seed, plus rare cases added by hand, with every file, grid feature and line of text."
 
 sample:

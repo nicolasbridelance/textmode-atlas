@@ -13,6 +13,7 @@ from stores import Stores
 from tm.datasets import DatasetError, build
 from tm.decode import decode_pending
 from tm.features import extract_artifact, pending_features
+from tm.packs import TEXTFILES
 from tm.text_layer import pending_text, read_artifact
 from tm_render.versions import DECODER_VERSION
 
@@ -116,3 +117,21 @@ def test_the_key_must_name_declared_columns(db: Connection, tmp_path: Path) -> N
     yaml_file.write_text(yaml_file.read_text().replace("key: [pack_sha256]", "key: [sha]"))
     with pytest.raises(DatasetError, match="not declared"):
         build(db, definition, tmp_path / "build")
+
+
+def test_works_hold_the_train_packs_of_every_archive(
+    db: Connection, stores: Stores, tmp_path: Path
+) -> None:
+    shared = b"\x1b[1;34mshared logo\r\n"
+    ingest(db, stores, tmp_path / "1995" / "a.zip", {"A.ANS": HORIZON, "S.ANS": shared}, "train")
+    textfiles = tmp_path / "textfiles"
+    ingest(db, stores, textfiles / "1994" / "a.zip", {"A.ANS": HORIZON}, "train", source=TEXTFILES)
+    ingest(db, stores, textfiles / "1996" / "t.zip", {"T.ANS": b"t\r\n"}, "train", source=TEXTFILES)
+    ingest(db, stores, textfiles / "1997" / "x.zip", {"S.ANS": shared}, "test", source=TEXTFILES)
+    built = build(db, definition(tmp_path, "works"), tmp_path / "build")
+    works = pq.read_table(built.directory / "works.parquet").to_pylist()
+    placed = {(w["path"], w["archive"], w["year"], tuple(w["archives"])) for w in works}
+    assert placed == {  # the earliest pack holds a file; a test pack anywhere withholds it
+        ("A.ANS", "textfiles", 1994, ("16colo", "textfiles")),
+        ("T.ANS", "textfiles", 1996, ("textfiles",)),
+    }
