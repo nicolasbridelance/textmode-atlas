@@ -16,6 +16,29 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-09 — The archives copy each other
+
+**Three archives, one lineage.** 16colo, textfiles.com's artscene and Demozoo all put the peak
+of artpacks in 1996–97 and halve by 2000. But 92% of textfiles' 3,956 artpacks have a pack of
+the same name in 16colo, and from 2000 on their yearly counts are nearly equal (199 and 199 in
+2000, 109 and 103 in 2004); Demozoo links a quarter of its artpacks to 16colo. The history of
+the scene's output has, so far, one witness copied three times. *Evidence: directory listings of
+artscene.textfiles.com/artpacks, Demozoo dump of 2026-10-09, dataset `catalogue` v1;
+[archives note](../research/exploration/archives.md). Names, not hashes. Story: how a scene's
+memory was handed from one archivist to the next.*
+
+**Demozoo remembers the 1990s as BBStros and the 2020s as single works.** It lists 2,175
+BBStros (the little programs that advertised a board) in 1995 alone and almost none after 2000;
+its ANSI productions rise again after 2013, to over 200 a year in 2023–25, while packs stay
+few. *Evidence: Demozoo dump of 2026-10-09, production types by release year. Coverage: what
+Demozoo's editors entered, bulk imports included (Q28).*
+
+**The pack, the scene's unit of release, is nearly absent from Wikipedia.** ANSI art has
+articles in 10 languages, the artpack in 3, the art scene in 2, against 44 for ASCII art and 49
+for teletext; no Wikipedia checked has an article on 16colo, Demozoo, Blocktronics or
+Mistigris. The longest article on ANSI art is in Persian. *Evidence: MediaWiki API, 70
+languages, 2026-10-09; [source note](sources/wikipedia.md).*
+
 ## 2026-10-09 — What the works say in letters
 
 **Early ANSI talked about BBSes.** Nine ANSI in ten hold at least one row of words. Among the
