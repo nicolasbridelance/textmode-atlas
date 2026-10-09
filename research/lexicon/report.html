@@ -1,0 +1,90 @@
+<!doctype html>
+<!-- SPDX-FileCopyrightText: 2026 textmode-atlas contributors -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ce que les œuvres écrivent · lexique du corpus</title>
+<style>
+:root{color-scheme:dark;--bg:#10151b;--panel:#18212b;--line:#344251;--fg:#edf2f7;--muted:#afbcca;--cyan:#65dfd3;--gold:#f2c573}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,sans-serif}main{max-width:1200px;margin:auto;padding:40px 24px 72px}h1{font-size:clamp(32px,5vw,58px);line-height:1.1;max-width:850px;margin:16px 0}h2{font-size:25px;margin:38px 0 14px}h3{font-size:18px}p{max-width:900px}.eyebrow{color:var(--cyan);letter-spacing:.12em;text-transform:uppercase;font-size:12px}.muted,small{color:var(--muted)}a{color:var(--cyan)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:28px 0}.stat,.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}.stat strong{display:block;font-size:29px}.stat span{color:var(--muted);font-size:13px}.note{border-left:3px solid var(--gold);padding:8px 18px;color:var(--muted)}nav{display:flex;gap:10px;flex-wrap:wrap;margin:28px 0}button,input,select{font:inherit;border:1px solid var(--line);border-radius:6px;padding:8px 12px;background:var(--panel);color:var(--fg)}button{cursor:pointer}button:hover{border-color:var(--cyan)}button[aria-selected=true]{background:var(--cyan);color:var(--bg)}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:3px}.tools{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:16px 0}.tools label{display:flex;gap:8px;align-items:center}input[type=search]{min-width:240px;flex:1}input[type=checkbox]{accent-color:var(--cyan)}.split{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px}.table-wrap{overflow:auto;max-height:650px}table{border-collapse:collapse;width:100%;font-size:14px}th{text-align:left;color:var(--muted);font-weight:500;position:sticky;top:0;background:var(--panel)}th,td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}.num{text-align:right;font-variant-numeric:tabular-nums}.term{border:0;background:transparent;padding:0;color:var(--cyan);text-align:left}tr.active{background:#243b46}.chart-row{display:grid;grid-template-columns:110px 1fr 58px;gap:10px;align-items:center;margin:12px 0;font-size:13px}.track{height:14px;background:#263442;border-radius:3px;overflow:hidden}.bar{height:100%;background:var(--cyan);min-width:0}.bar.gold{background:var(--gold)}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;background:#101820;padding:14px;border-radius:5px}.context{border-top:1px solid var(--line);padding:14px 0}.badge{color:var(--gold);font-size:12px}.downloads{display:flex;gap:12px;flex-wrap:wrap}section[hidden]{display:none}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:18px}.long-table{overflow:auto}details{padding:12px 0}summary{cursor:pointer;color:var(--cyan)}footer{border-top:1px solid var(--line);margin-top:44px;padding-top:16px;color:var(--muted);font-size:13px}
+@media(max-width:760px){main{padding:24px 15px}.stats{grid-template-columns:1fr 1fr}.split,.twocol{grid-template-columns:1fr}.tools label{font-size:14px}.stat strong{font-size:23px}.chart-row{grid-template-columns:100px 1fr 52px}.table-wrap{max-height:420px}}
+</style>
+<main>
+<div class="eyebrow">Textmode Atlas · analyse exploratoire · exploration</div>
+<h1>Ce que les œuvres écrivent</h1>
+<p>Un premier lexique, des crédits à démêler et les traces des BBS. Cette lecture décrit les fichiers des <strong>packs d’entraînement</strong> de <code>works v5</code>. Elle fournit des pistes à vérifier, sans attribution automatique.</p>
+<div class="note">Rapport local autonome : aucune donnée envoyée, aucune requête à l’explorateur avant un clic explicite sur un lien. Les exemples reproduisent des lignes des œuvres : ce document reste privé.</div>
+<div id="stats" class="stats"></div>
+<nav aria-label="Sections du rapport">
+<button data-tab="lexique" aria-selected="true">Lexique et contextes</button>
+<button data-tab="temps" aria-selected="false">Vocabulaire dans le temps</button>
+<button data-tab="credits" aria-selected="false">Auteurs et groupes</button>
+<button data-tab="formats" aria-selected="false">Ce qui manque</button>
+<button data-tab="suite" aria-selected="false">Méthode et prochaines étapes</button>
+</nav>
+<section id="lexique">
+<h2>Des mots, mais aussi des signatures et du bruit</h2>
+<p class="muted">Recherche dans les 2 000 formes les plus répandues. Le CSV contient toutes les formes. Une « œuvre » dans ces comptes est un fichier identifié par SHA-256 ; une même grille peut exister sous plusieurs fichiers.</p>
+<div class="tools"><input id="termSearch" type="search" aria-label="Rechercher une forme" placeholder="sysop, ansi, greets…"><label for="eraSelect">Période <select id="eraSelect"><option value="all">Toutes</option></select></label><label><input id="hideCommon" type="checkbox" checked>Masquer les mots anglais courants</label></div>
+<div class="split"><div class="panel"><div id="termCount" aria-live="polite" class="muted"></div><div class="table-wrap"><table><thead><tr><th>Forme</th><th class="num">Fichiers</th><th class="num">Part¹</th><th class="num">Occurrences²</th></tr></thead><tbody id="terms"></tbody></table></div></div><aside id="wordDetail" class="panel" aria-live="polite"></aside></div>
+<p class="muted"><small>¹ Parmi les fichiers avec texte de la période choisie. ² Occurrences dans toutes les périodes. Le filtre des mots courants est une petite liste anglaise, pas un nettoyage multilingue.</small></p>
+</section>
+<section id="temps" hidden>
+<h2>Du vocabulaire des BBS aux crédits de la scène</h2>
+<p>Chaque barre mesure la présence d’au moins un marqueur dans un fichier ANSI décodé. Les fichiers sans texte extrait restent au dénominateur. Cela décrit la fréquence des marqueurs, pas la proportion validée de publicités ou de salutations.</p>
+<div class="twocol"><div class="panel"><h3>Marqueurs BBS</h3><p class="muted"><code>sysop · node · baud · running · bbs · call</code></p><div id="bbsChart"></div></div><div class="panel"><h3>Marqueurs de salutations</h3><p class="muted"><code>greets · greetings · hellos</code></p><div id="greetsChart"></div></div></div>
+<div class="note">« call » et « running » ont d’autres sens. Un mot dessiné avec des blocs n’est pas lu. Les années sont les années de classement des packs, pas nécessairement les dates de création.</div>
+<h3>Effectifs et couverture</h3><div class="panel long-table"><table><thead><tr><th>Période</th><th class="num">Fichiers</th><th class="num">Décodés</th><th class="num">Avec texte</th><th class="num">ANSI décodés</th></tr></thead><tbody id="coverage"></tbody></table></div>
+</section>
+<section id="credits" hidden>
+<h2>Des répertoires de crédits, avant un dictionnaire d’identités</h2>
+<p id="creditSummary"></p><p class="muted">Les noms sont rapprochés seulement par casse Unicode, normalisation NFC et espaces extérieurs. Aucun alias, homonyme ou membre de groupe n’est résolu. Les compteurs de packs utilisent le pack représentatif du dataset.</p>
+<div class="tools"><label for="registryKind">Répertoire <select id="registryKind"><option value="authors">Auteurs</option><option value="groups">Groupes</option></select></label><input id="creditSearch" type="search" placeholder="Rechercher dans les 300 crédits les plus fréquents…" aria-label="Rechercher un crédit"></div>
+<div class="panel table-wrap"><table><thead><tr><th>Crédit et variantes</th><th class="num">Fichiers</th><th class="num">Packs</th><th>Années de classement</th><th>Vérification</th></tr></thead><tbody id="registry"></tbody></table></div>
+<p class="note">« READ THE INI FILE » peut être une valeur par défaut d’un outil. Un crédit SAUCE est une pièce à examiner ; il ne suffit pas à établir un auteur. Les CSV conservent toutes les entrées et les variantes exactes.</p>
+</section>
+<section id="formats" hidden>
+<h2>« Not decoded » recouvre plusieurs situations</h2>
+<p id="errorSummary"></p><div class="panel long-table"><table><thead><tr><th>Format</th><th>Raison enregistrée</th><th class="num">Fichiers</th></tr></thead><tbody id="errors"></tbody></table></div>
+<p>Les fichiers non décodés ne participent pas aux mesures visuelles ni à cette lecture de la grille. Leur absence constitue donc un biais de couverture. RIP, XBIN et BIN restent dans le catalogue et peuvent être étudiés comme collections de fichiers.</p>
+<p class="muted">Priorité proposée : étendre la chaîne des cellules à XBIN/BIN ; traiter RIP comme un système graphique distinct, avec un protocole de rendu adapté et ses propres preuves de fidélité.</p>
+</section>
+<section id="suite" hidden>
+<h2>De ce premier lexique à des résultats publiables</h2>
+<ol><li><strong>Annoter un échantillon par pack et époque.</strong> Identifier zones de prose, crédits, signatures, annonces BBS et salutations ; mesurer ce que l’extraction rate.</li><li><strong>Résoudre les crédits.</strong> Conserver la chaîne d’origine, les alias proposés et chaque source. Distinguer auteur, sujet, destinataire et personne saluée.</li><li><strong>Mesurer le vocabulaire.</strong> Comparer des fréquences normalisées, vérifier les contextes, contrôler les textes répétés et les variantes de grille.</li><li><strong>Tester les prédictions.</strong> Langue, période, groupe et auteur séparément ; comparaison aux baselines simples, séparation par pack, auteur inconnu possible, abstention et erreurs publiées.</li><li><strong>Publier à deux niveaux.</strong> Une histoire visuelle accompagnée d’œuvres autorisées ; une fiche scientifique avec couverture, protocole, code et agrégats exportables.</li></ol>
+<h3>Ce que cette analyse ne démontre pas</h3><p>Elle ne détecte pas la nationalité, n’attribue pas les œuvres et ne prouve pas des influences. Les formes observées ne sont pas toutes des mots. Le vocabulaire dessiné en blocs et les petites signatures échappent encore au lecteur.</p>
+<h3>Trois pistes à explorer à côté du chantier de Claude</h3><ul><li><strong>Un concordancier complet</strong> : <code>concordance.py</code> lit uniquement le snapshot et rend le contexte, la ligne de grille et les crédits. Exemple : <code>python concordance.py sysop --year-max 1996 --limit 10</code>.</li><li><strong>Un dictionnaire avec preuves</strong> : fiches d’œuvres, pseudonymes, groupes, alias et relations datées ; les CSV présents en sont une première base brute.</li><li><strong>Une collection des usages</strong> : soluces, notices, titres de programmes, interfaces en caractères et calculatrices ; petit échantillon documenté par système avant ingestion à grande échelle.</li></ul>
+<details><summary>Provenance et limites détaillées</summary><pre id="provenance"></pre><p>Les exemples du lexique couvrent les 250 premières formes, au plus trois packs représentatifs distincts, choisis par ordre SHA-256 puis ligne. Ce choix est reproductible mais ne constitue pas un échantillon représentatif. Les marqueurs et crédits ne sont pas des assertions historiques validées. Aucune table de test n’a été ouverte.</p></details>
+</section>
+<h2>Données et méthode à emporter</h2><div class="downloads"><a href="lexicon.csv" download>Lexique complet · CSV</a><a href="works.csv" download>Fichiers et crédits · CSV</a><a href="authors.csv" download>Auteurs · CSV</a><a href="groups.csv" download>Groupes · CSV</a><a href="eras.csv" download>Périodes · CSV</a><a href="decoding.csv" download>Décodage · CSV</a><a href="METHODS.md">Méthode</a><a href="analysis.json" download>Données du rapport · JSON</a></div>
+<footer>Textmode Atlas · lexique exploratoire · provenance et versions dans la méthode · rapport local.</footer>
+</main>
+<script type="application/json" id="data">__DATA__</script>
+<script>
+"use strict";
+const D=JSON.parse(document.getElementById('data').textContent),$=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>n.toLocaleString('fr-FR'),pct=(n,d)=>d?(100*n/d).toLocaleString('fr-FR',{maximumFractionDigits:1})+' %':'—';
+const S=D.summary;let selected='ansi';
+$('stats').innerHTML=[[S.works,'fichiers catalogués'],[S.text_works,'fichiers avec texte'],[S.lines,'lignes extraites'],[S.tokens,'tokens, avant nettoyage']].map(([n,l])=>`<div class="stat"><strong>${fmt(n)}</strong><span>${esc(l)}</span></div>`).join('');
+for(const e of D.eras){const o=document.createElement('option');o.value=e;o.textContent=e==='Unknown'?'Année inconnue / hors intervalle':e;$('eraSelect').append(o);}
+for(const b of document.querySelectorAll('[data-tab]'))b.addEventListener('click',()=>{for(const x of document.querySelectorAll('[data-tab]')){const on=x===b;x.setAttribute('aria-selected',String(on));$(x.dataset.tab).hidden=!on;}});
+function termCount(t){const e=$('eraSelect').value;return e==='all'?t.works:t.eras[D.eras.indexOf(e)];}
+function denominator(){const e=$('eraSelect').value;return e==='all'?S.text_works:D.totals[e].text;}
+function showTerms(){const query=$('termSearch').value.toLocaleLowerCase(),hide=$('hideCommon').checked;const rows=D.lexical.filter(t=>(!hide||!t.common)&&t.term.includes(query)).sort((a,b)=>termCount(b)-termCount(a)||a.term.localeCompare(b.term));$('termCount').textContent=`${fmt(rows.length)} formes trouvées · ${fmt(Math.min(rows.length,150))} affichées · dénominateur ${fmt(denominator())} fichiers avec texte`;$('terms').innerHTML=rows.slice(0,150).map(t=>`<tr class="${t.term===selected?'active':''}"><td><button class="term" data-term="${esc(t.term)}">${esc(t.term)}</button></td><td class="num">${fmt(termCount(t))}</td><td class="num">${pct(termCount(t),denominator())}</td><td class="num">${fmt(t.occurrences)}</td></tr>`).join('');for(const b of $('terms').querySelectorAll('[data-term]'))b.addEventListener('click',()=>{selected=b.dataset.term;showTerms();showWord();});}
+function bars(values,denoms,gold=false){return values.map((n,i)=>{const rate=denoms[i]?100*n/denoms[i]:0;return `<div class="chart-row"><span>${esc(D.eras[i]==='Unknown'?'Inconnue':D.eras[i])}</span><div class="track"><div class="bar ${gold?'gold':''}" style="width:${Math.min(rate,100)}%"></div></div><span class="num">${pct(n,denoms[i])}</span></div>`;}).join('');}
+function showWord(){const t=D.lexical.find(x=>x.term===selected);if(!t)return;$('wordDetail').innerHTML=`<h3>${esc(t.term)}</h3><p>${fmt(t.works)} fichiers avec cette forme · ${fmt(t.packs)} packs représentatifs · ${fmt(t.occurrences)} occurrences, toutes périodes.</p><p class="muted">Présence parmi les fichiers avec texte de chaque période. Échelle commune de 0 à 100 %.</p>${bars(t.eras,D.eras.map(e=>D.totals[e].text))}<h3>Retour aux lignes sources</h3><p class="muted">Exemples toutes périodes, indépendamment du filtre du tableau. Le concordancier Python permet de filtrer les contextes par année.</p>`+(t.examples.length?t.examples.map(e=>`<div class="context"><small>${esc(e.pack)} · ${e.year??'?'} · ligne de grille ${e.row}</small><pre>${esc(e.text)}</pre><small>${esc(e.path)}</small><br><a href="http://127.0.0.1:8737/#work=${encodeURIComponent(e.sha256)}" target="_blank" rel="noopener">Ouvrir l’œuvre dans l’explorateur local ↗</a></div>`).join(''):'<p class="muted">Pas de contexte embarqué pour cette forme. Le concordancier Python recherche dans toutes les lignes du snapshot.</p>');}
+for(const id of ['termSearch','hideCommon','eraSelect'])$(id).addEventListener('input',showTerms);
+$('bbsChart').innerHTML=bars(D.eras.map(e=>D.totals[e].bbs),D.eras.map(e=>D.totals[e].ansi_decoded));
+$('greetsChart').innerHTML=bars(D.eras.map(e=>D.totals[e].greets),D.eras.map(e=>D.totals[e].ansi_decoded),true);
+$('coverage').innerHTML=D.eras.map(e=>{const t=D.totals[e];return `<tr><td>${esc(e)}</td>${['all','decoded','text','ansi_decoded'].map(k=>`<td class="num">${fmt(t[k])}</td>`).join('')}</tr>`;}).join('');
+$('creditSummary').textContent=`${fmt(S.author_credited)} fichiers portent un crédit d’auteur (${pct(S.author_credited,S.works)}), et ${fmt(S.group_credited)} un crédit de groupe (${pct(S.group_credited,S.works)}). Les répertoires contiennent ${fmt(S.authors)} chaînes d’auteur et ${fmt(S.groups)} chaînes de groupe distinctes après normalisation.`;
+function showRegistry(){const q=$('creditSearch').value.toLocaleLowerCase();$('registry').innerHTML=D[$('registryKind').value].filter(r=>r.key.includes(q)||r.variants.some(v=>v.toLocaleLowerCase().includes(q))).slice(0,100).map(r=>`<tr><td><strong>${esc(r.key)}</strong><br><small>${r.variants.map(esc).join(' · ')}</small></td><td class="num">${fmt(r.works)}</td><td class="num">${fmt(r.packs)}</td><td>${r.first_filing_year??'?'}–${r.last_filing_year??'?'}</td><td>${r.review_flag?'<span class="badge">Valeur générique possible</span>':'Crédit non résolu'}</td></tr>`).join('');}
+for(const id of ['creditSearch','registryKind'])$(id).addEventListener('input',showRegistry);
+$('errorSummary').textContent=`${fmt(S.works-S.decoded)} fichiers ne sont pas décodés, dont ${fmt(S.unsupported)} à un format non pris en charge. Les autres raisons sont détaillées ci-dessous.`;
+$('errors').innerHTML=D.errors.map(([f,status,reason,n])=>`<tr><td>${esc(f)}</td><td>${esc(reason??status??'pas de résultat')}</td><td class="num">${fmt(n)}</td></tr>`).join('');
+$('provenance').textContent=JSON.stringify({dataset:D.manifest.name,version:D.manifest.version,extractors:D.manifest.extractors,tables:D.manifest.tables,tokenization:D.method},null,2);
+showTerms();showWord();showRegistry();
+</script>
+</html>
