@@ -39,7 +39,9 @@ def links(page: bytes, base: str) -> list[str]:
     """Absolute URLs of the entries a listing shows, inside its own directory, in page order."""
     found: list[str] = []
     for match in HREF.finditer(page.decode("latin-1")):
-        url = urllib.parse.urljoin(base, match["link"])
+        # The pages are Latin-1, and so are the names on the server: `·` must travel as `%B7`.
+        link = urllib.parse.quote(match["link"], safe="/%~:", encoding="latin-1")
+        url = urllib.parse.urljoin(base, link)
         rest = url.removeprefix(base)
         if url == rest or not rest or rest.startswith(".png/") or "/" in rest.rstrip("/"):
             continue  # another site, the directory itself, a preview, or deeper than one step
@@ -74,7 +76,7 @@ def walk(root: Path, url: str) -> tuple[int, int]:
 
 def fetch_file(root: Path, url: str) -> bool:
     """Keep one file under its site path; False when it is already held or cannot be had."""
-    path = urllib.parse.unquote(url.removeprefix(SITE))
+    path = urllib.parse.unquote(url.removeprefix(SITE), encoding="latin-1")
     target = root / path
     if target.exists():
         return False
