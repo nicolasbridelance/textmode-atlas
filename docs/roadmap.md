@@ -100,7 +100,9 @@ needs the one before says so.
     the records and the explorer (I27, I50). ADR before code.
 17. [ ] Where is the adult material? An exploratory note on Q36: what keyword inference misses,
     what dedicated collections exist (textfiles.com, Defacto2, Discmaster), what 16colo kept.
-18. [ ] Then, as planned before: the review queue (D2) for inferred ratings and the rule 4
+18. [ ] Grid v2, one grid for every system ([ADR 0026](adr/0026-one-grid-for-every-system.md)), owner's request: registries of systems, charsets, palettes and fonts in `corpus/`; grid v2 in `tm_render` and the PC decoders moved to it (decoder v5), merged with the legacy-formats work; `tm dataset cells` for corpus-wide analysis; `grid.tmg` v2 and the site; then features v2. Before PETSCII, teletext or any other system enters.
+19. [ ] Ingest textfiles' other trees (ADR 0024) as their mirror completes; then sources for PETSCII, ATASCII and teletext through Demozoo's links (I55), with source notes for CSDb and files.scene.org first.
+20. [ ] Then, as planned before: the review queue (D2) for inferred ratings and the rule 4
     sample; Discmaster over the 16colo archives (I33).
 
 Later, deliberately (nothing depends on them yet):

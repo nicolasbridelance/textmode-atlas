@@ -63,3 +63,4 @@ What becomes easier, what becomes harder, what we must now do.
 | [0022](0022-the-public-export.md) | What `tm export` publishes: a record, a compact grid and a PNG per work, nothing else | Accepted |
 | [0023](0023-lists-for-the-visit.md) | Export the lists a visit walks through, and the words of a shown work | Accepted |
 | [0024](0024-loose-files-from-a-scene-archive.md) | Files a scene archive holds loose: single works, split by their directory | Accepted |
+| [0026](0026-one-grid-for-every-system.md) | Grid v2: one grid for every system, read across the whole corpus | Accepted |
