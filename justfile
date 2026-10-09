@@ -52,10 +52,10 @@ lint:
 typecheck:
     uv run pyright
 
-# Python tests with coverage; `rights.py` and `audience.py` must stay at 100% branch coverage
+# Python tests with coverage; what decides what is shown stays at 100% branch coverage
 test *args:
     uv run pytest --cov --cov-report=term-missing {{args}}
-    uv run coverage report --include='ingest/src/tm/rights.py,ingest/src/tm/audience.py' --fail-under=100
+    uv run coverage report --include='ingest/src/tm/rights.py,ingest/src/tm/audience.py,ingest/src/tm/export.py' --fail-under=100
 
 corpus:
     uv run tm corpus check
