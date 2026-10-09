@@ -16,6 +16,18 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-09 — A pack on a Swedish FTP site in 1996
+
+**ACiD's packs travelled by FTP as well as by BBS.** The archive `acid-50a.zip` that 16colo holds
+is, byte for byte, the file found in a 2014 capture of `ftp.sunet.se`, the Swedish university
+network's FTP server, under `pub/pictures/ACiD-artpacks/artpacks/1996/`, beside the pack before
+and after it. Its file date there is 1996-10-13, six weeks after the date of the first file
+inside it (`ACID-50.EXE`, 1996-09-01). A pack thought of as BBS art sat on an academic FTP mirror within weeks of its
+release, in a directory of pictures. *Evidence: Discmaster search by BLAKE3
+`546eac7e…a537d4fb`, item 17397 (`2014.11.ftp.sunet.se-pictures.tar`); one pack, so a lead
+for how far and how fast packs left the BBSes (I33), not a measure. Story: the art scene's
+second network, the Internet before the Web.*
+
 ## 2026-10-09 — The archives copy each other
 
 **Three archives, one lineage.** 16colo, textfiles.com's artscene and Demozoo all put the peak
