@@ -1,127 +1,12 @@
-<!doctype html>
-<!--
-SPDX-FileCopyrightText: 2026 textmode-atlas contributors
-SPDX-License-Identifier: Apache-2.0
--->
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>corpus · constellation</title>
-<script src="https://unpkg.com/deck.gl@9.1.14/dist.min.js"></script>
-<style>
-  :root {
-    --bg: #020306; --glass: rgba(9, 11, 18, 0.74); --edge: rgba(255, 255, 255, 0.08);
-    --text: #c8ccd6; --dim: #7d8496; --bright: #fff; --accent: #55ffff;
-    --mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", "DejaVu Sans Mono", monospace;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; overflow: hidden; color-scheme: dark;
-    background: radial-gradient(ellipse at 50% 45%, #0b0e1a 0%, #04050b 55%, #000 100%);
-    color: var(--text); font: 13px/1.45 var(--mono); }
-  #map { position: fixed; inset: 0; }
-  .glass { position: fixed; background: var(--glass); border: 1px solid var(--edge);
-    border-radius: 6px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-  #brand { top: 14px; left: 14px; padding: 12px 14px; width: 300px; }
-  #brand h1 { margin: 0; font-size: 13px; font-weight: 500; letter-spacing: .14em;
-    text-transform: uppercase; color: var(--bright); }
-  #brand h1 span { color: var(--accent); }
-  #brand p { margin: 4px 0 10px; color: var(--dim); font-size: 11px; }
-  .row { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
-  .seg button, .btn { background: transparent; color: var(--dim); border: 1px solid var(--edge);
-    border-radius: 3px; padding: 3px 7px; font: inherit; font-size: 11px; cursor: pointer; }
-  .seg button:hover, .btn:hover { color: var(--bright); border-color: rgba(255,255,255,.25); }
-  .seg button[aria-pressed="true"] { color: #000; background: var(--accent); border-color: var(--accent); }
-  input[type="search"] { width: 100%; background: rgba(0,0,0,.35); color: var(--bright);
-    border: 1px solid var(--edge); border-radius: 3px; padding: 5px 7px; font: inherit; font-size: 12px; }
-  label.small { color: var(--dim); font-size: 11px; display: block; margin-top: 8px; }
-  #time { display: flex; align-items: center; gap: 8px; }
-  #time input { flex: 1; accent-color: var(--accent); }
-  #year { color: var(--bright); min-width: 4.5ch; text-align: right; font-size: 15px; }
-  #legend { bottom: 14px; left: 14px; padding: 10px 12px; width: 300px; font-size: 11px; color: var(--dim); }
-  #legend .ramp { height: 8px; border-radius: 2px; margin: 6px 0 3px; }
-  #legend .ends { display: flex; justify-content: space-between; }
-  #legend .sw { display: inline-flex; align-items: center; gap: 5px; margin: 2px 10px 2px 0; }
-  #legend i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
-  #tip { pointer-events: none; padding: 6px; display: none; width: 250px; z-index: 5; }
-  #tip img { width: 100%; display: block; image-rendering: pixelated; border-radius: 3px; background: #000; }
-  #tip div { padding: 5px 2px 0; font-size: 11px; }
-  #tip b { color: var(--bright); font-weight: 500; }
-  #side { top: 14px; right: 14px; bottom: 14px; width: 400px; overflow: auto; padding: 14px;
-    display: none; scrollbar-width: thin; }
-  #side.open { display: block; }
-  #side h2 { margin: 0 0 2px; font-size: 14px; font-weight: 500; color: var(--bright); overflow-wrap: anywhere; }
-  #side .meta { color: var(--dim); font-size: 11px; margin-bottom: 10px; }
-  #side .art { max-height: 58vh; overflow: auto; border-radius: 4px; background: #000;
-    border: 1px solid var(--edge); }
-  #side .art img { width: 100%; display: block; image-rendering: pixelated; }
-  #side h3 { margin: 14px 0 6px; font-size: 10px; font-weight: 400; letter-spacing: .14em;
-    text-transform: uppercase; color: var(--dim); }
-  .thumbs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
-  .thumbs img, .card img { width: 100%; display: block; aspect-ratio: 8/5; object-fit: cover;
-    border-radius: 2px; background: #000; cursor: pointer; outline: 1px solid var(--edge); }
-  .thumbs img:hover, .card img:hover { outline-color: var(--accent); }
-  .close { position: absolute; top: 10px; right: 10px; }
-  #comms { top: 14px; right: 14px; bottom: 14px; width: 440px; overflow: auto; padding: 14px;
-    display: none; scrollbar-width: thin; }
-  #comms.open { display: block; }
-  #comms > h2 { margin: 0 0 4px; font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
-    color: var(--bright); font-weight: 500; }
-  #comms > p { color: var(--dim); font-size: 11px; margin: 0 0 12px; }
-  .card { border: 1px solid var(--edge); border-radius: 5px; padding: 10px; margin-bottom: 10px;
-    cursor: pointer; background: rgba(255,255,255,.015); }
-  .card:hover, .card.on { border-color: rgba(255,255,255,.28); background: rgba(255,255,255,.04); }
-  .card .head { display: flex; align-items: baseline; gap: 8px; }
-  .card .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; box-shadow: 0 0 10px currentColor; }
-  .card .name { color: var(--bright); flex: 1; }
-  .card .n { color: var(--dim); font-size: 11px; }
-  .card .facts { color: var(--dim); font-size: 11px; margin: 3px 0 8px 18px; }
-  .card .arch { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: auto auto; gap: 4px; }
-  .card .arch img:first-child { grid-row: span 2; }
-  .card .axis { display: grid; grid-template-columns: 1fr 1fr auto 1fr 1fr; gap: 4px; align-items: center;
-    margin-top: 8px; }
-  .card .axis span { text-align: center; color: var(--accent); }
-  .card .axis-words { display: flex; justify-content: space-between; gap: 10px; font-size: 10px;
-    color: var(--dim); margin-top: 3px; }
-  .card .axis-words em { font-style: normal; color: var(--text); }
-  .card .sig { font-size: 10px; color: #555c6c; margin-top: 6px; }
-  #loading { position: fixed; inset: 0; display: grid; place-items: center; color: var(--dim);
-    letter-spacing: .2em; text-transform: uppercase; font-size: 11px; }
-  kbd { color: var(--accent); font-family: var(--mono); }
-</style>
-</head>
-<body>
-<div id="map"></div>
-<div id="loading">charting 84,110 works…</div>
+// SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+// SPDX-License-Identifier: Apache-2.0
+// Preserved scientific WebGL room; mounted by the single museum UI.
+window.mountMuseumGraph = function(root, locale, workHref) {
 
-<section id="brand" class="glass">
-  <h1>corpus <span>·</span> constellation</h1>
-  <p id="stats">Nearest works by features v1, train packs only. Exploratory.</p>
-  <label class="small">colour by</label>
-  <div class="row seg" id="modes"></div>
-  <label class="small" for="find">light up a group, an author or a pack</label>
-  <input id="find" type="search" placeholder="acid, mistigris, ice9603a…">
-  <label class="small">time <kbd>space</kbd> plays the years</label>
-  <div id="time">
-    <button class="btn" id="play" aria-label="play the years">▶</button>
-    <input id="slider" type="range" min="1990" max="2026" value="2026">
-    <span id="year">all</span>
-  </div>
-  <div class="row" style="margin-top:10px">
-    <button class="btn" id="openComms">33 communities</button>
-    <button class="btn" id="reset">reset view</button>
-    <a class="btn" href="./" style="text-decoration:none">wall</a>
-  </div>
-</section>
 
-<section id="legend" class="glass"></section>
-<div id="tip" class="glass"></div>
-<aside id="side" class="glass"></aside>
-<aside id="comms" class="glass"></aside>
-
-<script>
-"use strict";
-const $ = (id) => document.getElementById(id);
+const $ = (id) => root.querySelector("#" + id);
+const t = (en, fr) => locale === "fr" ? fr : en;
+let disposed = false;
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const KINDS = {coloured_blocks: [255, 95, 160], blocks: [176, 186, 210], coloured_text: [80, 200, 255],
   text: [236, 232, 214]};
@@ -152,10 +37,11 @@ const heat = (t) => ramp([[0, [40, 30, 90]], [0.35, [180, 40, 160]], [0.7, [255,
 
 async function load() {
   const [nodes, edges, comms] = await Promise.all([
-    fetch("api/graph/nodes").then((r) => r.json()),
-    fetch("api/graph/edges").then((r) => r.arrayBuffer()),
-    fetch("api/graph/communities").then((r) => r.json())]);
+    fetch("/api/graph/nodes").then((r) => r.json()),
+    fetch("/api/graph/edges").then((r) => r.arrayBuffer()),
+    fetch("/api/graph/communities").then((r) => r.json())]);
   N = nodes; C = comms.communities; n = N.sha256.length;
+  if (!n) throw new Error("No visible graph nodes");
   E = new Uint32Array(edges);
   out = Array.from({length: n}, () => []); inn = Array.from({length: n}, () => []);
   for (let i = 0; i < E.length; i += 2) { out[E[i]].push(E[i + 1]); inn[E[i + 1]].push(E[i]); }
@@ -163,16 +49,15 @@ async function load() {
   for (let i = 0; i < n; i++) { positions[i * 3] = N.x[i]; positions[i * 3 + 1] = -N.y[i]; }
   // Each work's tie to its nearest (edges come by source, then rank): the web seen from afar,
   // 84,000 lines; the ties of a selected work are drawn on demand.
-  const k = E.length / 2 / n;
   nearestPos = {s: new Float32Array(n * 3), t: new Float32Array(n * 3)};
   for (let i = 0; i < n; i++) {
-    const t = E[2 * i * k + 1];
+    const t = out[i][0] ?? i;
     nearestPos.s.set(positions.subarray(i * 3, i * 3 + 3), i * 3);
     nearestPos.t.set(positions.subarray(t * 3, t * 3 + 3), i * 3);
   }
   communityGeometry();
-  $("stats").textContent = `${n.toLocaleString()} works · ${(E.length / 2).toLocaleString()} links · `
-    + `${C.length} communities. Each work points to its 10 nearest by features v1 (train packs). Exploratory.`;
+  $("stats").textContent = `${n.toLocaleString()} ${t("works", "œuvres")} · ${(E.length / 2).toLocaleString()} ${t("links", "liens")} · `
+    + `${C.length} ${t("communities. Features v1, train packs. Computed proximity; original graph measures.", "communautés. Features v1, packs d’apprentissage. Proximité calculée ; mesures du graphe d’origine.")}`;
   $("loading").remove();
 }
 
@@ -272,7 +157,7 @@ function layers() {
     const h = S.extent / 260;
     ls.push(new deck.IconLayer({id: "thumbs", data: S.thumbs,
       getPosition: (i) => positions.subarray(i * 3, i * 3 + 3),
-      getIcon: (i) => ({url: `image/icon/${N.sha256[i]}`, id: N.sha256[i], width: 160, height: 100}),
+      getIcon: (i) => ({url: `/image/icon/${N.sha256[i]}`, id: N.sha256[i], width: 160, height: 100}),
       getSize: h, sizeUnits: "common", sizeMinPixels: 14, sizeMaxPixels: 140,
       textureParameters: {minFilter: "nearest", magFilter: "nearest"},
       pickable: true, parameters: {depthCompare: "always"}}));
@@ -312,7 +197,7 @@ function refreshThumbs() {
 }
 
 function fitView(bounds, pad = 0.9) {
-  const [minX, minY, maxX, maxY] = bounds, w = window.innerWidth, h = window.innerHeight;
+  const [minX, minY, maxX, maxY] = bounds, w = root.clientWidth, h = root.clientHeight;
   const zoom = Math.log2(Math.min(w / (maxX - minX || 1), h / (maxY - minY || 1)) * pad);
   return {target: [(minX + maxX) / 2, (minY + maxY) / 2, 0], zoom, transitionDuration: 900,
     transitionInterpolator: new deck.LinearInterpolator(["target", "zoom"])};
@@ -323,7 +208,7 @@ function tooltip(info) {
   const tip = $("tip");
   const i = pickIndex(info);
   if (i === null || i === undefined || i < 0) { tip.style.display = "none"; return; }
-  tip.innerHTML = `<img src="image/best/${N.sha256[i]}" alt=""><div><b>${esc(N.title[i] || N.path[i])}</b><br>`
+  tip.innerHTML = `<img src="/image/best/${N.sha256[i]}" alt=""><div><b>${esc(N.title[i] || N.path[i])}</b><br>`
     + `${esc(N.author[i] || "?")} / ${esc(N.group[i] || "?")}<br>${esc(N.pack[i])} · ${N.year[i] ?? "?"} · `
     + `<span style="color:rgb(${C[N.community[i]].colour})">#${N.community[i]}</span></div>`;
   tip.style.display = "block";
@@ -344,51 +229,50 @@ async function select(i, fly = false) {
   const side = $("side"), c = C[N.community[i]];
   if (fly) flyTo({target: [positions[i * 3], positions[i * 3 + 1], 0], zoom: Math.max(S.view.zoom, S.zoom0 + THUMB_ZOOM + 0.6),
     transitionDuration: 900, transitionInterpolator: new deck.LinearInterpolator(["target", "zoom"])});
-  side.innerHTML = `<button class="btn close" onclick="closeSide()">✕</button>
+  side.innerHTML = `<button class="btn close" data-close="side">✕</button>
     <h2>${esc(N.title[i] || N.path[i])}</h2>
     <div class="meta">${esc(N.author[i] || "?")} / ${esc(N.group[i] || "?")} · ${esc(N.pack[i])} · ${N.year[i] ?? "?"} · ${esc(N.archive[i])}<br>
-    ${esc(N.path[i])} · nearest to ${N.in_degree[i]} works</div>
-    <div class="art"><img src="image/full/${N.sha256[i]}" alt=""></div>
-    <h3>its 10 nearest</h3><div class="thumbs">${out[i].map((j) =>
-      `<img src="image/best/${N.sha256[j]}" data-i="${j}" title="${esc(N.path[j])} · ${esc(N.group[j] || "?")} · ${N.year[j] ?? "?"}" alt="">`).join("")}</div>
-    <h3>community</h3>${card(c)}
-    <div class="row" style="margin-top:12px"><a class="btn" href="./#work=${N.sha256[i]}" style="text-decoration:none">open on the wall</a></div>`;
+    ${esc(N.path[i])} · ${t("chosen among the nearest by", "choisie parmi les plus proches par")} ${N.in_degree[i]} ${t("works", "œuvres")}</div>
+    <div class="art"><img src="/image/full/${N.sha256[i]}" alt=""></div>
+    <h3>${t("Nearby works", "Œuvres proches")}</h3><div class="thumbs">${out[i].map((j) =>
+      `<img src="/image/best/${N.sha256[j]}" data-i="${j}" title="${esc(N.path[j])} · ${esc(N.group[j] || "?")} · ${N.year[j] ?? "?"}" alt="">`).join("")}</div>
+    <h3>${t("Community", "Communauté")}</h3>${card(c)}
+    <div class="row" style="margin-top:12px"><a class="btn" href="${workHref(N.sha256[i])}" style="text-decoration:none">${t("Open this work", "Ouvrir cette œuvre")}</a></div>`;
   side.classList.add("open");
   wireThumbs(side);
 }
-window.closeSide = () => { $("side").classList.remove("open"); S.selected = null; redraw(); };
+const closeSide = () => { $("side").classList.remove("open"); S.selected = null; redraw(); };
 
 function wireThumbs(root) {
+  for (const button of root.querySelectorAll("[data-close]")) { button.setAttribute("aria-label", t("Close", "Fermer")); button.onclick = () => button.dataset.close === "side" ? closeSide() : $(button.dataset.close).classList.remove("open"); }
   for (const img of root.querySelectorAll("img[data-i]")) img.onclick = (e) => { e.stopPropagation(); select(+img.dataset.i, true); };
-  for (const el of root.querySelectorAll(".card[data-c]")) el.onclick = () => focusCommunity(+el.dataset.c);
+  for (const el of root.querySelectorAll(".card[data-c]")) { el.tabIndex = 0; el.setAttribute("role", "button"); el.onclick = () => focusCommunity(+el.dataset.c); el.onkeydown = (event) => { if (event.key === "Enter") { event.stopPropagation(); focusCommunity(+el.dataset.c); } }; }
 }
 
 const index = () => { const m = new Map(); N.sha256.forEach((s, i) => m.set(s, i)); return m; };
 let bySha;
-function thumb(sha) { const i = bySha.get(sha); return i === undefined ? "" : `<img src="image/best/${sha}" data-i="${i}" alt="" title="${esc(N.path[i])} · ${esc(N.group[i] || "?")} · ${N.year[i] ?? "?"}">`; }
+function thumb(sha) { const i = bySha.get(sha); return i === undefined ? "" : `<img src="/image/best/${sha}" data-i="${i}" alt="" title="${esc(N.path[i])} · ${esc(N.group[i] || "?")} · ${N.year[i] ?? "?"}">`; }
 
 function card(c) {
-  const y = c.years ? `${c.years[1]}–${c.years[3]} (median ${c.years[2]})` : "undated";
-  const tight = c.spread < 2.5 ? "tight" : c.spread < 4.2 ? "moderate" : "loose";
-  const kinds = Object.entries(c.kinds).map(([k, v]) => `${k.replace("_", " ")} ${Math.round(100 * v / c.works)}%`).join(", ");
+  const y = c.years ? `${c.years[1]}–${c.years[3]} (${t("median", "médiane")} ${c.years[2]})` : t("undated", "non datée");
+  const tight = c.spread < 2.5 ? t("tight","resserrée") : c.spread < 4.2 ? t("moderate","modérée") : t("loose","dispersée");
+  const kinds = Object.entries(c.kinds).map(([k, v]) => `${k.replace("_", " ")} ${Math.round(100 * v / (c.original_works ?? c.works))}%`).join(", ");
   return `<div class="card${S.community === c.community ? " on" : ""}" data-c="${c.community}">
     <div class="head"><span class="dot" style="color:rgb(${c.colour});background:rgb(${c.colour})"></span>
       <span class="name">#${c.community} ${esc(c.name)}</span><span class="n">${c.works.toLocaleString()}</span></div>
-    <div class="facts">${y} · ${kinds}<br>${tight} (spread ${c.spread}) · ${esc(c.groups.slice(0, 3).join(", "))}</div>
+    <div class="facts">${y} · ${kinds}<br>${tight} (${t("spread", "dispersion")} ${c.spread}) · ${esc(c.groups.slice(0, 3).join(", "))}</div>
     <div class="arch">${thumb(c.archetype)}${c.typical.map(thumb).join("")}</div>
     <div class="axis">${c.axis.from_works.map(thumb).join("")}<span>↔</span>${c.axis.to_works.map(thumb).join("")}</div>
-    <div class="axis-words"><em>${esc(c.axis.from || "–")}</em><span>${Math.round(c.axis.variance_share * 100)}% of variation</span><em style="text-align:right">${esc(c.axis.to || "–")}</em></div>
-    <div class="sig">archetype first, then the four most typical; below, works at both ends of its main axis of variation. Named by ${esc(c.named_by)}.</div>
+    <div class="axis-words"><em>${esc(c.axis.from || "–")}</em><span>${Math.round(c.axis.variance_share * 100)}% ${t("of variation", "de variation")}</span><em style="text-align:right">${esc(c.axis.to || "–")}</em></div>
+    <div class="sig">${t("Archetype first, then typical works; below, both ends of the main axis. Named by", "Archétype, puis œuvres typiques ; en dessous, les extrémités de l’axe principal. Nom calculé par")} ${esc(c.named_by)}.</div>
   </div>`;
 }
 
 function openCommunities() {
   const p = $("comms");
-  p.innerHTML = `<button class="btn close" onclick="document.getElementById('comms').classList.remove('open')">✕</button>
-    <h2>${C.length} communities</h2>
-    <p>Found by Leiden on the nearest-works graph. Each has an archetype (the work nearest its centre),
-    its most typical works, and its main axis of variation with the works at both ends. Names are computed
-    from the measures where the community stands furthest from the corpus: a description, not a title.</p>
+  p.innerHTML = `<button class="btn close" data-close="comms">✕</button>
+    <h2>${C.length} ${t("communities", "communautés")}</h2>
+    <p>${t("Found by Leiden on the nearest-work graph. Archetypes, typical works and main axes describe the original training graph; examples are limited to display-eligible works. Names are computed descriptions.", "Communautés calculées par Leiden sur le graphe de proximité. Archétypes, œuvres typiques et axes décrivent le graphe d’apprentissage d’origine ; les exemples respectent les droits d’affichage. Les noms sont des descriptions calculées.")}</p>
     ${C.map(card).join("")}`;
   $("side").classList.remove("open");
   p.classList.add("open");
@@ -406,7 +290,7 @@ function focusCommunity(c) {
     minX = q(xs, 0.02); maxX = q(xs, 0.98); minY = q(ys, 0.02); maxY = q(ys, 0.98);
     flyTo(fitView([minX, minY, maxX, maxY], 0.7));
   }
-  for (const el of document.querySelectorAll(".card[data-c]")) el.classList.toggle("on", +el.dataset.c === S.community);
+  for (const el of root.querySelectorAll(".card[data-c]")) el.classList.toggle("on", +el.dataset.c === S.community);
   redraw(); refreshThumbs();
 }
 
@@ -414,11 +298,11 @@ function legend() {
   const L = $("legend");
   const grad = (stops, a, b) => `linear-gradient(90deg, ${stops.map(([v, c]) => `rgb(${c}) ${100 * (v - a) / (b - a)}%`).join(", ")})`;
   const text = {
-    ink: "Each work glows in the colours it is drawn with: its foreground colours mixed by cell count, black left out.",
-    community: `Each of the ${C.length} communities in the mean ink of its works. Open the communities to see their archetypes.`,
-    year: "Year of the pack, from 16colo's filing.",
-    kind: "Content kind, from colours and block share (works v2).",
-    centrality: "How many works have this one among their 10 nearest: typicality, not importance.",
+    ink: t('Each work glows in the colours it is drawn with: its foreground colours mixed by cell count, black left out.', 'Chaque œuvre prend les couleurs de son encre, pondérées par le nombre de cellules, sans le noir.'),
+    community: t(`The ${C.length} communities in their works’ mean ink. Open them to see their archetypes.`, `Les ${C.length} communautés dans l’encre moyenne de leurs œuvres. Ouvrez-les pour voir les archétypes.`),
+    year: t("Year of the pack, from 16colo's filing.", 'Année du pack, selon le classement de l’archive.'),
+    kind: t('Content kind, from colours and block share (works v2).', 'Type de contenu calculé selon les couleurs et la proportion de blocs.'),
+    centrality: t('How many works have this one among their 10 nearest: typicality, not importance.', 'Nombre d’œuvres dont celle-ci est un voisin proche dans le graphe d’origine : une mesure de typicalité.'),
   }[S.mode];
   let body = "";
   if (S.mode === "year") body = `<div class="ramp" style="background:${grad(YEAR_STOPS, 1990, 2026)}"></div><div class="ends"><span>1990</span><span>2008</span><span>2026</span></div>`;
@@ -442,14 +326,14 @@ function play() {
   }, 650);
 }
 function setYear(y) {
-  S.year = y >= 2026 && !S.playing ? null : y; $("slider").value = y; $("year").textContent = S.year ?? "all";
+  S.year = y >= 2026 && !S.playing ? null : y; $("slider").value = y; $("year").textContent = S.year ?? t("all", "toutes");
   colours(); redraw(); refreshThumbs();
 }
 
 async function main() {
-  await load(); bySha = index(); radii = radius(); colours();
+  await load(); if (disposed) return; bySha = index(); radii = radius(); colours();
   for (const m of Object.keys(MODES)) {
-    const b = document.createElement("button"); b.textContent = m; b.dataset.m = m; b.onclick = () => setMode(m);
+    const b = document.createElement("button"); b.textContent = ({ink:t("ink","encre"),community:t("community","communauté"),year:t("year","année"),kind:t("kind","contenu"),centrality:t("centrality","centralité")})[m]; b.dataset.m = m; b.onclick = () => setMode(m);
     $("modes").append(b);
   }
   const start = fitView(S.bounds, 0.86);
@@ -472,14 +356,15 @@ async function main() {
   $("play").onclick = play;
   $("openComms").onclick = openCommunities;
   $("reset").onclick = () => { S.community = null; S.find = ""; $("find").value = ""; setYear(2026); flyTo(fitView(S.bounds, 0.86)); closeSide(); };
-  document.addEventListener("keydown", (e) => {
-    if (e.target.tagName === "INPUT") return;
+  const keydown = (e) => {
+    if (e.target.closest("input, select, textarea, button, a")) return;
     if (e.key === " ") { e.preventDefault(); play(); }
     if (e.key === "Escape") { closeSide(); $("comms").classList.remove("open"); }
     if (e.key === "c") openCommunities();
-  });
+  };
+  root.addEventListener("keydown", keydown);
 }
-main();
-</script>
-</body>
-</html>
+main().catch(() => { const loading = $("loading"); if (loading) loading.textContent = t("Constellation unavailable", "Constellation indisponible"); });
+return () => { disposed = true; clearTimeout(thumbTimer); clearInterval(S.playing); if (deckgl) deckgl.finalize(); };
+
+};

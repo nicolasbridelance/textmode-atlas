@@ -10,6 +10,7 @@ SPDX-License-Identifier: Apache-2.0
 	import { loadWork, type Work } from '../lib/work/record';
 	import { loadList, workOfTheDay } from '../lib/work/visit';
 	import WorkScreen from '../lib/work/WorkScreen.svelte';
+	import { localizeHref } from '#lib/paraglide/runtime.js';
 
 	// The entrance is a work, the same for everyone today (foundation document, "Arriver"),
 	// drawn by `tm lists` among works the museum may show. Without it, the dedication.
@@ -35,6 +36,7 @@ SPDX-License-Identifier: Apache-2.0
 	<main>
 		<h1>{m.museum_name()}</h1>
 		<p>{m.dedication()}</p>
+		<p><a href={localizeHref('/explore')}>{m.atlas_enter()}</a></p>
 	</main>
 {/if}
 

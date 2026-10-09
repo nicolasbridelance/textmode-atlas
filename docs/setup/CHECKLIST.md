@@ -6,7 +6,7 @@ Installation locale en cours. Les preuves figurent dans JOURNAL.md.
 
 - Dépôt : C:/02_Projets/01_ACTIFS/textmode-atlas
 - Date / intervenant : 2026-10-09, Europe/Paris — Codex
-- Branche / commit : fix/windows-restoration / 9ca145a (base e8f36933)
+- Branche / commit : feat/unified-museum, working tree de 11c80ba (base e8f36933) ; [EV-008](JOURNAL.md#ev-008--unified-museum).
 - Environnement : Windows 11, PowerShell, Git Bash
 - À préserver : quatre fichiers suivis modifiés et deux fichiers non suivis du snapshot principal ; snapshot visualisations dans son worktree séparé.
 - Périmètre : restauration locale, kit, dépendances et vérifications ; aucune publication ni dépense de service.

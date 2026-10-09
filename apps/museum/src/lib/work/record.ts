@@ -39,6 +39,38 @@ export interface WorkRecord {
 	/** Schema 2 (ADR 0023): the words of a shown work, and the lists it belongs to. */
 	text?: { row: number; text: string }[];
 	lists?: ListPaths | null;
+	research?: Research;
+}
+
+interface Reading {
+	id: string;
+	title: string;
+	body: string;
+	locale: string;
+	kind: 'explanation' | 'science' | 'vision';
+	nature: 'documented' | 'testified' | 'inferred';
+	level: 'interpretation';
+	asserted_by: string;
+	method: string;
+	input_sha256: string;
+	sources: string[];
+	uncertainty: string;
+	model: string | null;
+	prompt_sha256: string | null;
+	representation_sha256: string | null;
+}
+
+export interface Research {
+	dataset: { version: string; extractors: Record<string, string> };
+	decoding: string;
+	features: Record<string, string | number>;
+	neighbours: {
+		sha256: string;
+		path: string;
+		sauce_author: string | null;
+		sauce_group: string | null;
+	}[];
+	readings: Reading[];
 }
 
 export interface Work {

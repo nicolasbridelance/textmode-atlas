@@ -1,10 +1,9 @@
 # SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 # SPDX-License-Identifier: Apache-2.0
-"""Corpus explorer: a local wall of works to look at the corpus together (roadmap step 5).
+"""The local museum: collection, scientific constellation and one shared work screen.
 
-A research tool, not the museum: it reads the `works` dataset (train packs of every scene archive
-only, so the test packs stay unexamined) and the private derived bucket, and listens on 127.0.0.1
-only. Works not rendered yet are previewed from their grid, without storing anything.
+Reads train-only datasets and private derived storage. Display decisions remain on the
+server. Serves the built Svelte museum on loopback; no private dataset is copied into it.
 
     uv run --group research python research/explorer/explorer.py   # or: just explore
 """
@@ -26,20 +25,26 @@ from urllib.parse import parse_qs, urlparse
 
 import duckdb
 import numpy as np
+import pyarrow as pa
+from access import load_access
 from graph import Graph  # next to this file
+from museum import asset
 from PIL import Image
+from readings import readings
 from thumbnails import MODES, thumbnail  # next to this file
 from tm.config import settings
 from tm.storage import S3Store, grid_key, rendering_key, s3_client
 from tm_analysis.neighbours import PROFILE, profile
+from tm_render.compact import encode
 from tm_render.conservation import BitmapFont, Settings, render
 from tm_render.grid import from_parquet
 
 ROOT = Path(__file__).resolve().parents[2]
 BUILD = ROOT / "datasets" / "build" / "works" / "6"
 FONT = ROOT / "corpus" / "fonts" / "ibm-vga-8x16.f16"
-PAGE = Path(__file__).with_name("index.html")
-GRAPH_PAGE = Path(__file__).with_name("graph.html")
+SITE = ROOT / "apps" / "museum" / "build"
+GRAPH_SCRIPT = Path(__file__).with_name("graph.js")
+READINGS = ROOT / "datasets" / "build" / "interpretations" / "1"
 GRAPH = ROOT / "datasets" / "build" / "graph" / "2"
 HOST, PORT = "127.0.0.1", 8737
 PAGE_SIZE = 120
@@ -69,7 +74,25 @@ class Corpus:
     def __init__(self, build: Path) -> None:
         self.manifest = json.loads((build / "manifest.json").read_text())
         self.db = duckdb.connect()
-        self.db.execute(f"create view works as select * from '{build / 'works.parquet'}'")
+        self.access = load_access()
+        visible = [sha for sha, rule in self.access.items() if rule.shown != "nothing"]
+        self.db.register("visible_rows", pa.table({"sha256": visible}))
+        self.db.execute("create table visible as select * from visible_rows")
+        self.db.register(
+            "visit_rows",
+            pa.table(
+                {
+                    "sha256": list(self.access),
+                    "shown": [r.shown for r in self.access.values()],
+                    "level": [r.level for r in self.access.values()],
+                }
+            ),
+        )
+        self.db.execute("create table visit_rules as select * from visit_rows")
+        self.db.execute(
+            f"create view works as select w.* from '{build / 'works.parquet'}' w"
+            " join visible using (sha256)"
+        )
         self.db.execute(f"create view features as select * from '{build / 'features.parquet'}'")
         self.db.execute(
             "create table w as select * from works left join features using (sha256, cols, rows)"
@@ -161,6 +184,7 @@ class Corpus:
             "select sha256, archive, pack, year, path, format, content_kind, sauce_title,"
             " sauce_author, sauce_group, cols, rows, decoding,"
             " rendering_sha256 is not null as rendered,"
+            " (select shown from visit_rules v where v.sha256 = w.sha256) as display,"
             f" {hit if words else 'null'} as hit from w"
             f" where {where} order by {order}, sha256 limit {PAGE_SIZE} offset {offset}",
             ([f"%{words}%"] if words else []) + params,
@@ -190,13 +214,15 @@ class Corpus:
 
     def text(self, sha: str) -> list[dict[str, Any]] | None:
         """The text layer of the work's grid, as the dataset holds it: rows with words."""
-        if not self.rows("select 1 from w where sha256 = ? and decoding = 'ok'", [sha]):
+        if not self.can_show(sha):
             return None
         return self.rows("select row, text from lines where sha256 = ? order by row", [sha])
 
     def image(self, sha: str, kind: str) -> bytes | None:
         """The stored rendering (`full`) or a card for the wall (`thumbnails.MODES`); works not
         rendered yet are drawn from their grid, without storing anything."""
+        if not self.can_show(sha):
+            return None
         row = (
             self.db.cursor()
             .execute(
@@ -223,6 +249,89 @@ class Corpus:
         grid = from_parquet(self.derived.get(grid_key(sha, self.decoder, self.decoder_version)))
         drawn = render(grid, self.font, Settings(high_bg="ice" if ice else "blink"))
         return Image.open(io.BytesIO(drawn.png))
+
+    def can_show(self, sha: str) -> bool:
+        rule = self.access.get(sha)
+        return rule is not None and rule.shown == "files"
+
+    def compact(self, sha: str) -> bytes | None:
+        work = self.work(sha)
+        if not work or not self.can_show(sha) or work["decoding"] != "ok":
+            return None
+        grid = from_parquet(self.derived.get(grid_key(sha, self.decoder, self.decoder_version)))
+        ice = bool(work["sauce_ice"]) and not work["sauce_problems"]
+        return encode(grid, ice) if grid.fits_v1() else None
+
+    def record(self, sha: str) -> dict[str, Any] | None:
+        work = self.work(sha)
+        if work is None:
+            return None
+        rule = self.access[sha]
+        shown = rule.shown if work["decoding"] == "ok" else "record"
+        return {
+            "schema": 2,
+            "sha256": sha,
+            "title": work["sauce_title"],
+            "file": work["path"].rsplit("/", 1)[-1],
+            "format": work["format"],
+            "year": work["year"],
+            "shown": shown,
+            "credit": {
+                "author": work["sauce_author"],
+                "group": work["sauce_group"],
+                "pack": work["pack"],
+                "archive": work["archive"],
+                "url": rule.url,
+            },
+            "audience": {
+                "level": rule.level,
+                "reviewed": rule.reviewed,
+                "descriptors": rule.descriptors,
+                "notices": rule.notices,
+            },
+            "grid": {
+                "cols": work["cols"] or 0,
+                "rows": work["rows"] or 0,
+                "ice": bool(work["sauce_ice"]) and not work["sauce_problems"],
+            },
+            "files": {},
+            "provenance": [],
+            "withdraw": settings().withdraw_url,
+            "text": self.text(sha) or [],
+            "lists": {kind: f"lists/{sha}/{kind}.json" for kind in ("pack", "author", "year")},
+            "research": {
+                "dataset": {
+                    "version": self.manifest["version"],
+                    "extractors": self.manifest["extractors"],
+                },
+                "decoding": work["decoding"],
+                "features": self.features(work),
+                "neighbours": work["neighbours"],
+                "readings": readings(READINGS, sha) if shown == "files" else [],
+            },
+        }
+
+    def features(self, work: dict[str, Any]) -> dict[str, Any]:
+        if not self.can_show(work["sha256"]):
+            return {}
+        names = (*PROFILE, "writes", "overwrites", "clears", "content_kind", "system")
+        return {name: work[name] for name in names if name in work and work[name] is not None}
+
+    def visit(self, sha: str | None = None, kind: str = "days") -> dict[str, Any]:
+        params: list[Any] = []
+        where = "v.shown = 'files' and w.decoding = 'ok'"
+        if sha:
+            field = {"pack": "pack", "author": "sauce_author", "year": "year"}[kind]
+            where += f" and w.{field} = (select {field} from w where sha256 = ?)"
+            params.append(sha)
+        limit = f" limit {PAGE_SIZE}" if kind == "days" else ""
+        entries = self.rows(
+            "select w.sha256, sauce_title as title, path as file, path, sauce_author as author,"
+            ' sauce_group as "group", pack, year, cols, rows, v.level'
+            f" from w join visit_rules v using (sha256) where {where} order by path, sha256{limit}",
+            params,
+        )
+        return {"works": entries}
 
 
 def _fold(text: str) -> str:
@@ -271,10 +380,11 @@ class Handler(BaseHTTPRequestHandler):
             self.send(HTTPStatus.BAD_REQUEST, "text/plain", str(err).encode())
 
     def route(self, parts: list[str], query: dict[str, str]) -> None:
+        if parts[0] == "files":
+            self.route_files(parts[1:])
+            return
         match parts:
-            case [""]:
-                self.send(HTTPStatus.OK, "text/html; charset=utf-8", PAGE.read_bytes())
-            case ["graph"] | ["api", "graph", _]:
+            case ["api", "graph", _]:
                 self.route_graph(parts)
             case ["api", "facets"]:
                 self.json(self.corpus.facets())
@@ -287,13 +397,48 @@ class Handler(BaseHTTPRequestHandler):
             case ["image", kind, sha] if SHA.match(sha) and kind in (*MODES, "full"):
                 self.png(_image(self.corpus, sha, kind))
             case _:
+                self.route_page(parts)
+
+    def route_page(self, parts: list[str]) -> None:
+        if parts == ["atlas-graph.js"]:
+            self.send(HTTPStatus.OK, "text/javascript", GRAPH_SCRIPT.read_bytes())
+            return
+        page = "constellation" if parts == ["graph"] else "/".join(parts)
+        found = asset(SITE, page)
+        if found is None:
+            self.send(HTTPStatus.NOT_FOUND, "text/plain", b"not found: build the museum first")
+            return
+        kind, body = found
+        self.send(HTTPStatus.OK, kind, body)
+
+    def route_files(self, parts: list[str]) -> None:
+        match parts:
+            case ["lists", "days.json"]:
+                self.json(self.corpus.visit())
+            case ["lists", sha, kind] if SHA.match(sha):
+                name = kind.removesuffix(".json")
+                if name in ("pack", "author", "year"):
+                    self.json(self.corpus.visit(sha, name))
+                else:
+                    self.send(HTTPStatus.NOT_FOUND, "text/plain", b"unknown list")
+            case ["works", sha, "record.json"] if SHA.match(sha):
+                self.json(self.corpus.record(sha))
+            case ["works", sha, "grid.tmg"] if SHA.match(sha):
+                self.binary(self.corpus.compact(sha))
+            case ["works", sha, "conservation.png"] if SHA.match(sha):
+                self.png(_image(self.corpus, sha, "full"))
+            case _:
                 self.send(HTTPStatus.NOT_FOUND, "text/plain", b"not found")
+
+    def binary(self, data: bytes | None) -> None:
+        if data is None:
+            self.send(HTTPStatus.NOT_FOUND, "text/plain", b"no grid")
+            return
+        self.send(HTTPStatus.OK, "application/octet-stream", data)
 
     def route_graph(self, parts: list[str]) -> None:
         """The graph page and its three payloads (nodes, edges, communities)."""
-        if parts == ["graph"]:
-            self.send(HTTPStatus.OK, "text/html; charset=utf-8", GRAPH_PAGE.read_bytes())
-        elif self.graph and parts[-1] in ("nodes", "edges", "communities"):
+        if self.graph and parts[-1] in ("nodes", "edges", "communities"):
             kind = "application/octet-stream" if parts[-1] == "edges" else "application/json"
             self.send(HTTPStatus.OK, kind, getattr(self.graph, parts[-1]), cache=True)
         else:
@@ -333,14 +478,17 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     if not (BUILD / "manifest.json").exists():
         sys.exit("No works dataset: run `uv run tm dataset build works` first.")
+    if not (SITE / "index.html").exists():
+        sys.exit("Build the museum first: pnpm --filter museum build")
     corpus = Corpus(BUILD)
     Handler.corpus = corpus
     if Graph.exists(GRAPH):
-        Handler.graph = Graph(GRAPH, BUILD)
+        allowed = {sha for sha in corpus.access if corpus.can_show(sha)}
+        Handler.graph = Graph(GRAPH, BUILD, allowed)
         Handler.graph.check(corpus.manifest)
         corpus.use_graph(Handler.graph)
     server = ThreadingHTTPServer((HOST, PORT), Handler)
-    log.info("Corpus explorer on http://%s:%d (%s works)", HOST, PORT, len(corpus.order))
+    log.info("Museum on http://%s:%d (%s measured works)", HOST, PORT, len(corpus.order))
     server.serve_forever()
 
 

@@ -10,12 +10,14 @@ request, and kept: the graph does not change while the explorer runs.
 from __future__ import annotations
 
 import json
+from collections import Counter
 from functools import cached_property
 from pathlib import Path
 from typing import Any
 
 import duckdb
 import numpy as np
+import pyarrow as pa
 
 # VGA's 16 colours; black is left out of a work's ink, since most works are drawn on it.
 VGA = np.array(
@@ -31,9 +33,10 @@ ASSETS = ("manifest.json", "nodes.parquet", "edges.parquet", "communities.json")
 
 
 class Graph:
-    def __init__(self, build: Path, works: Path) -> None:
+    def __init__(self, build: Path, works: Path, allowed: set[str] | None = None) -> None:
         self.build = build
         self.works = works
+        self.allowed = allowed
 
     @staticmethod
     def exists(build: Path) -> bool:
@@ -57,8 +60,12 @@ class Graph:
             )
             .fetchall()
         ):
-            found.setdefault(source, []).append(target)
+            if self.permitted(source) and self.permitted(target):
+                found.setdefault(source, []).append(target)
         return found
+
+    def permitted(self, sha: str) -> bool:
+        return self.allowed is None or sha in self.allowed
 
     def _rows(self) -> list[tuple[Any, ...]]:
         """Every node in the order of the edge indices, with its metadata: a left join, so that
@@ -76,12 +83,22 @@ class Graph:
         ).fetchall()
         if count is None or len(rows) != count[0]:
             raise ValueError("graph nodes and works do not join one to one: rebuild the graph")
-        return rows
+        return [row for row in rows if self.permitted(row[0])]
+
+    @cached_property
+    def visible_rows(self) -> list[tuple[Any, ...]]:
+        return self._rows()
+
+    @cached_property
+    def community_ids(self) -> dict[int, int]:
+        return {old: new for new, old in enumerate(sorted({r[3] for r in self.visible_rows}))}
 
     @cached_property
     def nodes(self) -> bytes:
         """Columns of every node as JSON: one list per field, in the order of the edges."""
-        rows = self._rows()
+        rows = self.visible_rows
+        if not rows:
+            return json.dumps({"sha256": [], "ink": []}).encode()
         columns = list(zip(*rows, strict=True))
         hists = [hist if hist is not None else [0] * len(VGA) for hist in columns[13]]
         ink = _ink(np.array(hists, dtype=np.float64))
@@ -89,6 +106,7 @@ class Graph:
                  "author", "pack", "path", "archive", "title"]  # fmt: skip
         payload: dict[str, Any] = {name: list(columns[i]) for i, name in enumerate(names)}
         payload["ink"] = ink.ravel().tolist()
+        payload["community"] = [self.community_ids[c] for c in payload["community"]]
         return json.dumps(payload, separators=(",", ":")).encode()
 
     @cached_property
@@ -96,9 +114,10 @@ class Graph:
         """Every edge as two little-endian uint32 node indexes, source then target, by source and
         then rank: the first edge of each work goes to its nearest."""
         db = duckdb.connect()
+        db.register("visible", pa.table({"sha256": [r[0] for r in self.visible_rows]}))
         db.execute(
             "create table idx as select sha256, row_number() over (order by sha256) - 1 as i"
-            f" from '{self.build / 'nodes.parquet'}'"
+            " from visible"
         )
         pairs = db.execute(
             f"select s.i, t.i from '{self.build / 'edges.parquet'}' e"
@@ -110,7 +129,30 @@ class Graph:
 
     @cached_property
     def communities(self) -> bytes:
-        return (self.build / "communities.json").read_bytes()
+        payload = json.loads((self.build / "communities.json").read_bytes())
+        counts = Counter(r[3] for r in self.visible_rows)
+        result = []
+        for community in payload["communities"]:
+            old = community["community"]
+            if old in counts:
+                result.append(self.visible_community(community, counts[old]))
+        payload["communities"] = result
+        payload["scope"] = "Display-eligible nodes; measures describe the original train graph."
+        return json.dumps(payload).encode()
+
+    def visible_community(self, community: dict[str, Any], count: int) -> dict[str, Any]:
+        result = dict(community)
+        old = result["community"]
+        result["community"] = self.community_ids[old]
+        result["original_works"] = result["works"]
+        result["works"] = count
+        result["typical"] = [sha for sha in result["typical"] if self.permitted(sha)]
+        if not self.permitted(result["archetype"]):
+            result["archetype"] = next(r[0] for r in self.visible_rows if r[3] == old)
+        result["axis"] = dict(result["axis"])
+        for name in ("from_works", "to_works"):
+            result["axis"][name] = [sha for sha in result["axis"][name] if self.permitted(sha)]
+        return result
 
 
 def _ink(fg_hist: np.ndarray) -> np.ndarray:

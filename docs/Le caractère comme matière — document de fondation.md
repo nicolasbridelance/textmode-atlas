@@ -33,6 +33,20 @@ Neuf règles sont vérifiées par le code, pas seulement par convention.
 | Tout contenu généré par un modèle est marqué | `level = 'interpretation'` et `asserted_by = 'algo:…'` |
 | Aucune œuvre n'est générée « à la manière de » | les modèles mesurent et prédisent ; une grille produite par un modèle n'est jamais rendue ni exportée (`tm export` refuse toute `representation` sans `sha256` d'artefact acquis) |
 
+## Un musée commun à la visite et à la recherche
+
+Décision du propriétaire, 9 octobre 2026 : la collection, son exploration, la constellation,
+les explications scientifiques et les lectures des modèles de vision appartiennent au même
+musée ([ADR 0027](adr/0027-one-museum-for-exploration-and-research.md)). Les résultats enrichissent
+progressivement les mêmes fiches d’œuvres. Une navigation commune relie ces salles ; les
+outils scientifiques et les jeux de données restent reproductibles, sans constituer un second site.
+
+Chaque lecture distingue le document, la mesure et l’interprétation, indique son auteur, sa
+méthode, ses sources et ses limites. Une lecture de modèle est signée `algo:`, avec l’identité
+du modèle et le hash de l’entrée ; elle n’est jamais présentée comme un fait historique.
+Les règles de droits, de retrait et de public s’appliquent côté serveur à cette interface
+commune. L’unification ne publie pas les sauvegardes, les originaux privés ni les secrets.
+
 ## Stack et dépôt
 
 La stack proposée tient en sept composants, tous standards et remplaçables.
