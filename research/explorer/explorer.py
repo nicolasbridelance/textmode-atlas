@@ -36,11 +36,11 @@ from tm_render.conservation import BitmapFont, Settings, render
 from tm_render.grid import from_parquet
 
 ROOT = Path(__file__).resolve().parents[2]
-BUILD = ROOT / "datasets" / "build" / "works" / "5"
+BUILD = ROOT / "datasets" / "build" / "works" / "6"
 FONT = ROOT / "corpus" / "fonts" / "ibm-vga-8x16.f16"
 PAGE = Path(__file__).with_name("index.html")
 GRAPH_PAGE = Path(__file__).with_name("graph.html")
-GRAPH = ROOT / "datasets" / "build" / "graph" / "1"
+GRAPH = ROOT / "datasets" / "build" / "graph" / "2"
 HOST, PORT = "127.0.0.1", 8737
 PAGE_SIZE = 120
 NEIGHBOURS = 10  # as the graph build (k), so that the wall and the graph agree
