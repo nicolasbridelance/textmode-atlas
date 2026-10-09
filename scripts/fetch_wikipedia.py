@@ -139,7 +139,7 @@ def language_links(client: Client, titles: list[str]) -> tuple[dict[str, set[str
                 by_lang["en"].add(page["title"])
                 for link in page.get("langlinks", []):
                     by_lang[link["lang"]].add(link["*"])
-                    hosts[link["lang"]] = urllib.parse.urlparse(link["url"]).netloc
+                    hosts[link["lang"]] = urllib.parse.urlparse(str(link["url"])).netloc
     return by_lang, hosts
 
 
