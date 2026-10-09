@@ -20,6 +20,7 @@ from __future__ import annotations
 import datetime as dt
 import hashlib
 import json
+import re
 import struct
 import zlib
 from collections.abc import Sequence
@@ -27,6 +28,7 @@ from dataclasses import dataclass
 from typing import Any, Literal
 
 from sqlalchemy import Connection, Row, text
+from tm_analysis.versions import TEXT_VERSION
 from tm_render.compact import encode
 from tm_render.versions import DECODER_VERSION, RENDERER_VERSION
 
@@ -37,7 +39,7 @@ from tm.rights import Privacy, Rights, can_display
 from tm.shards import EVERYTHING, Shard, condition
 from tm.storage import ObjectStore, rendering_key
 
-RECORD_SCHEMA = 1
+RECORD_SCHEMA = 2  # 2: the work's words and its lists (ADR 0023)
 NOT_YET_SHOWN = ("18",)  # no age check yet (ADR 0019): record only
 FILES = ("record.json", "grid.tmg", "conservation.png")
 Outcome = Literal["files", "record", "nothing"]
@@ -47,7 +49,7 @@ select a.sha256, a.source_path, a.format, a.sauce, w.title, w.rights, w.privacy,
   d.grid_sha256, d.cols, d.rows, d.sauce_problems,
   wa.level, wa.descriptors, wa.notices, wa.reviewed,
   r.output_sha256 as rendering_sha256,
-  p.archive, p.pack, p.pack_url, p.year
+  p.archive, p.pack, p.pack_url, p.year, p.pack_path, t.line_rows, t.lines
 from decoding d
 join artifact a on a.sha256 = d.sha256
 join version v on v.id = a.version_id
@@ -63,7 +65,7 @@ left join lateral (
 left join lateral (
   select s.name as archive, sw.title as pack,
     sw.rights -> 'scene_publication' ->> 'url' as pack_url,
-    extract(year from sv.date_min)::int as year
+    extract(year from sv.date_min)::int as year, m.path as pack_path
   from set_member m
   join work sw on sw.id = m.set_work_id
   join version sv on sv.work_id = sw.id
@@ -73,6 +75,8 @@ left join lateral (
   order by sv.date_min nulls last, s.name, m.path
   limit 1
 ) p on true
+left join text_layer t on t.sha256 = a.sha256 and t.extractor_version = :text_version
+  and t.grid_sha256 = d.grid_sha256
 where d.status = 'ok' and d.decoder = :decoder and d.decoder_version = :decoder_version
 """
 PROVENANCE = """
@@ -115,6 +119,7 @@ def exportable(conn: Connection, shard: Shard = EVERYTHING) -> Sequence[Row[Any]
         "decoder": DECODER,
         "decoder_version": DECODER_VERSION,
         "renderer_version": RENDERER_VERSION,
+        "text_version": TEXT_VERSION,
         **shard.params(),
     }
     sql = WORKS + condition("a.sha256") + " order by a.sha256"
@@ -188,11 +193,21 @@ def _ice(row: Row[Any]) -> bool:
     return bool(flags & 1) and not row.sauce_problems
 
 
-def _credit(row: Row[Any]) -> dict[str, Any]:
+def credit_of(row: Row[Any]) -> dict[str, Any]:
+    """Title and signature as the file carries them: a handle, never a civil name."""
     sauce = _sauce(row)
     return {
-        "author": sauce.get("author") or None,  # as signed: a handle, never a civil name
+        "title": sauce.get("title") or row.title,
+        "author": sauce.get("author") or None,
         "group": sauce.get("group") or None,
+    }
+
+
+def _credit(row: Row[Any]) -> dict[str, Any]:
+    signed = credit_of(row)
+    return {
+        "author": signed["author"],
+        "group": signed["group"],
         "pack": row.pack,
         "archive": row.archive,
         "url": row.pack_url,
@@ -208,11 +223,10 @@ def _record(
     files: dict[str, bytes],
     withdraw_url: str,
 ) -> dict[str, Any]:
-    sauce = _sauce(row)
     return {
         "schema": RECORD_SCHEMA,
         "sha256": row.sha256,
-        "title": sauce.get("title") or row.title,
+        "title": credit_of(row)["title"],
         "file": row.source_path.rsplit("/", 1)[-1],
         "year": row.year,
         "format": row.format,
@@ -228,6 +242,31 @@ def _record(
         "files": {name: hashlib.sha256(data).hexdigest() for name, data in sorted(files.items())},
         "provenance": provenance,
         "withdraw": withdraw_url,
+        "text": _text(row) if outcome == "files" else [],
+        "lists": list_paths(row) if outcome == "files" else None,
+    }
+
+
+def _text(row: Row[Any]) -> list[dict[str, Any]]:
+    """The words of the work, as the text layer read them (ADR 0023)."""
+    return [
+        {"row": r, "text": line}
+        for r, line in zip(row.line_rows or [], row.lines or [], strict=True)
+    ]
+
+
+def slug(value: str) -> str:
+    """A list key: lower case letters and digits, other runs as one hyphen."""
+    return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
+
+
+def list_paths(row: Row[Any]) -> dict[str, str | None]:
+    """Where the lists of a shown work live in the public bucket (ADR 0023)."""
+    author = slug(_credit(row)["author"] or "")
+    return {
+        "pack": f"lists/packs/{slug(row.archive)}-{slug(row.pack)}.json",
+        "author": f"lists/authors/{author}.json" if author else None,
+        "year": f"lists/years/{row.year}.json" if row.year else None,
     }
 
 
@@ -235,7 +274,7 @@ def _png_text(row: Row[Any], provenance: list[dict[str, Any]], withdraw_url: str
     credit = _credit(row)
     signed = " / ".join(x for x in (credit["author"], credit["group"]) if x) or "unsigned"
     return {
-        "Title": _sauce(row).get("title") or row.title or "",
+        "Title": credit_of(row)["title"] or "",
         "Author": signed,
         "Source": credit["url"],
         "Copyright": "The artist's. Shown as released by the scene (ADR 0009); withdraw: "
