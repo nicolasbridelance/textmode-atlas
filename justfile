@@ -116,3 +116,11 @@ graph:
 # Corpus explorer on http://127.0.0.1:8737 (reads the works dataset and the derived bucket)
 explore:
     uv run --group research python research/explorer/explorer.py
+
+# Offline lexical report and raw credited-string registries from the train works dataset
+lexicon *args:
+    uv run --group research python research/lexicon/build.py {{args}}
+
+# Whole-token concordance with optional year and raw SAUCE credit filters
+concordance *args:
+    uv run --group research python research/lexicon/concordance.py {{args}}

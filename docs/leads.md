@@ -130,7 +130,7 @@ Rules:
 | I50 | Wikipedia and Wikidata downloaded politely (relevant articles in every language, with revision ids) and used for a classification and a nomenclature of the field | owner, 2026-10-09 | taken (roadmap steps 10, 16) |
 | I51 | The works as documents: the text inside them (dedications, news, credits, working conditions, "he is working on…") read methodically. Layers: text zones, line classes, entities, block lettering, then NLP (topics, embeddings, NER, dating) over a per-work reading stored as rows and Parquet, rendered as Markdown for people | owner, 2026-10-09 ("c'est tout à fait monstrueux") | taken (roadmap step 15) |
 | I52 | Read lettering drawn with blocks (logos, titles) by matching TheDraw (`.TDF`) fonts cell by cell: exact, explainable, and it names the font used | I51 | open |
-| I53 | A concordance (keyword in context) over the text layer, by year and group, in the explorer: the first tool for reading 1.17 million lines by hand | I51 | open |
+| I53 | A concordance (keyword in context) over the text layer, by year and group, in the explorer: the first tool for reading 1.17 million lines by hand | I51 | taken in part: offline `just concordance`, lexical report and raw credit registries (`research/lexicon/`); explorer integration remains open |
 
 ## Curiosities
 

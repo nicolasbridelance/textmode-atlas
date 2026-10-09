@@ -18,3 +18,7 @@ Hypotheses, pre-registered **before** looking at the data, and the notebooks tha
 - Notebooks read built datasets (`datasets/`), never the production database directly.
 - Method rules (foundation document): split by pack, compare to a null model, resample by pack
   for intervals, publish coverage.
+
+Local reading tools: [lexicon and concordance](lexicon/README.md), built with `just lexicon`
+and searched with `just concordance TERM`. Generated data and the offline report stay in
+`datasets/build/lexicon/1/`, outside Git.

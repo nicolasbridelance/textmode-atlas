@@ -91,6 +91,10 @@ needs the one before says so.
     BBS, phone numbers, dates, places) as `inferred` assertions; lettering drawn in blocks read
     against TheDraw fonts; a per-work reading exported as Parquet for NLP and as Markdown for
     people (I51). ADR before code.
+    - [x] Offline lexical first reading and whole-token concordance (`just lexicon`,
+      `just concordance`): file frequencies, contexts, temporal coverage, unresolved SAUCE
+      registries; source hashes verified, outputs local in `datasets/build/lexicon/1/`.
+      Supports I53; zone classification and entity resolution remain open.
 16. [ ] Nomenclature from Wikipedia and Wikidata: a controlled vocabulary (kinds, techniques,
     formats, tools, groups) with QIDs and labels in every language, as data in `corpus/`, used by
     the records and the explorer (I27, I50). ADR before code.
