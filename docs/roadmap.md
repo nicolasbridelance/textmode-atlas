@@ -67,7 +67,7 @@ needs the one before says so.
    long portraits and the first screen misrepresents them) with the first screen as an option, and
    the whole work in a corner of a first-screen card (I47). Small, and every later look at the
    corpus goes through it.
-10. [ ] Wikipedia and Wikidata, downloaded politely: the articles of the source note in every
+10. [x] Wikipedia and Wikidata, downloaded politely: the articles of the source note in every
     language that has one, with revision ids, and their Wikidata items, into `data/wikipedia/`
     (local, CC BY-SA text never republished), one request at a time with our User-Agent (I50).
     Runs in the background while the next steps go on.
