@@ -24,6 +24,8 @@ class Settings(BaseModel):
     # Garage administration: local environment only.
     garage_admin_url: str = "http://localhost:3903"
     garage_admin_token: str = "tm-local-admin-token"
+    # Paid model calls: the append-only ledger of grants and spends (tm.budget), machine-local.
+    model_ledger: str = ".local/model-ledger.jsonl"
 
 
 @cache

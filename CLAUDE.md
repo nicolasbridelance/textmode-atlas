@@ -110,6 +110,9 @@ output through `typer.echo`; `print` only in `scripts/`.
   each with a test that makes it fail.
 - REUSE: SPDX header on every file (code Apache-2.0; data CC0-1.0; texts CC-BY-4.0).
 - Secrets come from the environment (`TM_*`), never from files in the repository.
+- Paid model calls only under a grant the owner recorded (`tm budget grant`), through
+  `tm.budget.Ledger.call`; ask him first with an estimate ([model budget](docs/model-budget.md)).
+  Never print or read `.env` whole: it holds API keys.
 - Preliminary reports in `docs/research/` are leads to verify at the primary source.
 
 ## Commands
