@@ -20,6 +20,7 @@ from tm.dev import storage_init
 from tm.features import extract_artifact, pending_features
 from tm.ingest import ingest_golden
 from tm.packs import PackIngested, ingest_pack, pack_archives
+from tm.pilots import SampleError
 from tm.render import pending_renderings, render_artifact
 from tm.shards import Shard
 from tm.storage import S3Store, s3_client
@@ -90,7 +91,7 @@ def dataset_build(
     with engine.connect() as conn:
         try:
             built = build(conn, definitions / name, out)
-        except (DatasetError, ValidationError) as err:
+        except (DatasetError, SampleError, ValidationError) as err:
             typer.echo(f"✗ {err}", err=True)
             raise typer.Exit(1) from err
     for table, rows in built.rows.items():
@@ -110,7 +111,7 @@ def dataset_draw(
     with engine.connect() as conn:
         try:
             path = draw_sample(conn, definitions / name)
-        except (DatasetError, ValidationError) as err:
+        except (DatasetError, SampleError, ValidationError) as err:
             typer.echo(f"✗ {err}", err=True)
             raise typer.Exit(1) from err
     typer.echo(f"drew {path}")
