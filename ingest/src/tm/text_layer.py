@@ -14,40 +14,19 @@ from typing import Any
 from sqlalchemy import Connection, Row, text
 from tm_analysis.text import TextLine, text_lines
 from tm_analysis.versions import TEXT_VERSION
-from tm_render.grid import from_parquet
-from tm_render.versions import DECODER_VERSION
 
-from tm.decode import DECODER
-from tm.shards import EVERYTHING, Shard, condition
-from tm.storage import IntegrityError, ObjectStore, grid_key
+from tm.grids import pending_grids, stored_grid
+from tm.shards import EVERYTHING, Shard
+from tm.storage import ObjectStore
 
 
 def pending_text(conn: Connection, shard: Shard = EVERYTHING) -> Sequence[Row[Any]]:
     """Grids of the current decoder with no text layer from the current extractor yet."""
-    return conn.execute(
-        text(
-            "select d.sha256, a.source_path, d.grid_sha256 from decoding d"
-            " join artifact a on a.sha256 = d.sha256"
-            " where d.status = 'ok' and d.decoder = :decoder"
-            " and d.decoder_version = :decoder_version"
-            " and not exists (select 1 from text_layer t where t.sha256 = d.sha256"
-            " and t.extractor_version = :version)"
-            f"{condition('d.sha256')} order by a.source_path, d.sha256"
-        ),
-        {
-            "decoder": DECODER,
-            "decoder_version": DECODER_VERSION,
-            "version": TEXT_VERSION,
-            **shard.params(),
-        },
-    ).all()
+    return pending_grids(conn, "text_layer", TEXT_VERSION, shard)
 
 
 def read_artifact(conn: Connection, derived: ObjectStore, row: Row[Any]) -> list[TextLine]:
-    grid = from_parquet(derived.get(grid_key(row.sha256, DECODER, DECODER_VERSION)))
-    if grid.digest() != row.grid_sha256:
-        raise IntegrityError(f"grid of {row.sha256} does not match its decoding row")
-    lines = text_lines(grid)
+    lines = text_lines(stored_grid(derived, row.sha256, row.grid_sha256))
     conn.execute(
         text(
             "insert into text_layer (sha256, extractor_version, grid_sha256, line_rows, lines)"
