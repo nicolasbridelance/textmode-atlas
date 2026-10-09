@@ -110,6 +110,7 @@ In GitHub Codespaces the development container sets everything up. Locally you n
 ```sh
 just setup     # dependencies, screenshot browser, services, migrations, storage, git hooks
 just check     # everything CI checks
+just museum    # collection, constellation, research and shared work screen
 just --list    # other commands
 ```
 
@@ -118,5 +119,6 @@ just --list    # other commands
 - [Foundation document](docs/Le%20caractère%20comme%20matière%20—%20document%20de%20fondation.md)
   (French): the specification, its invariants and milestones.
 - [Research programme](docs/research-program.md) and [roadmap](docs/roadmap.md).
+- [Unified museum](docs/unified-museum.md): local rooms and interpretation contract.
 - [Architecture decisions](docs/adr/) and [spikes](docs/spikes/).
 - [CONTRIBUTING.md](CONTRIBUTING.md): how to contribute, and the four prohibitions.

@@ -19,6 +19,8 @@ SPDX-License-Identifier: Apache-2.0
 	import { type Lists, loadList, seedOf, type Ways as WaysOut, waysOut } from './visit';
 	import Ways from './Ways.svelte';
 	import WorkCanvas from './WorkCanvas.svelte';
+	import ResearchPanel from '../atlas/ResearchPanel.svelte';
+	import { fileUrl } from '../files';
 
 	// Modem speeds of the BBS years, and whole zooms down to the cell.
 	const SPEEDS = [300, 1200, BBS_BAUD, 9600, 14400, 28800, 57600]; // eslint-disable-line @typescript-eslint/no-magic-numbers
@@ -133,6 +135,7 @@ SPDX-License-Identifier: Apache-2.0
 <div class="screen">
 	<aside class="cartel">
 		<Cartel {record} {locale} seconds={work.grid ? seconds : null} {baud} {eyebrow} />
+		{#if record.research}<ResearchPanel research={record.research} {locale} />{/if}
 	</aside>
 
 	<!-- A swipe is a shortcut for the arrow keys and the ways out: nothing is reachable only by it. -->
@@ -149,6 +152,12 @@ SPDX-License-Identifier: Apache-2.0
 				{zoom}
 				bind:scale
 				bind:cell
+			/>
+		{:else if record.shown === 'files'}
+			<img
+				class="conservation"
+				src={fileUrl(`works/${record.sha256}/conservation.png`)}
+				alt={`${title}, ${signed}`}
 			/>
 		{:else}
 			<p class="not-shown">{m.work_not_shown()}</p>
@@ -205,6 +214,13 @@ SPDX-License-Identifier: Apache-2.0
 	.stage {
 		grid-area: stage;
 		min-width: 0;
+	}
+	.conservation {
+		max-width: 100%;
+		height: auto;
+		image-rendering: pixelated;
+		display: block;
+		margin-inline: auto;
 	}
 	.cartel {
 		grid-area: cartel;

@@ -6,12 +6,14 @@ SPDX-License-Identifier: Apache-2.0
 	import type { Path } from '$app/types';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import { browser } from '$app/env';
 	import { getLocale, locales, localizeHref } from '#lib/paraglide/runtime.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import favicon from '#lib/assets/favicon.svg';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
+	const context = $derived(browser ? `${page.url.search}${page.url.hash}` : '');
 
 	const localeNames: Record<string, () => string> = {
 		en: m.locale_name_en,
@@ -26,11 +28,16 @@ SPDX-License-Identifier: Apache-2.0
 
 <header class="top">
 	<a class="name" href={resolve(localizeHref('/') as Path)}>{m.museum_name()}</a>
+	<nav class="rooms" aria-label={m.atlas_rooms()}>
+		<a href={localizeHref('/explore')}>{m.atlas_collection()}</a>
+		<a href={localizeHref('/constellation')}>{m.atlas_constellation()}</a>
+		<a href={localizeHref('/research')}>{m.atlas_research()}</a>
+	</nav>
 	<!-- Also tells the prerenderer to crawl every localized version of the page. -->
 	<nav class="locales" aria-label={m.language_switch()}>
 		{#each locales as locale (locale)}
 			<a
-				href={resolve(localizeHref(page.url.pathname, { locale }) as Path)}
+				href={`${resolve(localizeHref(page.url.pathname, { locale }) as Path)}${context}`}
 				hreflang={locale}
 				data-sveltekit-reload
 				lang={locale}
@@ -86,6 +93,7 @@ SPDX-License-Identifier: Apache-2.0
 		align-items: baseline;
 		justify-content: space-between;
 		gap: 1rem;
+		flex-wrap: wrap;
 		padding: 0.9rem 1rem;
 		font-size: 0.75rem;
 		letter-spacing: 0.06em;
@@ -103,6 +111,20 @@ SPDX-License-Identifier: Apache-2.0
 	.locales {
 		display: flex;
 		gap: 0.75rem;
+	}
+	.rooms {
+		display: flex;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+	.rooms a {
+		text-decoration: none;
+	}
+	@media (max-width: 600px) {
+		.rooms {
+			order: 3;
+			width: 100%;
+		}
 	}
 	.locales a {
 		color: var(--faint);

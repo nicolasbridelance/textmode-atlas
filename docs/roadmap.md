@@ -26,6 +26,15 @@ Status: ✅ done · 🔨 in progress · ⏳ next · 💤 later
 
 ## Current focus: see and measure the corpus, then the pilot dataset and the work screen (M2)
 
+Owner-directed consolidation (2026-10-09, [ADR 0027](adr/0027-one-museum-for-exploration-and-research.md)):
+
+- [x] Unite collection, constellation, scientific reports and shared work records in the museum.
+- [x] Preserve search, scientific features and neighbours with server-side rights/audience gates.
+- [x] Define signed explanation/science/vision readings on the same work records.
+- [ ] Produce reviewed model readings and an authoring workflow; no model run is implied by the UI.
+
+Local operation and remaining deployment limits: [unified museum](unified-museum.md).
+
 Order set on 2026-10-08, revised the same day: all of 16colo is ingested and decoded, so the
 next step is to look at it, as images and as measurements, before choosing the pilot. What the
 exploration finds may become constraints for the steps after it, so it comes first. It reads

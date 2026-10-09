@@ -113,9 +113,13 @@ graph:
     uv run --group research python research/graph/build.py
     uv run --group research python research/graph/communities.py
 
-# Corpus explorer on http://127.0.0.1:8737 (reads the works dataset and the derived bucket)
-explore:
+# One museum: collection, works, constellation and research, on 127.0.0.1:8737
+museum:
+    pnpm --filter museum build
     uv run --group research python research/explorer/explorer.py
+
+# Compatibility name for the same museum
+explore: museum
 
 # Offline lexical report and raw credited-string registries from the train works dataset
 lexicon *args:

@@ -22,15 +22,17 @@ the storage engine or publish private research data to work around missing tools
 
 The migration backup omits most original archives and the public bucket. Existing
 local archives were discovered separately and must be preserved. The restored
-derived bucket supports the research explorer; it does not restore the museum's
+derived bucket supports the unified museum's local host; it does not restore
 public exports. Preserve the source ZIP and dumps until local verification is complete.
 
 ## Scope, interfaces and risks
 
 The foundation document and `CLAUDE.md` remain authoritative. Python workspaces
 `ingest`, `renderers`, `analysis` and `api` produce versioned grids and datasets;
-`apps/museum` consumes public exports. The private explorer consumes works/6,
-graph/2 and derived S3 objects. SQL contracts live in Alembic migrations;
+`apps/museum` consumes public exports or its local host's gated records. That host
+consumes works/6, graph/2 and derived S3 objects; `just museum` (alias `just explore`)
+serves collection, constellation and research together. See [the museum contract](../unified-museum.md).
+SQL contracts live in Alembic migrations;
 grid contracts and audience/display permissions have repository tests.
 
 The principal workspace and all three restored worktrees match their saved
@@ -57,7 +59,7 @@ No budget is inferred from quotas. Legal applicability, operational ownership,
 retention and accessibility certification remain unassessed for publication.
 The local setup does not change licenses, grant artwork rights or claim compliance.
 
-UI sources are the museum Svelte components/localized messages and research HTML
-pages. Priority research tasks are text search, graph navigation and work display.
-Rendering, keyboard, focus and responsive checks require a running local viewer;
+UI sources are the museum Svelte components/localized messages and the retained
+constellation runtime. Priority tasks are text search, graph navigation and work display.
+Rendering, keyboard, focus and responsive checks require a running local museum;
 reading these sources does not satisfy those checks.
