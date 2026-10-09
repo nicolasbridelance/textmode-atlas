@@ -26,12 +26,13 @@ from urllib.parse import parse_qs, urlparse
 import duckdb
 import numpy as np
 import pyarrow as pa
-from access import load_access
 from graph import Graph  # next to this file
 from museum import asset, english
 from PIL import Image
 from readings import readings
+from sqlalchemy import create_engine
 from thumbnails import MODES, thumbnail  # next to this file
+from tm.access import Access, load_access
 from tm.config import settings
 from tm.storage import S3Store, grid_key, rendering_key, s3_client
 from tm_analysis.neighbours import PROFILE, profile
@@ -76,7 +77,7 @@ class Corpus:
     def __init__(self, build: Path) -> None:
         self.manifest = json.loads((build / "manifest.json").read_text())
         self.db = duckdb.connect()
-        self.access = load_access()
+        self.access = _access()
         visible = [sha for sha, rule in self.access.items() if rule.shown != "nothing"]
         self.db.register("visible_rows", pa.table({"sha256": visible}))
         self.db.execute("create table visible as select * from visible_rows")
@@ -338,6 +339,15 @@ class Corpus:
             params,
         )
         return {"works": entries}
+
+
+def _access() -> dict[str, Access]:
+    engine = create_engine(settings().database_url)
+    try:
+        with engine.connect() as conn:
+            return load_access(conn)
+    finally:
+        engine.dispose()
 
 
 def _seed(query: dict[str, str]) -> str:

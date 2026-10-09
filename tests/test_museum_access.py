@@ -11,6 +11,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import pytest
 from pydantic import ValidationError
+from tm import access
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -27,7 +28,6 @@ def load(name):
     return module
 
 
-access = load("access")
 museum = load("museum")
 reading_module = load("readings")
 graph_module = load("graph")

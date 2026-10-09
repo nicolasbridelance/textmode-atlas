@@ -1,15 +1,18 @@
 # SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 # SPDX-License-Identifier: Apache-2.0
-"""Live museum display decisions; private storage is never a display permission."""
+"""What the live museum shows of each work: files, its record, or nothing.
+
+Private storage is never a display permission: `can_display()` and the audience grid decide.
+"""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any
 
-from sqlalchemy import create_engine, text
+from sqlalchemy import Connection, text
+
 from tm.audience import Rated, audience
-from tm.config import settings
 from tm.export import NOT_YET_SHOWN, Shown
 from tm.rights import Privacy, Rights, can_display
 
@@ -44,10 +47,5 @@ def classify(row: Any) -> Access:
     return Access(shown, level, bool(row.reviewed), row.descriptors or [], row.notices or [], url)
 
 
-def load_access() -> dict[str, Access]:
-    engine = create_engine(settings().database_url)
-    try:
-        with engine.connect() as conn:
-            return {row.sha256: classify(row) for row in conn.execute(text(POLICIES))}
-    finally:
-        engine.dispose()
+def load_access(conn: Connection) -> dict[str, Access]:
+    return {row.sha256: classify(row) for row in conn.execute(text(POLICIES))}
