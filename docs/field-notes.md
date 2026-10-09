@@ -16,6 +16,17 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-09 — Teletext art is remembered as pictures
+
+**Most teletext art in Demozoo survives as a screenshot, not as a page.** Of 447 productions
+tagged `teletext` (442 of them graphics), 318 have no link of any kind and only 128 a download
+link, while 446 have a screenshot. The page, the thing broadcast, is mostly not held; its image
+is. PETSCII is the opposite: 2,050 of 2,118 tagged productions can be downloaded. Some teletext
+links point to edit.tf, an editor that writes the whole page into its URL, so for those the link
+is itself the original. Demozoo's coverage, not the scene's output: teletext art festivals may
+keep their files elsewhere (lead I56). *Evidence: Demozoo dump of 2026-10-09, `taggit_tag`,
+`productions_productionlink`, `productions_screenshot` (lead I55).*
+
 ## 2026-10-09 — Colour families, and the genres of utility
 
 **The coloured block art of the 1990s sorts by hue.** Read as a graph of nearest works (features
