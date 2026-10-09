@@ -28,9 +28,14 @@ and an ad drawn in blocks is not text to the extractor. Story: from the board's 
 artist's signature.*
 
 **The scene's letters were CP437's.** CP437 has é, ü, ñ, but no ã or õ: a Brazilian ANSI could
-not write `não` on a standard VGA screen. Ñ, the most drawn accented letter by far, is mostly
-texture, not Spanish. *Evidence: glyph histograms of features v1 (codes 0x80–0xA5 in 8.5% of
-measured works, 130,000 cells of Ñ), 2026-10-09. Open: Q24, C7.*
+not write `não` on a standard VGA screen, and one writes `näo`, borrowing the German ä, beside
+`soh` for `só`. Polish texts in the packs drop their diacritics (`juz`, `sie`). Ñ, the most
+drawn accented letter by far, is mostly texture, not Spanish. Writing in another language than
+English stays under 1% of the ANSI of every era, by a rough count of function words (two
+distinct ones per work); found: German, Brazilian Portuguese, Polish, Swedish, Dutch, French,
+Spanish. *Evidence: glyph histograms of features v1 (codes 0x80–0xA5 in 8.5% of
+measured works, 130,000 cells of Ñ) and text layer v2 of the train packs, 2026-10-09. Open:
+Q10, Q24, C7.*
 
 ## 2026-10-08 — Pictures signed as ANSI
 

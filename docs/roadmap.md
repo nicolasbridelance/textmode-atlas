@@ -73,11 +73,10 @@ Later, deliberately (nothing depends on them yet):
 ## Leads
 
 Every question, hypothesis, idea and curiosity is written in [leads.md](leads.md) when it comes,
-even when it would lead too far; a lead taken up moves here or into a study. Next in line, after
-the open tasks of step 5:
+even when it would lead too far; a lead taken up moves here or into a study. Next in line:
 
-- I2, text runs extracted from the grids: it opens signatures (Q12), languages (Q10) and
-  greetings at once.
+- I2 is done (text layer v2, `tm text`, table `text` of `works` v4, explorer search). Next from
+  it: classify lines (I22) and a greets graph (I23), signatures (Q12), a language detector (Q10).
 - I21, an author-signal benchmark: H3 explored on the train packs found a weak signal in
   features v1 (2.3% same author among nearest works, 0.6% by chance, 14.2% knowing the group);
   every new representation is measured against it.
