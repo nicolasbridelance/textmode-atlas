@@ -54,7 +54,7 @@ Next, in this order:
 5. [x] Visual and statistical exploration of the `train` packs: a `works` dataset (metadata, features, rendering keys), marimo notebook, local corpus explorer (`just explore`), first note ([works.md](../research/exploration/works.md)) with the constraints it puts on later steps
    - [x] Content kind of each work (colours, block share), since the extension does not say it (constraint 1): `works` v2, explorer filter
    - [x] Decoder counts overwritten cells (decoder v3); exploratory animation rule chosen on their distribution, in `works` v3 and the notebook (constraint 3)
-6. [ ] D1 pilot: 20 packs drawn by stratum with a fixed seed, strata revised after step 5 (eras bounded by the mass, equal allocation so thin years are over-represented, inclusion weights recorded, content kind: constraints 1–2 of the works note, leads I19), rare cases added by hand with a reason; frozen with its datasheet; marimo notebook template
+6. [x] D1 pilot: 21 train packs drawn by era (seven strata bounded by the mass, three each, systematic within a stratum by content and size, seed 20261009, weights recorded) and 3 added by hand with a reason ([ADR 0017](adr/0017-d1-pilot-sampling.md)); frozen in `datasets/d1/sample.yaml` with its datasheet; notebook and pre-registration templates in `research/templates/`
 7. [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`; refuses a shown file without credit (ADR 0009)
 8. [ ] Work screen, first version: canvas renderer from the grid and the bitmap font, credit as signed, source link, "withdraw or claim" on every record (ADR 0009)
 

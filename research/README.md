@@ -7,7 +7,8 @@ SPDX-License-Identifier: CC-BY-4.0
 Hypotheses, pre-registered **before** looking at the data, and the notebooks that test them.
 
 - One directory per hypothesis: `research/NNNN-short-name/`, with `hypothesis.md` committed
-  first (question, measure, null model, test that could fail, date). The commit date is the proof
+  first (template: [templates/hypothesis.md](templates/hypothesis.md); notebook template:
+  [templates/notebook.py](templates/notebook.py), with design weights and pack resampling) (question, measure, null model, test that could fail, date). The commit date is the proof
   of pre-registration.
 - Notebooks are [marimo](https://marimo.io/) files (plain Python, reviewable in a diff):
   `just notebook research/NNNN-short-name`.

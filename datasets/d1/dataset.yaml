@@ -1,0 +1,54 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+#
+# Drawn by `tm dataset draw d1` into sample.yaml (committed), built by `tm dataset build d1`.
+# Design: ADR 0017. Datasheet: DATASHEET.md.
+name: d1
+version: "1"
+description: "Pilot: 16colo train packs drawn by era with a fixed seed, plus rare cases added by hand, with every file, grid feature and line of text."
+
+sample:
+  frame: frame.sql
+  unit: pack_sha256
+  label: pack
+  stratum: era
+  order: [dominant_kind, members]
+  per_stratum: 3
+  seed: 20261009
+  additions:
+    - unit: 85f7235f99b4b6b2a72cad8c160579acde00624a768e57df95360536dbbafd7c
+      reason: "acdu1190 (ACiD, 1990): the draw's three 1990–93 packs are all from 1993; this is one of the earliest group packs"
+    - unit: 4dcfddb1a9f84aafa45e2facaadcb15ccf7ddad9041d8c346c723f7894d6cfb9
+      reason: "1991: a yearly collection assembled by 16colo from loose files, not a group's release; tests how records tell them apart"
+    - unit: becb9001523600dea4da998676bff62286a9d40a7abdc6cb683d1412082eb190
+      reason: "maiden14 (Black Maiden, Brazil, 1997): writing in Portuguese with CP437 stand-ins (ä for ã, ö for õ), for languages (Q10, Q24) and D2; one of two archives 16colo holds under this name"
+
+# A file belongs to D1 when one of the sampled packs holds it. `= any(array(…))` computes the
+# list once; `in (…)` let the planner rerun it for every row of a corpus-wide query.
+x-members: &members "sha256 = any(array(select m.sha256 from set_member m join pack_split p on p.set_work_id = m.set_work_id where p.pack_sha256 in (select unit from sample)))"
+
+tables:
+  sample:
+    query: sample.sql
+    key: [pack_sha256]
+    columns:
+      - { name: pack_sha256, type: string, description: The pack (packs.pack_sha256) }
+      - { name: stratum, type: string, description: "Era of the pack (frame.sql)" }
+      - { name: selection, type: string, description: "drawn (systematic, by stratum) or added (by hand)" }
+      - { name: weight, type: float64, description: "Packs of the stratum in the frame / packs drawn from it; null for an added pack" }
+      - { name: reason, type: string, description: Why a pack was added by hand }
+  packs:
+    same_as: catalogue.packs
+    filter: pack_sha256 = any(array(select unit from sample))
+  files:
+    same_as: catalogue.files
+    filter: pack_sha256 = any(array(select unit from sample))
+  works:
+    same_as: works.works
+    filter: *members
+  features:
+    same_as: works.features
+    filter: *members
+  text:
+    same_as: works.text
+    filter: *members

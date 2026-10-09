@@ -14,7 +14,7 @@ from tm_render.conservation import MAX_SCALE, BitmapFont
 
 from tm import corpus as corpus_mod
 from tm.config import settings
-from tm.datasets import DatasetError, build
+from tm.datasets import DatasetError, build, draw_sample
 from tm.decode import decode_artifact, pending_artifacts
 from tm.dev import storage_init
 from tm.features import extract_artifact, pending_features
@@ -96,6 +96,24 @@ def dataset_build(
     for table, rows in built.rows.items():
         typer.echo(f"{table}: {rows} rows")
     typer.echo(f"built {built.directory}")
+
+
+@dataset_app.command("draw")
+def dataset_draw(
+    name: Annotated[str, typer.Argument(help="A dataset defined in datasets/<name>/.")],
+    definitions: Annotated[Path, typer.Option(help="Where datasets are defined.")] = Path(
+        "datasets"
+    ),
+) -> None:
+    """Draw a pilot dataset's sample from its frame into sample.yaml, to be committed."""
+    engine = create_engine(settings().database_url, execution_options={"postgresql_readonly": True})
+    with engine.connect() as conn:
+        try:
+            path = draw_sample(conn, definitions / name)
+        except (DatasetError, ValidationError) as err:
+            typer.echo(f"✗ {err}", err=True)
+            raise typer.Exit(1) from err
+    typer.echo(f"drew {path}")
 
 
 @dev_app.command("storage-init")

@@ -67,7 +67,7 @@ datasheet.
 | Dataset | Content | Available | Used by |
 | --- | --- | --- | --- |
 | D0 golden | the project's CC0 reference artifacts | M2 | tests, method checks |
-| D1 pilot | 20 packs: artifacts, SAUCE, grids, features, NFO text | M2 | R0, R1 |
+| D1 pilot | 21 packs drawn by era plus 3 added by hand ([ADR 0017](adr/0017-d1-pilot-sampling.md)): artifacts, SAUCE, grids, features, text; NFO text next | M2 | R0, R1 |
 | D2 linkage gold set | 200+ hand-checked NFO / DIZ lines with their extracted credits, greetings and BBS ads | M3 | R1 evaluation |
 | D3 16colo metadata | every pack and file of 16colo: hashes, SAUCE, dates, credits | M4 | R2 onwards |
 | D4 features and embeddings | grid features, symbolic / visual / text embeddings for D3 | M4 | R2, R3 |
