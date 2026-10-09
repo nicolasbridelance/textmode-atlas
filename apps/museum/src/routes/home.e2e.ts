@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 import { expect, test } from '@playwright/test';
 
-test('the entrance exists in English and in French', async ({ page }) => {
+test('without published files, the entrance is the dedication, in both languages', async ({
+	page
+}) => {
+	await page.route('**/files/**', (route) => route.fulfill({ status: 404 }));
 	await page.goto('/');
 	await expect(page.locator('html')).toHaveAttribute('lang', 'en');
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText(

@@ -5,9 +5,19 @@
 // site never decides what may be shown: a work it cannot fetch is a work it does not show.
 import { fileUrl } from '../files';
 import { parseTmg, type TmgGrid } from './tmg';
+import type { ListPaths } from './visit';
 
-interface WorkRecord {
-	schema: 1;
+interface Provenance {
+	source: string;
+	url: string;
+	method: string;
+	retrieved_at: string | null;
+	via_archive: string | null;
+	path_in_archive: string | null;
+}
+
+export interface WorkRecord {
+	schema: 1 | 2;
 	sha256: string;
 	title: string | null;
 	file: string;
@@ -23,7 +33,12 @@ interface WorkRecord {
 	audience: { level: string; descriptors: string[]; notices: string[]; reviewed: boolean };
 	shown: 'files' | 'record';
 	grid: { cols: number; rows: number; ice: boolean };
+	files: Record<string, string>;
+	provenance: Provenance[];
 	withdraw: string;
+	/** Schema 2 (ADR 0023): the words of a shown work, and the lists it belongs to. */
+	text?: { row: number; text: string }[];
+	lists?: ListPaths | null;
 }
 
 export interface Work {
@@ -37,10 +52,19 @@ export function isWorkId(value: string | null): value is string {
 	return value !== null && SHA256.test(value);
 }
 
-export async function loadWork(
-	sha256: string,
-	fetcher: typeof fetch = fetch
-): Promise<Work | null> {
+const loaded = new Map<string, Promise<Work | null>>();
+
+/** A work, fetched once: ways out are fetched ahead so the next work opens at once. */
+export function loadWork(sha256: string, fetcher: typeof fetch = fetch): Promise<Work | null> {
+	let work = loaded.get(sha256);
+	if (!work) {
+		work = fetchWork(sha256, fetcher).catch(() => null);
+		loaded.set(sha256, work);
+	}
+	return work;
+}
+
+async function fetchWork(sha256: string, fetcher: typeof fetch): Promise<Work | null> {
 	const response = await fetcher(fileUrl(`works/${sha256}/record.json`));
 	if (!response.ok) return null;
 	const record = (await response.json()) as WorkRecord;
