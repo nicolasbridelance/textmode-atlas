@@ -63,7 +63,7 @@ Session 8 order (2026-10-09, owner's requests: a viewer that is a snapshot of th
 nearest-works graph, Wikipedia, the words in the works). Each step is one branch; a step that
 needs the one before says so.
 
-9. [ ] Explorer thumbnails: "best fit" (the whole work scaled into the card, since most works are
+9. [x] Explorer thumbnails: "best fit" (the whole work scaled into the card, since most works are
    long portraits and the first screen misrepresents them) with the first screen as an option, and
    the whole work in a corner of a first-screen card (I47). Small, and every later look at the
    corpus goes through it.

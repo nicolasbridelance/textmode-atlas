@@ -90,6 +90,11 @@ SPDX-License-Identifier: Apache-2.0
   <input id="q" type="search" placeholder="group, author, pack, file">
   <input id="words" type="search" placeholder="words in the work">
   <select id="order"></select>
+  <select id="thumbs" title="cards: most works are long portraits">
+    <option value="best">cards: best screen</option>
+    <option value="screen">cards: first screen</option>
+    <option value="whole">cards: whole work</option>
+  </select>
   <span id="count"></span>
   <div class="note" id="note"></div>
 </header>
@@ -128,7 +133,7 @@ const arrival = (bytes, baud) => {
 
 function filters() {
   return {archive: $("archive").value, year: $("year").value, format: $("format").value, kind: $("kind").value, q: $("q").value,
-    words: $("words").value, order: $("order").value};
+    words: $("words").value, order: $("order").value, thumbs: $("thumbs").value};
 }
 function saveHash(work) {
   const params = new URLSearchParams(Object.entries(filters()).filter(([, v]) => v));
@@ -148,7 +153,7 @@ async function facets() {
     + ` the train packs of every archive, ${d.measured.toLocaleString()} measured. Exploratory: the test packs`
     + ` are not here. Extractors ${JSON.stringify(d.extractors)}.`;
   const hash = new URLSearchParams(location.hash.slice(1));
-  for (const k of ["archive", "year", "format", "kind", "q", "words", "order"]) if (hash.get(k)) $(k).value = hash.get(k);
+  for (const k of ["archive", "year", "format", "kind", "q", "words", "order", "thumbs"]) if (hash.get(k)) $(k).value = hash.get(k);
   state.ready = true;
   await reload();
   if (hash.get("work")) open(hash.get("work"));
@@ -183,7 +188,7 @@ function card(w) {
   const el = document.createElement("div");
   el.className = "card"; el.tabIndex = 0;
   const thumb = w.decoding === "ok"
-    ? `<img loading="lazy" src="image/screen/${w.sha256}" alt="">`
+    ? `<img loading="lazy" src="image/${$("thumbs").value}/${w.sha256}" alt="">`
     : `<span class="none">${esc(w.format)} · not decoded</span>`;
   const file = w.path.split("/").pop();
   el.innerHTML = `<div class="thumb">${thumb}</div><div class="meta">
@@ -266,7 +271,7 @@ function features(w) {
   const bigrams = (w.bigram_codes || []).map((code, i) =>
     `<span title="${(code >> 8).toString(16)} ${(code & 255).toString(16)}">${esc(CP437[code >> 8] + CP437[code & 255])} <small>${w.bigram_counts[i]}</small></span>`).join("");
   const neighbours = (w.neighbours || []).map((n) =>
-    `<img loading="lazy" data-sha="${n.sha256}" src="image/screen/${n.sha256}" title="${esc(n.path)} · ${esc(n.sauce_group || "?")} · ${n.year}" alt="">`).join("");
+    `<img loading="lazy" data-sha="${n.sha256}" src="image/${$("thumbs").value}/${n.sha256}" title="${esc(n.path)} · ${esc(n.sauce_group || "?")} · ${n.year}" alt="">`).join("");
   return `<h3>Glyphs (visible)</h3><div class="bar">${classBar}</div><div class="legend">${legend}</div>
   <dl style="margin-top:6px"><dt>entropy</dt><dd>${num(w.glyph_entropy)} bits</dd></dl>
   <h3>Top pairs, side by side</h3><div class="bigrams">${bigrams || "–"}</div>
@@ -293,7 +298,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowRight") step(1);
   if (e.key === "ArrowLeft") step(-1);
 });
-for (const id of ["archive", "year", "format", "kind", "order"]) $(id).onchange = reload;
+for (const id of ["archive", "year", "format", "kind", "order", "thumbs"]) $(id).onchange = reload;
 let typing;
 $("q").oninput = $("words").oninput = () => { clearTimeout(typing); typing = setTimeout(reload, 350); };
 new IntersectionObserver((e) => { if (e[0].isIntersecting) more(); }, {rootMargin: "800px"}).observe($("more"));

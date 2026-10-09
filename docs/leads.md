@@ -145,3 +145,4 @@ Rules:
 | C9 | 16colo, Demozoo, Defacto2, Blocktronics, Mistigris and PabloDraw have no Wikipedia article in any language checked; the artpack has 3. | Wikipedia survey | open |
 | C10 | Black Maiden (Brazil) wrote Portuguese with CP437's ä and ö for ã and õ. Did other Brazilian groups share the habit, or use CP860 and look broken on CP437 screens? | D1 additions (maiden14) | open |
 | C5 | A `.ANS` of 1996 with 605 rows of grey line drawing (`02-STEPS.ANS`, swap07): line art in ANSI, how common? | explorer | open |
+| C11 | Several of the tallest works (`43-duck.ans`, `we-sublime.ans`, thousands of rows) are nearly black below their first screens when seen whole: padding written by the editor, a decoder that counts written blank rows, or works meant to scroll into darkness? | explorer "whole work" cards, 2026-10-09 | open |

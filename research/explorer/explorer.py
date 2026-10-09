@@ -27,17 +27,17 @@ from urllib.parse import parse_qs, urlparse
 import duckdb
 import numpy as np
 from PIL import Image
+from thumbnails import MODES, thumbnail  # next to this file
 from tm.config import settings
 from tm.storage import S3Store, grid_key, rendering_key, s3_client
 from tm_render.conservation import BitmapFont, Settings, render
-from tm_render.grid import Grid, from_parquet
+from tm_render.grid import from_parquet
 
 ROOT = Path(__file__).resolve().parents[2]
 BUILD = ROOT / "datasets" / "build" / "works" / "5"
 FONT = ROOT / "corpus" / "fonts" / "ibm-vga-8x16.f16"
 PAGE = Path(__file__).with_name("index.html")
 HOST, PORT = "127.0.0.1", 8737
-SCREEN_ROWS = 25  # a thumbnail is the first screen
 PAGE_SIZE = 120
 NEIGHBOURS = 12
 SHA = re.compile(r"^[0-9a-f]{64}$")
@@ -186,9 +186,9 @@ class Corpus:
             return None
         return self.rows("select row, text from lines where sha256 = ? order by row", [sha])
 
-    def image(self, sha: str, screen: bool) -> bytes | None:
-        """The stored rendering, or a preview drawn from the grid; `screen` keeps the first
-        screen at half size."""
+    def image(self, sha: str, kind: str) -> bytes | None:
+        """The stored rendering (`full`) or a card for the wall (`thumbnails.MODES`); works not
+        rendered yet are drawn from their grid, without storing anything."""
         row = (
             self.db.cursor()
             .execute(
@@ -204,19 +204,15 @@ class Corpus:
         if rendering:
             image = Image.open(io.BytesIO(self.derived.get(rendering_key(rendering))))
         else:
-            image = self._preview(sha, bool(ice) and not problems, screen)
-        if screen:
-            image = image.crop((0, 0, image.width, min(image.height, 16 * SCREEN_ROWS)))
-            image = image.resize((image.width // 2, image.height // 2), Image.Resampling.BOX)
+            image = self._preview(sha, bool(ice) and not problems)
+        if kind in MODES:
+            image = thumbnail(image, kind)
         out = io.BytesIO()
         image.save(out, "PNG")
         return out.getvalue()
 
-    def _preview(self, sha: str, ice: bool, screen: bool) -> Image.Image:
+    def _preview(self, sha: str, ice: bool) -> Image.Image:
         grid = from_parquet(self.derived.get(grid_key(sha, self.decoder, self.decoder_version)))
-        if screen:
-            cells = {pos: cell for pos, cell in grid.cells.items() if pos[0] < SCREEN_ROWS}
-            grid = Grid(grid.cols, min(grid.rows, SCREEN_ROWS), cells)
         drawn = render(grid, self.font, Settings(high_bg="ice" if ice else "blink"))
         return Image.open(io.BytesIO(drawn.png))
 
@@ -253,7 +249,7 @@ def _conditions(query: dict[str, str]) -> tuple[str, list[Any]]:
 
 
 class Handler(BaseHTTPRequestHandler):
-    """Routes: the page, three JSON endpoints, and images (first screen or whole work)."""
+    """Routes: the page, the JSON endpoints, and images (cards for the wall, or the work)."""
 
     corpus: Corpus
 
@@ -277,8 +273,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.json(self.corpus.work(sha))
             case ["api", "text", sha] if SHA.match(sha):
                 self.json(self.corpus.text(sha))
-            case ["image", kind, sha] if SHA.match(sha) and kind in ("screen", "full"):
-                self.png(_image(self.corpus, sha, kind == "screen"))
+            case ["image", kind, sha] if SHA.match(sha) and kind in (*MODES, "full"):
+                self.png(_image(self.corpus, sha, kind))
             case _:
                 self.send(HTTPStatus.NOT_FOUND, "text/plain", b"not found")
 
@@ -308,8 +304,8 @@ class Handler(BaseHTTPRequestHandler):
 
 
 @lru_cache(maxsize=4096)
-def _image(corpus: Corpus, sha: str, screen: bool) -> bytes | None:
-    return corpus.image(sha, screen)
+def _image(corpus: Corpus, sha: str, kind: str) -> bytes | None:
+    return corpus.image(sha, kind)
 
 
 def main() -> None:
