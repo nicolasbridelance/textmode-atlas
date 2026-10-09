@@ -8,7 +8,7 @@ const SEED_LENGTH = 6;
 const SEED_ALPHABET = 'abcdefghijkmnpqrstuvwxyz23456789'; // no look-alikes, readable aloud
 
 /** FNV-1a over the text: the same work and seed always land at the same place. */
-export function rank(sha256: string, seed: string): number {
+function rank(sha256: string, seed: string): number {
 	let hash = FNV_OFFSET;
 	for (const char of `${sha256}:${seed}`) {
 		hash ^= char.charCodeAt(0);
