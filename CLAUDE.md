@@ -81,6 +81,9 @@ output through `typer.echo`; `print` only in `scripts/`.
 7. No handle → civil identity link without consent: `person` stays out of the public API.
 8. All model-generated content is marked: `level = 'interpretation'`, `asserted_by = 'algo:…'`.
 9. No work is generated "in the style of": a model-produced grid is never rendered nor exported.
+10. No work is shown outside its audience: one grid (`corpus/ratings/grid.yaml`, ADR 0020) for
+    the README, the docs and the database; ratings append-only (`content_rating`); `withheld`
+    never exported; applied by `tm export` and the API, never in the frontend.
 
 ## Prohibitions
 

@@ -38,6 +38,17 @@ Le projet est dédié à celles et ceux qui ont fait la scène textmode.
 - **Des parcours** de 12 à 20 œuvres écrits par des personnes nommées, et les radios de la scène
   en fond.
 
+## Pour qui
+
+<img src="corpus/ratings/badges/level-3.svg" alt="Tous publics" height="32"> <img src="corpus/ratings/badges/level-7.svg" alt="7 ans et plus" height="32"> <img src="corpus/ratings/badges/level-12.svg" alt="12 ans et plus" height="32"> <img src="corpus/ratings/badges/level-16.svg" alt="16 ans et plus" height="32"> <img src="corpus/ratings/badges/level-18.svg" alt="Réservé aux adultes" height="32"> <img src="corpus/ratings/badges/level-withheld.svg" alt="Retenue" height="32">
+
+La scène a été faite en grande partie par des adolescents, et certaines de ses œuvres sont
+violentes, sexuelles, haineuses ou parlent de délits. Chaque œuvre reçoit un niveau de public,
+comme les jeux avec PEGI : la [grille des publics](docs/audience-grid.fr.md) du musée dit,
+descripteur par descripteur, ce qui peut être montré et à qui. Le serveur l'applique, la grille
+est la même de cette page jusqu'à la base de données, et chacun peut demander qu'une œuvre soit
+reclassée.
+
 ## Où on en est
 
 En construction, à découvert. Le dépôt tourne sur son architecture cible : stockage adressé par
