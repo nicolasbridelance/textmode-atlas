@@ -122,8 +122,10 @@ decoding a source format (CLAUDE.md, target architecture).
 
 A grid v1 is a grid v2 with `system = pc-vga`, `charset = cp437`, `palette = vga16`, `layer = 0`,
 `attrs` = blink, no `control`: nothing is lost. Grids are derived, so they are rebuilt by a new
-decoder version (ADR 0012), not converted in place; the old rows stay in `decoding` until
-dropped by the usual rule. The determinism test and the ansilove parity carry over unchanged on
+decoder version (ADR 0012), not converted in place. A grid that grid v1 could hold exactly keeps
+grid v1's digest: the measures, text layers and renderings keyed by it stay valid, and grid v2
+costs no recomputation of the PC corpus. The same rename left the renderer's, features' and
+text's outputs unchanged, proven on 3,000 corpus files (ADR 0012, amendment). The determinism test and the ansilove parity carry over unchanged on
 PC files.
 
 ## Consequences

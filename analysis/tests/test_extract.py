@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 from tm_analysis.features import Features, extract
 from tm_render.ansi import decode
-from tm_render.grid import Cell, Grid
+from tm_render.grid import BLINK, Cell, Grid
 
 HORIZON = Path(__file__).resolve().parents[2] / "tests" / "golden" / "ansi" / "horizon.ans"
 # Features of the golden artifact, pinned: a change of value must come with a new version.
@@ -25,7 +25,7 @@ def grid(cols: int, rows: int, cells: dict[tuple[int, int], int], **colour: int)
     return Grid(
         cols,
         rows,
-        {pos: Cell(cp, fg, bg, False, pos[0] * cols + pos[1]) for pos, cp in cells.items()},
+        {pos: Cell(cp, fg, bg, pos[0] * cols + pos[1]) for pos, cp in cells.items()},
     )
 
 
@@ -88,9 +88,9 @@ def test_bigrams_are_horizontal_pairs_most_frequent_first() -> None:
 
 def test_colours_and_bright_backgrounds() -> None:
     cells = {
-        (0, 0): Cell(BLOCK, RED, 0, False, 0),
-        (0, 1): Cell(ord("A"), GREY, BLUE, True, 1),
-        (0, 2): Cell(SPACE, GREY, BLUE, True, 2),
+        (0, 0): Cell(BLOCK, RED, 0, 0),
+        (0, 1): Cell(ord("A"), GREY, BLUE, 1, BLINK),
+        (0, 2): Cell(SPACE, GREY, BLUE, 2, BLINK),
     }
     features = extract(Grid(3, 1, cells))
     assert features.n_colors == len({RED, GREY, 0, BLUE})
@@ -103,7 +103,7 @@ def test_colours_and_bright_backgrounds() -> None:
 def test_a_typed_screen_is_linear_and_a_drawn_one_is_not() -> None:
     typed = extract(grid(3, 2, {(r, c): BLOCK for r in range(2) for c in range(3)}))
     assert (typed.cursor_jumps, typed.draw_order) == (0.0, 1.0)
-    backwards = {(0, c): Cell(BLOCK, GREY, 0, False, 2 - c) for c in range(3)}
+    backwards = {(0, c): Cell(BLOCK, GREY, 0, 2 - c) for c in range(3)}
     drawn = extract(Grid(3, 1, backwards))
     assert (drawn.cursor_jumps, drawn.draw_order) == (1.0, -1.0)
 

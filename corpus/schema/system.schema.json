@@ -1,0 +1,73 @@
+{
+  "additionalProperties": false,
+  "description": "A machine or medium a grid belongs to: what its charsets, palettes and fonts can be.",
+  "properties": {
+    "title": {
+      "patternProperties": {
+        "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$": {
+          "type": "string"
+        }
+      },
+      "title": "Title",
+      "type": "object"
+    },
+    "charsets": {
+      "items": {
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Charsets",
+      "type": "array"
+    },
+    "palettes": {
+      "items": {
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Palettes",
+      "type": "array"
+    },
+    "fonts": {
+      "items": {
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Fonts",
+      "type": "array"
+    },
+    "cell": {
+      "pattern": "^\\d+x\\d+$",
+      "title": "Cell",
+      "type": "string"
+    },
+    "attributes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Attributes",
+      "type": "array"
+    },
+    "sources": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Sources",
+      "type": "array"
+    }
+  },
+  "required": [
+    "title",
+    "charsets",
+    "palettes",
+    "fonts",
+    "cell",
+    "attributes",
+    "sources"
+  ],
+  "title": "CharacterSystem",
+  "type": "object"
+}

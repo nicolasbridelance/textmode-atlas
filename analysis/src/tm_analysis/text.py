@@ -38,8 +38,8 @@ def text_lines(grid: Grid) -> list[TextLine]:
         chars = [" "] * grid.cols
         for col in range(grid.cols):
             cell = grid.cell(row, col)
-            if cell and cell.codepoint in SHOWN and cell.fg != cell.bg:
-                chars[col] = SHOWN[cell.codepoint]
+            if cell and cell.glyph in SHOWN and cell.fg != cell.bg:
+                chars[col] = SHOWN[cell.glyph]
         text = GAP.sub("   ", "".join(chars)).strip()
         if _has_word(text):
             lines.append(TextLine(row, text))

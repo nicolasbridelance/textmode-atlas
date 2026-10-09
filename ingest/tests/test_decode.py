@@ -44,6 +44,7 @@ def test_decode_records_the_grid_and_stores_it(db: Connection, stores: Stores) -
     assert (row.decoder, row.decoder_version) == (DECODER, DECODER_VERSION)
     assert (row.status, row.error_class) == ("ok", None)
     assert (row.cols, row.rows, row.grid_sha256) == (80, 40, expected.digest())
+    assert (row.document_kind, row.system, row.charset) == ("grid", "pc-vga", "cp437")
     stream = decode(HORIZON).stream
     assert (row.writes, row.overwrites, row.clears) == (
         stream.writes,

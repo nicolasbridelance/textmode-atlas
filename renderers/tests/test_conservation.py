@@ -8,7 +8,7 @@ from conftest import SauceRecord
 from PIL import Image
 from tm_render.ansi import decode
 from tm_render.conservation import VGA_PALETTE, BitmapFont, Settings, render
-from tm_render.grid import Cell, Grid
+from tm_render.grid import BLINK, Cell, Grid
 
 FULL_BLOCK, LOWER_HALF_BLOCK, LETTER_A = 0xDB, 0xDC, 0x41
 FONT = BitmapFont.load(Path(__file__).resolve().parents[2] / "corpus/fonts/ibm-vga-8x16.f16")
@@ -20,7 +20,7 @@ def pixels(grid: Grid, settings: Settings) -> Image.Image:
 
 
 def one_cell(codepoint: int, fg: int = WHITE, bg: int = 0, blink: bool = False) -> Grid:
-    return Grid(1, 1, {(0, 0): Cell(codepoint, fg, bg, blink, 0)})
+    return Grid(1, 1, {(0, 0): Cell(codepoint, fg, bg, 0, BLINK if blink else 0)})
 
 
 def test_cell_size_and_integer_scale() -> None:
@@ -54,7 +54,7 @@ def test_blinking_text_is_drawn_in_its_lit_phase() -> None:
 
 
 def test_unwritten_cells_are_black() -> None:
-    grid = Grid(2, 1, {(0, 0): Cell(FULL_BLOCK, WHITE, 0, False, 0)})
+    grid = Grid(2, 1, {(0, 0): Cell(FULL_BLOCK, WHITE, 0, 0)})
     image = pixels(grid, Settings())
     assert image.crop((8, 0, 16, 16)).getcolors() == [(8 * 16, VGA_PALETTE[0])]
 

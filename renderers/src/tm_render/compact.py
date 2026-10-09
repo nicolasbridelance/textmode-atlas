@@ -6,7 +6,7 @@ A 16-byte header, then 8 bytes per cell, little-endian, every cell of the canvas
 order, written or not:
 
     header  magic "TMG1" | version u8 = 1 | flags u8 | cols u16 | rows u16 | reserved 6 bytes
-    cell    codepoint u16 | fg u8 | bg u8 | t u32, where t = 0xFFFFFFFF for a cell never written
+    cell    glyph u16 | fg u8 | bg u8 | t u32, where t = 0xFFFFFFFF for a cell never written
 
 Header flags: bit 0, the high background is iCE (bright) rather than blink. A cell's blink bit
 rides in the top bit of its `bg` byte. `t` lets the site replay the arrival of the work at modem
@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import struct
 
-from tm_render.grid import Cell, Grid
+from tm_render.grid import BLINK, Cell, Grid
 
 MAGIC = b"TMG1"
 VERSION = 1
@@ -25,10 +25,12 @@ HEADER = struct.Struct("<4sBBHH6x")
 CELL = struct.Struct("<HBBI")
 NEVER = 0xFFFFFFFF
 ICE = 0x01
-BLINK = 0x80
+BLINK_BIT = 0x80  # a cell's blink bit, in its `bg` byte
 
 
 def encode(grid: Grid, ice: bool) -> bytes:
+    if not grid.fits_v1():
+        raise ValueError(f"{MAGIC.decode()} holds PC grids only, not {grid.header.system}")
     out = bytearray(HEADER.pack(MAGIC, VERSION, ICE if ice else 0, grid.cols, grid.rows))
     for row in range(grid.rows):
         for col in range(grid.cols):
@@ -36,8 +38,8 @@ def encode(grid: Grid, ice: bool) -> bytes:
             if cell is None:
                 out += CELL.pack(0, 0, 0, NEVER)
             else:
-                bg = cell.bg | (BLINK if cell.blink else 0)
-                out += CELL.pack(cell.codepoint, cell.fg, bg, cell.t)
+                bg = cell.bg | (BLINK_BIT if cell.blink else 0)
+                out += CELL.pack(cell.glyph, cell.fg, bg, cell.t)
     return bytes(out)
 
 
@@ -48,7 +50,8 @@ def decode(data: bytes) -> tuple[Grid, bool]:
         raise ValueError(f"not a TMG{VERSION} file")
     cells: dict[tuple[int, int], Cell] = {}
     for index in range(cols * rows):
-        codepoint, fg, bg, t = CELL.unpack_from(data, HEADER.size + index * CELL.size)
+        glyph, fg, bg, t = CELL.unpack_from(data, HEADER.size + index * CELL.size)
         if t != NEVER:
-            cells[divmod(index, cols)] = Cell(codepoint, fg, bg & ~BLINK, bool(bg & BLINK), t)
+            attrs = BLINK if bg & BLINK_BIT else 0
+            cells[divmod(index, cols)] = Cell(glyph, fg, bg & ~BLINK_BIT, t, attrs)
     return Grid(cols, rows, cells), bool(flags & ICE)

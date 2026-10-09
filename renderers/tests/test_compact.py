@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 from tm_render.ansi import decode as decode_ansi
 from tm_render.compact import CELL, HEADER, decode, encode
-from tm_render.grid import Cell, Grid
+from tm_render.grid import BLINK, Cell, Grid
 
 HORIZON = Path(__file__).resolve().parents[2] / "tests/golden/ansi/horizon.ans"
 
@@ -22,7 +22,7 @@ def test_a_grid_comes_back_whole() -> None:
 
 
 def test_blink_and_unwritten_cells() -> None:
-    grid = Grid(2, 1, {(0, 1): Cell(0xDB, 12, 4, True, 7)})
+    grid = Grid(2, 1, {(0, 1): Cell(0xDB, 12, 4, 7, BLINK)})
     back, ice = decode(encode(grid, ice=False))
     assert (back.cells, ice) == (grid.cells, False)
 

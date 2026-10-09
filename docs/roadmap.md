@@ -192,3 +192,13 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 | The work screen shrinks an 80-column work on a phone by smooth scaling, not by redrawing with a smaller bitmap font as the foundation document asks | legible but soft; no VGA font smaller than 8 × 8 exists for 4.9-pixel cells | try 8 × 8 and 8 × 14 fonts redrawn from the grid, judged on phones (spike 0002) |
 | No `axe` accessibility check in the Playwright tests yet (foundation document, WCAG AA) | the work screen grew controls, dialogs and links | add `@axe-core/playwright` to the e2e tests |
 | OpenTofu for staging / production not written | needed from M4 | after the host decision |
+
+## Visitor presentation workshop (owner request, 2026-10-09)
+
+- [x] Configurable gallery background and frame; persistent dark/light/system viewer theme.
+- [x] First scripted looks: paper, bitmap glyph density, points, touches, graffiti; smooth and Gaussian enlargement; full-work PNG with a JSON recipe.
+- [x] Shared public entrance for the daily work, whole-work thumbnails and metadata constellations; work and locale navigation preserved.
+- [ ] Evaluate aesthetic results on varied public works; refine parameters and add side-by-side comparisons.
+- [ ] Join the private feature graph through an authorized public export; adapt the workshop to TMG v2 font/palette assets.
+
+Implementation and limits: [presentation workshop](presentation-workshop.md).

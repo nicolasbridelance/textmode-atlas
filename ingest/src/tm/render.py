@@ -47,14 +47,15 @@ def render_pending(
 def pending_renderings(
     conn: Connection, font: BitmapFont, scale: int, shard: Shard = EVERYTHING
 ) -> Sequence[Row[Any]]:
-    """Decoded grids with no conservation rendering by this renderer, scale and font yet."""
+    """Decoded PC grids with no conservation rendering by this renderer, scale and font yet: the
+    conservation renderer draws VGA (ADR 0026)."""
     return conn.execute(
         text(
             "select a.sha256, a.source_path, a.sauce, d.sauce_problems, d.grid_sha256"
             " from decoding d"
             " join artifact a on a.sha256 = d.sha256"
             " where d.status = 'ok' and d.decoder = :decoder"
-            " and d.decoder_version = :decoder_version"
+            " and d.decoder_version = :decoder_version and d.system = 'pc-vga'"
             " and not exists (select 1 from representation r where r.sha256 = d.sha256"
             " and r.level = :level and r.recipe->>'renderer_version' = :renderer_version"
             " and r.recipe->>'grid_sha256' = d.grid_sha256"

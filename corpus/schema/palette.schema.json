@@ -1,0 +1,39 @@
+{
+  "additionalProperties": false,
+  "description": "The colours a grid's `fg` and `bg` index, in index order.",
+  "properties": {
+    "title": {
+      "patternProperties": {
+        "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$": {
+          "type": "string"
+        }
+      },
+      "title": "Title",
+      "type": "object"
+    },
+    "colours": {
+      "items": {
+        "pattern": "^#[0-9A-F]{6}$",
+        "type": "string"
+      },
+      "minItems": 2,
+      "title": "Colours",
+      "type": "array"
+    },
+    "sources": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Sources",
+      "type": "array"
+    }
+  },
+  "required": [
+    "title",
+    "colours",
+    "sources"
+  ],
+  "title": "Palette",
+  "type": "object"
+}

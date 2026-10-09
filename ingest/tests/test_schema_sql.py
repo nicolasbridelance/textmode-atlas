@@ -124,18 +124,43 @@ def test_decoding_is_grid_or_classified_error(db: Connection) -> None:
     insert_artifact(db)
     sql = text(
         "insert into decoding (sha256, decoder, decoder_version, status, error_class,"
-        " grid_sha256) values (:s, 'ansi', :v, :st, :e, :g)"
+        " grid_sha256, document_kind, system, charset)"
+        " values (:s, 'ansi', :v, :st, :e, :g, :k, :sys, :cs)"
+    )
+    grid = {"k": "grid", "sys": "pc-vga", "cs": "cp437"}
+    none = {"k": None, "sys": None, "cs": None}
+    fails(
+        db,
+        "check",
+        lambda: db.execute(sql, {"s": SHA, "v": "1", "st": "error", "e": None, "g": None, **none}),
     )
     fails(
         db,
         "check",
-        lambda: db.execute(sql, {"s": SHA, "v": "1", "st": "error", "e": None, "g": None}),
+        lambda: db.execute(sql, {"s": SHA, "v": "2", "st": "ok", "e": None, "g": None, **grid}),
     )
-    fails(
-        db, "check", lambda: db.execute(sql, {"s": SHA, "v": "2", "st": "ok", "e": None, "g": None})
+    db.execute(sql, {"s": SHA, "v": "3", "st": "error", "e": "truncated", "g": None, **none})
+    db.execute(sql, {"s": SHA, "v": "4", "st": "ok", "e": None, "g": "b" * 64, **grid})
+
+
+def test_a_decoded_document_says_its_kind_system_and_charset(db: Connection) -> None:
+    """ADR 0026: a query picks grids by system without opening them."""
+    insert_artifact(db)
+    sql = text(
+        "insert into decoding (sha256, decoder, decoder_version, status, grid_sha256,"
+        " document_kind, system, charset) values (:s, 'x', :v, 'ok', :g, :k, :sys, :cs)"
     )
-    db.execute(sql, {"s": SHA, "v": "3", "st": "error", "e": "truncated", "g": None})
-    db.execute(sql, {"s": SHA, "v": "4", "st": "ok", "e": None, "g": "b" * 64})
+    ok = {"s": SHA, "g": "b" * 64}
+    for version, kind, system, charset in [
+        ("1", None, None, None),  # an ok decoding without a document kind
+        ("2", "grid", None, "cp437"),  # a document without a system
+        ("3", "grid", "pc-vga", None),  # a grid without a charset
+        ("4", "image", "pc-vga", "cp437"),  # not a kind of document
+    ]:
+        values = {**ok, "v": version, "k": kind, "sys": system, "cs": charset}
+        fails(db, "check", lambda values=values: db.execute(sql, values))
+    db.execute(sql, {**ok, "v": "5", "k": "vector", "sys": "pc-vga", "cs": None})
+    db.execute(sql, {**ok, "v": "6", "k": "grid", "sys": "c64", "cs": "petscii-upper"})
 
 
 def test_expansion_says_why_a_pack_is_empty_or_partial(db: Connection) -> None:

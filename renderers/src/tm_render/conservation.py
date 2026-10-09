@@ -19,7 +19,7 @@ from typing import Any, Literal
 
 from PIL import Image
 
-from tm_render.grid import Cell, Grid
+from tm_render.grid import PC_VGA, Cell, Grid
 from tm_render.sauce import Sauce
 from tm_render.versions import RENDERER_VERSION
 
@@ -28,7 +28,7 @@ GLYPH_HEIGHT = 16
 GLYPH_WIDTH = 8
 LINE_DRAWING = range(0xC0, 0xE0)  # glyphs whose 8th column is repeated into the 9th
 BRIGHT = 8
-BLANK = Cell(codepoint=0x20, fg=7, bg=0, blink=False, t=0)
+BLANK = Cell(glyph=0x20, fg=7, bg=0, t=0)
 MAX_SCALE = 8
 
 VGA_PALETTE = (
@@ -62,8 +62,8 @@ class BitmapFont:
     def sha256(self) -> str:
         return hashlib.sha256(self.data).hexdigest()
 
-    def row(self, codepoint: int, y: int) -> int:
-        return self.data[codepoint * GLYPH_HEIGHT + y]
+    def row(self, glyph: int, y: int) -> int:
+        return self.data[glyph * GLYPH_HEIGHT + y]
 
 
 @dataclass(frozen=True)
@@ -97,6 +97,8 @@ class Rendering:
 
 
 def render(grid: Grid, font: BitmapFont, settings: Settings) -> Rendering:
+    if grid.header != PC_VGA:
+        raise ValueError(f"the conservation renderer draws PC VGA grids, not {grid.header}")
     image = _draw(grid, font, settings)
     png = _encode(image)
     recipe = {
@@ -141,18 +143,18 @@ def _draw(grid: Grid, font: BitmapFont, settings: Settings) -> Image.Image:
 def _colours(cell: Cell, settings: Settings) -> tuple[int, int, int]:
     """In iCE mode the blink bit selects a bright background; otherwise blink is drawn lit."""
     bg = cell.bg + BRIGHT if settings.high_bg == "ice" and cell.blink else cell.bg
-    return cell.codepoint, cell.fg, bg
+    return cell.glyph, cell.fg, bg
 
 
 @lru_cache(maxsize=65536)
 def _glyph_row(
     font: BitmapFont, settings: Settings, colours: tuple[int, int, int], y: int
 ) -> bytes:
-    codepoint, fg, bg = colours
-    bits = font.row(codepoint, y)
+    glyph, fg, bg = colours
+    bits = font.row(glyph, y)
     pixels = [fg if bits & (0x80 >> x) else bg for x in range(GLYPH_WIDTH)]
     if settings.letter_spacing > GLYPH_WIDTH:
-        pixels.append(pixels[-1] if codepoint in LINE_DRAWING else bg)
+        pixels.append(pixels[-1] if glyph in LINE_DRAWING else bg)
     return bytes(index for index in pixels for _ in range(settings.scale))
 
 

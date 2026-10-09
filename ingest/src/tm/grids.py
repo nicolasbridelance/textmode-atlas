@@ -31,13 +31,16 @@ def stored_grid(derived: ObjectStore, sha256: str, grid_sha256: str) -> Grid:
 def pending_grids(
     conn: Connection, table: ExtractorTable, version: str, shard: Shard = EVERYTHING
 ) -> Sequence[Row[Any]]:
-    """Grids of the current decoder with no row in `table` from extractor `version` yet."""
+    """Grids of the current decoder with no row in `table` from extractor `version` yet.
+
+    Features v1 and text v2 read code page 437 on VGA, so only PC grids are theirs (ADR 0026)."""
     return conn.execute(
         text(
             "select d.sha256, a.source_path, d.grid_sha256 from decoding d"
             " join artifact a on a.sha256 = d.sha256"
             " where d.status = 'ok' and d.decoder = :decoder"
-            " and d.decoder_version = :decoder_version"
+            " and d.decoder_version = :decoder_version and d.system = 'pc-vga'"
+            " and d.charset = 'cp437'"
             f" and not exists (select 1 from {table} x where x.sha256 = d.sha256"
             " and x.extractor_version = :version)"
             f"{condition('d.sha256')} order by a.source_path, d.sha256"

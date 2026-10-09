@@ -59,3 +59,17 @@ that stays a point for review: an old line should never change in a diff.
 - Results of an earlier version stay in the database and in `tm-derived`; the current version is
   the one `tm decode` and `tm render` look for.
 - The pin test holds the history, so it stays an audit trail of what each version was.
+
+## Amendment (2026-10-09, ADR 0026): same outputs, same version
+
+A version names a behaviour, and two codes can have it. Grid v2 renamed the cell's fields
+(`codepoint` became `glyph`, `blink` an attribute bit), which changed the code of the renderer,
+features v1 and text v2 without changing a single output; a new version for each would have
+recomputed 110,000 renderings, measures and text layers to get the same bytes.
+
+So a change of code may add its digest to the pins of the **same** version, as a tuple beside the
+old one, when `scripts/same_outputs.py` has run the old code and the new on a sample of the
+corpus and found no difference in grid digests, features, text lines, rendered pixels, write
+counts or decoding errors. The comment beside the pins names the proof. Anything else, or any
+difference, still means a new version. The first use: 3,000 corpus files, no difference.
+

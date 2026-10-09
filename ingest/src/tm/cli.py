@@ -72,6 +72,9 @@ def corpus_check(root: CorpusRoot = Path("corpus"), docs: DocsRoot = Path("docs"
     for name in stale:
         errors += 1
         typer.echo(f"✗ corpus/schema/{name} is out of date: run `tm corpus schema`", err=True)
+    for problem in corpus_mod.broken_references(root):
+        errors += 1
+        typer.echo(f"✗ {problem}", err=True)
     for path in _stale_ratings(root, docs):
         errors += 1
         typer.echo(f"✗ {path} is out of date: run `tm corpus ratings`", err=True)

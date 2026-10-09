@@ -138,6 +138,7 @@ Rules:
 | I58 | Shift_JIS art (AA) and kaomoji: no open corpus found by search; 2channel AA collections (AA wikis, Mona font sites) to find with Japanese keywords; proportional font (MS PGothic) means a different grid model | I54 | open |
 | I59 | ATASCII: Break Into Chat's AtasciiTube (BBS animations), the pigwa.net Atari FTP archive (886 GB), atariuptodate's ascii-art category | I54 | open |
 | I60 | Rebuild teletext pages from their screenshots: not OCR but exact matching of each 40 × 25 cell against the SAA5050 glyphs and mosaics, checked by redrawing and comparing pixel for pixel. Limits: control codes take cells and several byte sequences draw the same image, so the result is *a* page, `inferred` with an `algo:` author (invariants 5, 9: ADR and owner first); screenshots are Demozoo's (no data license). Spike first on pages that have both a screenshot and an edit.tf original: exact-match rate | owner, 2026-10-09 | open, after I56 |
+| I61 | Two vocabularies say "system": the work facet of the foundation document and the collections (`ansi-cp437`, `xbin`, `petscii`…, a mix of format and character set) and the grid header of ADR 0026 (`pc-vga`, `c64`…, the machine). Reconcile them: the facet could become derived from the grid header and the format, so that a collection never disagrees with its works' grids | grid v2, 2026-10-09 | open |
 
 ## Curiosities
 
@@ -155,3 +156,9 @@ Rules:
 | C5 | A `.ANS` of 1996 with 605 rows of grey line drawing (`02-STEPS.ANS`, swap07): line art in ANSI, how common? | explorer | open |
 | C12 | Community 19 gathers 411 works drawn strictly line by line, with box lines and weight high: menus and screens written top to bottom by a program (a BBS menu generator) rather than drawn in an editor? | nearest-works graph, communities | open |
 | C11 | Several of the tallest works (`43-duck.ans`, `we-sublime.ans`, thousands of rows) are nearly black below their first screens when seen whole: padding written by the editor, a decoder that counts written blank rows, or works meant to scroll into darkness? | explorer "whole work" cards, 2026-10-09 | open |
+
+Presentation workshop leads (2026-10-09): compare glyph-density mappings with perceptual tone
+curves, test paper inversion on coloured-background works, evaluate dots/touches/graffiti at
+several mark sizes, and compare browser interpolation with deterministic area/Lanczos resampling.
+A common public entry for feature constellations still needs authorized edge export, while
+native font/palette assets must drive density once TMG v2 reaches the museum.

@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+title:
+  en: VGA text mode, 16 colours in attribute order
+  fr: Mode texte VGA, 16 couleurs dans l'ordre des attributs
+# 0 black, 1 blue, 2 green, 3 cyan, 4 red, 5 magenta, 6 brown, 7 grey, then the bright eight.
+colours: ["#000000", "#0000AA", "#00AA00", "#00AAAA", "#AA0000", "#AA00AA", "#AA5500", "#AAAAAA",
+          "#555555", "#5555FF", "#55FF55", "#55FFFF", "#FF5555", "#FF55FF", "#FFFF55", "#FFFFFF"]
+sources:
+  - "IBM VGA Technical Reference (1987): default DAC values of text mode"
+  - "libansilove, src/config.h: the same sixteen colours"

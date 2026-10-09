@@ -10,7 +10,7 @@ ESC = b"\x1b["
 def cell(data: bytes, row: int, col: int) -> tuple[int, int, int, bool]:
     found = decode(data).grid.cell(row, col)
     assert found is not None
-    return found.codepoint, found.fg, found.bg, found.blink
+    return found.glyph, found.fg, found.bg, found.blink
 
 
 def test_plain_text_and_offsets() -> None:
@@ -19,7 +19,7 @@ def test_plain_text_and_offsets() -> None:
     a, b = grid.cell(0, 0), grid.cell(0, 1)
     assert a is not None
     assert b is not None
-    assert (a.codepoint, a.t, b.t) == (ord("A"), 0, 1)
+    assert (a.glyph, a.t, b.t) == (ord("A"), 0, 1)
 
 
 def test_sgr_colours_use_vga_order() -> None:
