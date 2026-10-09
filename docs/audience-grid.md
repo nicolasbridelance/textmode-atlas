@@ -2,7 +2,7 @@
 SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 SPDX-License-Identifier: CC-BY-4.0
 -->
-# Audience grid (v1)
+# Audience grid (v2)
 
 [Version française](audience-grid.fr.md)
 
@@ -41,6 +41,6 @@ What the museum shows to whom. Adapted from PEGI, the European consensus on what
 1. A work's level is the highest level among its descriptors. A cartel can explain a work, never lower its level.
 2. The grid rates what a work shows, in its time and its context, not the person who made it. A descriptor applies to a work, never to a person.
 3. Every descriptor is an assertion with its author. A program may infer it; a named reviewer confirms or rejects it; the artist may declare it. Nothing is erased, so the history of a rating stays visible.
-4. Until a person has reviewed it, a descriptor inferred by a program counts. A work no one has reviewed is "not rated yet" and is shown only where 16 is.
+4. Until a person has reviewed it, a descriptor inferred by a program counts. A work no one has reviewed and in which no program finds anything is shown up to 12, never lower; this is a trial, watched by a sample reviewed by people, and it ends if more than 1 in 100 such works turns out to call for 16 or more.
 5. Levels are applied by the server when it exports and serves works, never by the page in the browser.
 6. Anyone can ask for a work to be rated again, with the same form as for withdrawal.
