@@ -14,6 +14,7 @@ from tm_render.conservation import MAX_SCALE, BitmapFont
 
 from tm import corpus as corpus_mod
 from tm import ratings
+from tm.acquisitions import load_acquisitions
 from tm.audience import rate_flashing, rate_words
 from tm.config import settings
 from tm.datasets import DatasetError, build, draw_sample
@@ -272,6 +273,20 @@ def rate_command() -> None:
     for (descriptor, level), count in sorted(found.items()):
         typer.echo(f"{descriptor} {level}: {count}")
     typer.echo(f"flashing: {flashing}")
+
+
+@ingest_app.command("acquisitions")
+def ingest_acquisitions_command(
+    record: Annotated[Path, typer.Argument(help="A mirror's acquisitions.tsv.")],
+    source: Annotated[str, typer.Option(help="The archive the mirror copies.")],
+) -> None:
+    """Record where and when each held file was fetched (ADR 0021)."""
+    with create_engine(settings().database_url).begin() as conn:
+        loaded = load_acquisitions(conn, record, source)
+    typer.echo(
+        f"{loaded.recorded} recorded, {loaded.already} already known,"
+        f" {loaded.not_held} not held by the museum"
+    )
 
 
 @ingest_app.command("pack")

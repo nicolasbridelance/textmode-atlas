@@ -5,7 +5,9 @@
 Politely, as the source note asks: one request at a time, a pause between downloads, a named
 User-Agent. Resumable: a file already present with the listed size is not fetched again. The
 listing's rows (year, file, size, description) are kept in `index.tsv`, since the descriptions
-name the group and often the month of release.
+name the group and often the month of release. Each fetch is recorded in `acquisitions.tsv`
+(ADR 0021) with its time and the server's `Last-Modified` and `ETag`, for
+`tm ingest acquisitions --source textfiles`.
 
     uv run python scripts/mirror_textfiles.py [data/textfiles]
 """
@@ -13,7 +15,10 @@ name the group and often the month of release.
 from __future__ import annotations
 
 import csv
+import datetime as dt
+import hashlib
 import html
+import json
 import re
 import sys
 import time
@@ -25,6 +30,15 @@ BASE = "http://artscene.textfiles.com/artpacks/"
 YEARS = range(1992, 2009)
 USER_AGENT = "textmode-atlas/0.1 (https://github.com/nicolasbridelance/textmode-atlas)"
 PAUSE_SECONDS = 0.5
+ACQUISITION_COLUMNS = (
+    "path",
+    "url",
+    "method",
+    "retrieved_at",
+    "retrieved_basis",
+    "remote",
+    "sha256",
+)
 ROW = re.compile(
     r'<A HREF="(?P<file>[^"/]+)">[^<]*</A>.*?'
     r"<TD>\s*(?P<size>\d+)<BR><TD>\s*(?P<description>[^<\n]*)",
@@ -33,9 +47,27 @@ ROW = re.compile(
 
 
 def fetch(url: str) -> bytes:
+    return fetch_with_headers(url)[0]
+
+
+def fetch_with_headers(url: str) -> tuple[bytes, dict[str, str]]:
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(request, timeout=120) as response:
-        return response.read()
+        kept = {k: response.headers[k] for k in ("Last-Modified", "ETag") if response.headers[k]}
+        return response.read(), kept
+
+
+def record(root: Path, path: str, url: str, data: bytes, remote: dict[str, str]) -> None:
+    """Append one acquisition, in the columns `tm ingest acquisitions` reads."""
+    record_file = root / "acquisitions.tsv"
+    new = not record_file.exists()
+    with record_file.open("a", newline="", encoding="utf-8") as out:
+        writer = csv.writer(out, delimiter="\t", lineterminator="\n")
+        if new:
+            writer.writerow(ACQUISITION_COLUMNS)
+        now = dt.datetime.now(dt.UTC).isoformat(timespec="seconds")
+        sha = hashlib.sha256(data).hexdigest()
+        writer.writerow([path, url, "http", now, "recorded", json.dumps(remote), sha])
 
 
 def listing(year: int) -> list[tuple[str, int, str]]:
@@ -60,12 +92,14 @@ def main() -> None:
         if target.exists() and target.stat().st_size == size:
             continue
         target.parent.mkdir(exist_ok=True)
+        url = f"{BASE}{year}/{urllib.parse.quote(name)}"  # `#` in names
         try:
-            data = fetch(f"{BASE}{year}/{urllib.parse.quote(name)}")  # `#` in names
+            data, remote = fetch_with_headers(url)
         except OSError as err:
             print(f"failed {year}/{name}: {err}")
             continue
         target.write_bytes(data)
+        record(root, f"{year}/{name}", url, data, remote)
         fetched += 1
         if len(data) != size:
             print(f"size {year}/{name}: listed {size}, got {len(data)}")
