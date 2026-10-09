@@ -123,6 +123,7 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 - [ ] First artists and groups for display permission
 - [ ] Before M3: inform 16colo and Demozoo of the project (Claude drafts, Nicolas sends)
 - [ ] Before M4: lawyer review of ADR 0009
+- [ ] Decide ADR 0019 (content descriptors, audiences, age check), with the lawyer for its legal points; before any feed, game or kiosk reaches the public
 - [ ] Decisions: legal structure, host, domain name, lawyer, partner radios
 
 ## Known debt
