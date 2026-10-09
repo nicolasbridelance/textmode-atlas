@@ -80,3 +80,11 @@
 - Documentation hygiene: removed checklist BOM/trailing blank lines; final working and aggregate patch whitespace checks pass. No functional changes after full checks. Temporary validation container stopped again; all source changes committed locally, push approval pending.
 - Before proposed GitHub push, owner requested Git-ignore verification. Inspected root/nested rules and .git/info/exclude; git check-ignore -v confirms .env, SQL dump, derived objects, datasets, private worktrees and preserved temporary files are excluded. git ls-files finds no dump/zip/private-key/parquet or real .env. Secret-pattern scan on the changed files: 0 matches; artwork exclusion passes. Remote main still e8f36933; proposed feature branch absent.
 - Publication scope: feature-branch push only, following owner request to clean GitHub and subsequent instruction to verify exclusions first; no merge or main update. Pre-push full-check runs against the same tracked source copied into the isolated Linux environment, retaining ARJ coverage; no hook bypass.
+
+## EV-006
+
+2026-10-09, Europe/Paris — GitHub branch publication after exclusion review.
+
+- git push -u origin fix/windows-restoration: exit 0, native pre-push hook full-check Passed through isolated Linux just check, no bypass. Published commit 575ed35b50bdea2fb568adbe911a5833a30a551a; live git ls-remote confirmed the same hash. GitHub main remains e8f36933; no PR merge or main change.
+- Prior to push, SHA-256 comparison of all 398 tracked files against Linux snapshot found 0 mismatches. Private data and local temporary tools are ignored; no artwork/dump/secret included. Root working tree clean after four coherent commits.
+- Final documentation follow-up updates this checkpoint to the actual published state; same authorized feature branch, standard hooks retained. Remote CI status is separate from successful local checks and has not been claimed green.

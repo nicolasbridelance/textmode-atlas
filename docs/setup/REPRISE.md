@@ -1,4 +1,4 @@
-﻿# Setup checkpoint
+# Setup checkpoint
 
 2026-10-09, Europe/Paris — local development ready; broader installation audit remains partial.
 
@@ -12,4 +12,4 @@ Validation (EV-005): Linux just check exit 0, 304 Python tests, 100% coverage fo
 
 Temporary textmode-atlas-validation container holds isolated /tmp/checkrepo and Linux tools; stopped after use, retained for reproducibility. No service/storage deletion. Public bucket restoration and full access/security/legal/accessibility audit are still open; no publication compliance claim.
 
-GitHub main matched e8f36933 at last fetch. Feature upstreams were deleted; preserved local worktrees remain independent. Branch push awaits explicit owner response; no push or publication yet. Next product work follows docs/roadmap.md. See JOURNAL.md#ev-005 for commands and limits.
+GitHub main matched e8f36933 at last fetch. Feature upstreams were deleted; preserved local worktrees remain independent. Branch published on GitHub and tracks origin/fix/windows-restoration; push passed the standard full-check hook. No merge or main change. Next product work follows docs/roadmap.md. See JOURNAL.md#ev-005 and #ev-006 for checks, publication evidence and limits.
