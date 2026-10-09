@@ -8,10 +8,8 @@ writes one Parquet file per table and a manifest (migration, extractor versions,
 query and file) into `datasets/build/<name>/<version>/`. Nothing in a build depends on when it
 ran: building twice from the same database gives byte-identical files.
 
-A pilot dataset also declares a `sample` (ADR 0017): `tm dataset draw` runs its frame query,
-draws the units, and writes `sample.yaml` beside the definition, to be committed. The build
-reads that frozen list as a CTE named `sample` (unit, stratum, weight, selection, reason), which
-the tables' queries and filters can use; a frame query changed since the draw stops the build.
+A pilot dataset also declares a `sample` (ADR 0017), drawn and frozen by `tm.pilots`; the build
+reads the frozen list as a CTE named `sample`, which the tables' queries and filters can use.
 """
 
 from __future__ import annotations
@@ -31,7 +29,7 @@ from tm_analysis.versions import FEATURES_VERSION, TEXT_VERSION
 from tm_render.versions import DECODER_VERSION, RENDERER_VERSION
 
 from tm.decode import DECODER
-from tm.sampling import draw
+from tm.pilots import SAMPLE_CTE, FrozenSample, Sample, frozen_sample, write_sample
 
 ColumnType = Literal["string", "int32", "int64", "float64", "bool", "list<int32>", "list<string>"]
 ARROW_TYPES: dict[str, pa.DataType] = {
@@ -74,26 +72,6 @@ class Table(BaseModel):
     columns: list[Column] = []
     filter: str | None = None  # SQL condition on the query's rows
     same_as: str | None = None  # `dataset.table`: its query, key and columns, with this filter
-
-
-class Addition(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    unit: str
-    reason: str
-
-
-class Sample(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    frame: str  # query file: one row per unit, with its stratum and order columns
-    unit: str
-    label: str  # frame column that names a unit for the reader of sample.yaml
-    stratum: str
-    order: list[str]
-    per_stratum: int
-    seed: int
-    additions: list[Addition] = []  # chosen by hand, each with its reason; no weight
 
 
 class Definition(BaseModel):
@@ -143,7 +121,7 @@ def build(conn: Connection, directory: Path, out_root: Path) -> Built:
     """Build the dataset defined in `directory` under `out_root/<name>/<version>/`."""
     definition = load(directory)
     out = out_root / definition.name / definition.version
-    sample = _frozen_sample(directory, definition.sample)
+    sample = frozen_sample(directory, definition.sample)
     out.mkdir(parents=True, exist_ok=True)
     tables: dict[str, dict[str, object]] = {}
     for name, table in sorted(definition.tables.items()):
@@ -210,102 +188,9 @@ def _lost_items(conn: Connection) -> dict[str, int]:
     return {kind: count for kind, count in found}
 
 
-SAMPLE_FILE = "sample.yaml"
-# REUSE-IgnoreStart: the header of the files `draw_sample` writes, not this file's license.
-SAMPLE_HEADER = (
-    "# SPDX-FileCopyrightText: 2026 textmode-atlas contributors\n"
-    "# SPDX-License-Identifier: CC0-1.0\n"
-    "#\n"
-    "# Written by `tm dataset draw {name}`: do not edit; change dataset.yaml and draw again.\n"
-)
-# REUSE-IgnoreEnd
-SAMPLE_COLUMNS = ("unit", "stratum", "weight", "selection", "reason")
-SAMPLE_CTE = (
-    "sample (unit, stratum, weight, selection, reason) as (select * from unnest("
-    "cast(:sample_unit as text[]), cast(:sample_stratum as text[]),"
-    " cast(:sample_weight as double precision[]), cast(:sample_selection as text[]),"
-    " cast(:sample_reason as text[])))"
-)
-
-
-@dataclass(frozen=True)
-class FrozenSample:
-    units: list[dict[str, object]]
-    digest: str
-
-    def params(self) -> dict[str, list[object]]:
-        return {f"sample_{c}": [u[c] for u in self.units] for c in SAMPLE_COLUMNS}
-
-
 def draw_sample(conn: Connection, directory: Path) -> Path:
-    """Draw the definition's sample from its frame and write `sample.yaml` beside it."""
+    """Draw the sample a pilot definition declares, and freeze it beside the definition."""
     definition = load(directory)
-    spec = definition.sample
-    if spec is None:
+    if definition.sample is None:
         raise DatasetError(f"{definition.name}: dataset.yaml declares no sample")
-    query = (directory / spec.frame).read_text(encoding="utf-8")
-    frame = [dict(r) for r in conn.execute(text(query), PARAMETERS).mappings()]
-    strata = {str(r[spec.unit]): str(r[spec.stratum]) for r in frame}
-    labels = {str(r[spec.unit]): str(r[spec.label]) for r in frame}
-    drawn = draw(
-        frame,
-        unit=spec.unit,
-        stratum=spec.stratum,
-        order=spec.order,
-        per_stratum=spec.per_stratum,
-        seed=spec.seed,
-    )
-    units: list[dict[str, object]] = [
-        {
-            "unit": d.unit,
-            "label": labels[d.unit],
-            "stratum": d.stratum,
-            "weight": d.weight,
-            "selection": "drawn",
-            "reason": None,
-        }
-        for d in drawn
-    ]
-    taken = {d.unit for d in drawn}
-    for addition in spec.additions:
-        if addition.unit not in strata:
-            raise DatasetError(f"addition {addition.unit} is not in the frame")
-        if addition.unit in taken:
-            raise DatasetError(f"addition {addition.unit} was drawn already")
-        units.append(
-            {
-                "unit": addition.unit,
-                "label": labels[addition.unit],
-                "stratum": strata[addition.unit],
-                "weight": None,
-                "selection": "added",
-                "reason": addition.reason,
-            }
-        )
-    sizes: dict[str, int] = {}
-    for stratum in strata.values():
-        sizes[stratum] = sizes.get(stratum, 0) + 1
-    document = {
-        "frame_sha256": hashlib.sha256(query.encode()).hexdigest(),
-        "frame_sizes": dict(sorted(sizes.items())),
-        "seed": spec.seed,
-        "units": units,
-    }
-    path = directory / SAMPLE_FILE
-    body = yaml.safe_dump(document, sort_keys=False, allow_unicode=True)
-    path.write_text(SAMPLE_HEADER.format(name=definition.name) + body, "utf-8")
-    return path
-
-
-def _frozen_sample(directory: Path, spec: Sample | None) -> FrozenSample | None:
-    if spec is None:
-        return None
-    path = directory / SAMPLE_FILE
-    if not path.exists():
-        raise DatasetError(f"{path} is missing: run `tm dataset draw {directory.name}`")
-    raw = path.read_bytes()
-    document = yaml.safe_load(raw)
-    frame = (directory / spec.frame).read_text(encoding="utf-8")
-    if document["frame_sha256"] != hashlib.sha256(frame.encode()).hexdigest():
-        raise DatasetError(f"{spec.frame} changed since the sample was drawn: draw it again")
-    return FrozenSample(document["units"], hashlib.sha256(raw).hexdigest())
+    return write_sample(conn, directory, definition.name, definition.sample, PARAMETERS)

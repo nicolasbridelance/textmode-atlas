@@ -95,7 +95,7 @@ Rules:
 | I26 | Resolve SAUCE author strings with Demozoo's nicks and aliases (165,502 nicks) | I20, H3, R1 | open |
 | I27 | Wikidata identifiers on records of groups, tools and formats (CC0), for "see also" across languages | museum, authority control | open |
 | I28 | An independent witness of how many packs were released per year: BBS file lists, art magazines' release lists, member lists in NFOs | H8, Q21 | open |
-| I29 | Separate sampling (draw, frozen sample) from dataset building in `tm`: `tm.datasets` now does both | audit after D1 | open |
+| I29 | Separate sampling (draw, frozen sample) from dataset building in `tm`: `tm.datasets` now does both | audit after D1 | **taken**: `tm.pilots` draws and freezes samples, `tm.datasets` builds |
 | I19 | D1 sampling design: strata bounded by the mass, equal (or square-root) allocation per stratum so that thin years are over-represented, and each pack's inclusion weight recorded so that statistics can be reweighted to the corpus | owner: over-represent thin years | taken (roadmap step 6) |
 | I18 | Detect the artist's handle in NFO and in-grid text and link it to SAUCE authors, with confidence | linkage R1 | open |
 
