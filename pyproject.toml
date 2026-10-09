@@ -42,6 +42,8 @@ research = [
   "duckdb>=1.1",
   "altair>=5.5",
   "scikit-learn>=1.6",
+  "igraph>=0.11",
+  "umap-learn>=0.5",
 ]
 
 [tool.ruff]

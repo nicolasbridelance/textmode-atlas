@@ -77,7 +77,7 @@ needs the one before says so.
     on a phone redrawn from the grid, zoom to the cell, the words of the work as text for screen
     readers, ways out that need no new data (next in the pack, same author, same month);
     typography and layout with care; checked in screenshots, desktop and phone, both locales.
-12. [ ] Nearest-works graph: k nearest neighbours on features v1 (standardized, versioned, train
+12. [x] Nearest-works graph: k nearest neighbours on features v1 (standardized, versioned, train
     packs), stored as a dataset table; studied as a social network: degree, communities,
     homophily by year, group, archive, content kind, and country where Demozoo gives one; what
     the projections show, written in an exploration note (I48, exploratory). Feeds I21.

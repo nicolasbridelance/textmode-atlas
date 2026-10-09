@@ -9,3 +9,4 @@ rows record them.
 FEATURES_VERSION = "1"  # features.py
 TEXT_VERSION = "2"  # text.py
 RATING_VERSION = "2"  # ratings.py
+NEIGHBOURS_VERSION = "1"  # neighbours.py
