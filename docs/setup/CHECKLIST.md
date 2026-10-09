@@ -1,4 +1,4 @@
-﻿# Checklist — état courant de l’installation
+# Checklist — état courant de l’installation
 
 Installation locale en cours. Les preuves figurent dans JOURNAL.md.
 
@@ -81,5 +81,3 @@ Les dépendances indiquent l’ordre de départ ; ajuste-les avec justification 
 Copie la structure d’une ligne avec un ID nouveau et stable. Lie la preuve à une ancre du journal, par exemple `[EV-001](JOURNAL.md#ev-001)` une fois cette entrée créée. Mets le détail du blocage dans le journal, pas dans une cellule interminable.
 
 Ne remplace pas `Vérifié` par une simple case cochée : il faut distinguer travail fait, validation manquante, report et non-applicabilité.
-
-
