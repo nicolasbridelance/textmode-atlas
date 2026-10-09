@@ -71,7 +71,7 @@ needs the one before says so.
     language that has one, with revision ids, and their Wikidata items, into `data/wikipedia/`
     (local, CC BY-SA text never republished), one request at a time with our User-Agent (I50).
     Runs in the background while the next steps go on.
-11. [ ] Work screen, second pass: a snapshot of what visitors will get (foundation document,
+11. [x] Work screen, second pass: a snapshot of what visitors will get (foundation document,
     "Expérience du visiteur"; museography room 1). Entrance on a work (work of the day), five-line
     label opening by levels (context, analysis, bytes), keys (`?`, space, arrows, `r`), full width
     on a phone redrawn from the grid, zoom to the cell, the words of the work as text for screen
@@ -183,4 +183,6 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 | XBIN, BIN, RIP, ADF, IDF, PCBoard, Avatar and Tundra are recorded as `unsupported_format` | their works have no grid, so no rendering and no features | decoders by count of files in the catalogue; ASCII is read by the ANSI decoder, as ansilove does |
 | Planner estimates of the `work_split` view (an aggregate) are wrong by orders of magnitude, even after `analyze` | a filter `x in (subquery)` over a corpus-wide dataset query ran for minutes (D1 build) | write such filters as `= any(array(…))`, computed once; revisit if the views become tables |
 | The `web` CI job sometimes spends 20 minutes installing Playwright's system packages | slows every merge | cache the browsers, or install without `--with-deps` on a runner that has them |
+| The work screen shrinks an 80-column work on a phone by smooth scaling, not by redrawing with a smaller bitmap font as the foundation document asks | legible but soft; no VGA font smaller than 8 × 8 exists for 4.9-pixel cells | try 8 × 8 and 8 × 14 fonts redrawn from the grid, judged on phones (spike 0002) |
+| No `axe` accessibility check in the Playwright tests yet (foundation document, WCAG AA) | the work screen grew controls, dialogs and links | add `@axe-core/playwright` to the e2e tests |
 | OpenTofu for staging / production not written | needed from M4 | after the host decision |
