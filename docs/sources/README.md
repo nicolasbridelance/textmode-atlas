@@ -31,6 +31,12 @@ Ranked by what they bring for the effort. All are downloadable in bulk, so no cr
 | 3 | **Wikipedia and Wikidata** | Reference articles in up to 44 languages, Wikidata identifiers to link groups, tools and formats to the rest of the web | 29 topic articles followed in 70 languages | API (Wikimedia asks for a `name/version (url)` User-Agent, otherwise 429) | Wikipedia text CC BY-SA 4.0; Wikidata CC0 | [wikipedia.md](wikipedia.md) |
 | 4 | **Pouët** (pouet.net) | Demoscene productions, votes, party placings; bbstros and cracktros; cross-ids to Demozoo and CSDb | 102,973 productions (7,830 bbstros, 11,323 cracktros); no ANSI or artpack type | Weekly JSON dumps, [data.pouet.net](https://data.pouet.net/) (prods 15 MB) | Not stated on the dump page | register only, until needed |
 | 5 | **Defacto2** (defacto2.net) | PC warez and art scene: NFO, DIZ, BBStros, group histories; Demozoo links 3,800 productions to it | "thousands of records" (claimed) | Daily SQL export on GitHub ([defacto2/database](https://github.com/defacto2/database)); REST API | Not stated in the repository | to measure |
+| 6 | **Discmaster** (discmaster.textfiles.com) | Files extracted from the CD-ROMs, disks and FTP captures on the Internet Archive, each with its file date and the disc or site it sits on: a dated witness of where a pack travelled (Q21, Q26, I33) | 1,743,521,591 indexed files from 43,856 items (its home page) | Search by BLAKE3 hash (`&b3sum=`), JSON output (`&outputAs=json`); one request per file | none stated; run by textfiles.com (sysop@textfiles.com); only errors and hit counts are logged | below |
+
+**Discmaster, first probe (2026-10-09).** 16colo's `acid-50a.zip` is byte-identical (BLAKE3) to
+the copy in a 2014 capture of `ftp.sunet.se/pub/pictures/ACiD-artpacks/artpacks/1996/`, whose
+file date, 1996-10-13, survived. One hash lookup per archive gives where and since when a pack
+existed outside the art archives, a witness that does not descend from 16colo.
 
 ## Medium: a week or more, or terms to clarify first
 
