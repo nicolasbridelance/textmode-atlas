@@ -16,6 +16,22 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-09 — What the works say in letters
+
+**Early ANSI talked about BBSes.** Nine ANSI in ten hold at least one row of words. Among the
+ANSI of 1990–93, 44% use the vocabulary of a board (sysop, node, baud, running, bbs, call); 25%
+in 1994–96, 11% in 1997–99, 7% in 2000–04, and 12% again after 2005, perhaps the retro boards.
+The art was first an advertisement for a place to call. Greets (`greets`, `greetings`,
+`hellos`) peak in 1994–96, at 9%. *Evidence: text layer v1 of the train packs (`works` v4,
+table `text`), marker words matched on whole words, 2026-10-09. Rough: `call` is a common word,
+and an ad drawn in blocks is not text to the extractor. Story: from the board's door to the
+artist's signature.*
+
+**The scene's letters were CP437's.** CP437 has é, ü, ñ, but no ã or õ: a Brazilian ANSI could
+not write `não` on a standard VGA screen. Ñ, the most drawn accented letter by far, is mostly
+texture, not Spanish. *Evidence: glyph histograms of features v1 (codes 0x80–0xA5 in 8.5% of
+measured works, 130,000 cells of Ñ), 2026-10-09. Open: Q24, C7.*
+
 ## 2026-10-08 — Pictures signed as ANSI
 
 **Some packs signed every file, pictures and music included.** About 1,600 files of 16colo that

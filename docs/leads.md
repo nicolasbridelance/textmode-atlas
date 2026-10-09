@@ -44,6 +44,8 @@ Rules:
 | Q21 | Is 1996 the peak of the scene, or of 16colo? The archive holds what was submitted to it, and its submitters may favour the years they lived. | owner, works note | artpacks by year in other sources (Demozoo has 1,519 artpacks, type 51; its API ignores date filters and blocks the codespace, so a paging script from elsewhere or a dump is needed), textfiles.com, Defacto2; capture–recapture (R2), knowing that Demozoo imported part of 16colo, so the sources are not independent | open |
 | Q22 | What is the colourless block art of 2000–04, as common then as coloured block art (2,419 against 2,536)? A style (block ASCII), a medium (IRC, web, e-mail without colour codes), or one prolific group? | works note | contact sheet of `blocks` 2000–04, by group and pack; first look (explorer, 2002): `.asc` files drawn in grey blocks (BAFH, sac, spr, mfn), most with no SAUCE author, so a style rather than a fault | open |
 | Q23 | Simpson's traps elsewhere: which other trends over time are mixtures of content kinds, packs or groups changing weight? | works note (Q2) | every trend shown by content kind and with pack and group weights | open |
+| Q24 | How did scenes whose letters are not in CP437 write: Portuguese `ã`/`õ` (CP860), Polish (Mazovia, CP852), Nordic `Ø` (CP865)? Did they drop accents, switch code page, or draw letters CP437 shows as something else? | text v1 → v2: CP437 has no `ã`, so `não` cannot appear | glyphs of Brazilian, Polish and Nordic packs at 0x80–0xAF, read in each code page | open |
+| Q25 | How much of the writing inside works is BBS advertising (sysop, nodes, numbers, "running")? Did the share fall when BBSes did? | first word count of the text layer: `sysop`, `board`, `member`, `site`, `running` among the most common words | lines classified by kind (I22), by year | open |
 | Q20 | How alike are the works of one pack? Do packs have a house style, a template header or footer? | explorer | within-pack distances against between-pack | open |
 
 ## Hypotheses (to pre-register before a confirmatory test)
@@ -64,7 +66,7 @@ Rules:
 | Id | Idea | Why | Status |
 | --- | --- | --- | --- |
 | I1 | Content kind of each work: escape sequences or not, colours, block share; plain text art, coloured text art, colourless block art, ANSI | the extension does not say it (works note, constraint 1) | done: `works` v2, `content_kind` |
-| I2 | Extract text runs from grids (letters and punctuation in rows) | search inside works, signatures (Q12), greetings, languages (Q10) | taken: `tm_analysis.text`, explorer detail; next, corpus-wide with a search index. Short tags (`rs!`, two letters) escape the three-character word rule |
+| I2 | Extract text runs from grids (letters and punctuation in rows) | search inside works, signatures (Q12), greetings, languages (Q10) | taken: text extractor v2 (`tm_analysis.text`, CP437 letters kept), `tm text`, table `text` of `works` v4, explorer search "words in the work". Short tags (`rs!`, two letters) still escape the three-character word rule |
 | I3 | Decoder counts overwritten cells; keep frames of animations | the grid is not the work for animations (constraint 3) | counts done (decoder v3, `works` v3); frames for playback still open |
 | I4 | Lettering fingerprints: glyph n-grams of logos, to find shared or copied letterforms | diffusion and borrowing (W4, W5) | open |
 | I5 | Colour ramps: the sequences of colours along rows and down columns | shading schools (Q15), house palettes (H7) | open |
@@ -82,6 +84,9 @@ Rules:
 | I17 | Distances between works on the grid itself (cell-level edit distance on aligned grids) to find versions, edits and recolours of one work | versions of a work across packs | open |
 | I20 | Resolve SAUCE author strings into handles (case, spacing, aliases, typos) before any author statistic | H3 counted lower-cased strings | open |
 | I21 | An "author signal" benchmark: same-author rate among nearest works from other packs, against random and group baselines, rerun for every new representation | H3 gives a first number to beat | open |
+| I22 | Classify the lines of the text layer: greets, BBS ad, signature, title, prose, credits | Q12, Q25, the greets graph (I23) | open |
+| I23 | A greets graph: who greets whom, by year, from `greets:` lines (3,728 train works hold the word) | R1 linkage, D5 graph, Q6 | open |
+| I24 | Explorer header on a phone: the dataset note runs past the right edge | screenshot of the text search | open |
 | I19 | D1 sampling design: strata bounded by the mass, equal (or square-root) allocation per stratum so that thin years are over-represented, and each pack's inclusion weight recorded so that statistics can be reweighted to the corpus | owner: over-represent thin years | taken (roadmap step 6) |
 | I18 | Detect the artist's handle in NFO and in-grid text and link it to SAUCE authors, with confidence | linkage R1 | open |
 
@@ -94,4 +99,5 @@ Rules:
 | C3 | Packs whose archive listing is a drawing (`TOTAL CHAOS`, 1993): how many groups did it, and did it spread? | field notes | open |
 | C4 | Ninety-two archives are copies under another name: who renamed them, and when? | field notes | open |
 | C6 | `DD-ICE.ICE` (pack dd-ice) is a ProTracker module, "agony intro", named like an iCE artwork; about 1,600 pictures, programs, archives and modules carry a SAUCE record of type ANSI. Which tool stamped them all? | decoder signatures | open |
+| C7 | Ñ (0xA5) is by far the most drawn CP437 letter (about 130,000 cells in the train packs), then ÿ, ¢ and á: letters as texture, not as writing. Who drew with them, and since when? | glyph histograms, text v2 | open |
 | C5 | A `.ANS` of 1996 with 605 rows of grey line drawing (`02-STEPS.ANS`, swap07): line art in ANSI, how common? | explorer | open |
