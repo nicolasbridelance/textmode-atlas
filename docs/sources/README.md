@@ -42,8 +42,8 @@ existed outside the art archives, a witness that does not descend from 16colo.
 
 | Source | What it brings | Access | Blocking point |
 | --- | --- | --- | --- |
-| scene.org files (files.scene.org) | `mirrors/artpacks/` (artpacks, programs, mags), party archives, demos; 173,654 Demozoo links point to it | HTTP and FTP, browsable tree | volume unknown; overlap with 16colo to measure by hash |
-| CSDb (csdb.dk) | C64 scene: PETSCII, releases, sceners, groups (M5, platform C64) | Web service, XML, one entry per request, depth ≤ 4, "very early stage", undocumented | no bulk dump; per-entry requests only; terms point to a disclaimer page |
+| scene.org files (files.scene.org) | PETSCII, ATASCII and teletext compo entries (1,092 files, ~150 MB); `mirrors/artpacks/` (2,951 pack files, 3.2 GB, 59 without a 16colo namesake) | rsync, HTTP `/get/` → mirrors, FTP; mirroring encouraged | rights stay with the authors; [scene-org.md](scene-org.md) |
+| CSDb (csdb.dk) | C64 scene: PETSCII (1,153 productions only there), releases, sceners, groups (M5, platform C64) | Web service, XML, one entry per request, depth ≤ 4, undocumented | robots.txt closes downloads to all robots and the whole site to AI agents: ask admin[at]csdb.dk first; [csdb.md](csdb.md) |
 | asciiarena.se | ASCII art releases (new school), 715 Demozoo links | Website | access and terms not checked |
 | Internet Archive | BBS collections, scans, CD-ROM images of BBS file areas | advancedsearch API | few hits by keyword (84 items `subject:ansi` and software); collections to find by hand |
 | roysac.com | ANSI and ASCII galleries, TheDraw fonts, histories | Website | single-person site; contact before any reuse |
@@ -56,7 +56,7 @@ existed outside the art archives, a witness that does not descend from 16colo.
 | Teletext art | teletextart.com; the International Teletext Art Festival (ITAF) | answers (301); not examined |
 | RTTY art | rtty.com gallery (`.pix` / `.pox`) | answers; a few hundred files claimed |
 | ZX Spectrum, Atari, Amiga | ZXArt (zxart.ee), Atarimania, amigascne mirror on scene.org | ZXArt answers; Demozoo links 1,700 productions to it |
-| PETSCII | CSDb; petscii.krissz.hu (an editor, not an archive) | see CSDb |
+| PETSCII | scene.org party compos, then CSDb; petscii.krissz.hu (an editor, not an archive) | [scene-org.md](scene-org.md), [csdb.md](csdb.md) |
 | Japanese Shift_JIS art (AA), kaomoji | 2channel / 5channel archives; no source identified | open (leads) |
 | Soviet and post-Soviet pseudographics, FidoNet | no source identified; ru and uk Wikipedia articles on pseudographics are long (27 KB) | open (leads) |
 | Taiwan PTT, Korean BBS art | PTT itself (still running); ko Wikipedia has a long "artscene" article | open (leads) |
