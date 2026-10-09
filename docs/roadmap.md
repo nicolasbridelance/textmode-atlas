@@ -34,6 +34,15 @@ Owner-directed consolidation (2026-10-09, [ADR 0027](adr/0027-one-museum-for-exp
 - [x] Bring back the preserved Pinterest/Instagram/Tinder layouts, local selections and presentation workshop in that same museum.
 - [ ] Produce reviewed model readings and an authoring workflow; no model run is implied by the UI.
 
+Discovery by chance, owner's request of 2026-10-10 (leads I69–I73, Q38):
+
+- [x] Seeded reshuffle and a random draw in the collection, shareable by URL (I69)
+- [ ] Slideshows over a selection, a search or a draw (I70)
+- [ ] Random walks on the constellation, replayable (I71)
+- [ ] Famous works: a fame score with its witnesses, signed `algo:` (Q38; ADR first)
+- [ ] Local Wikipedia pages beside groups and artists (I72)
+- [ ] A live EDA read from PostgreSQL through the API (I73; ADR first)
+
 Local operation and remaining deployment limits: [unified museum](unified-museum.md).
 
 Order set on 2026-10-08, revised the same day: all of 16colo is ingested and decoded, so the
