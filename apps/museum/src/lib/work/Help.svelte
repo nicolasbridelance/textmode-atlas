@@ -49,7 +49,7 @@ SPDX-License-Identifier: Apache-2.0
 
 <style>
 	dialog {
-		background: #000;
+		background: var(--surface);
 		color: var(--ink);
 		border: 1px solid var(--line);
 		padding: 1.25rem 1.5rem;

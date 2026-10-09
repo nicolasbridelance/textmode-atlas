@@ -3,9 +3,7 @@ SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 SPDX-License-Identifier: Apache-2.0
 -->
 <script lang="ts">
-	// Room 1, the gallery: one work at a time, on black, at full scale; the label beside it, the
-	// ways out on the other side, everything on a key (foundation document, "Expérience du
-	// visiteur"). The site shows what the export published and decides nothing.
+	// One public work with its label, ways out and visitor presentation settings.
 	import type { Path } from '$app/types';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
@@ -21,6 +19,8 @@ SPDX-License-Identifier: Apache-2.0
 	import WorkCanvas from './WorkCanvas.svelte';
 	import ResearchPanel from '../atlas/ResearchPanel.svelte';
 	import { fileUrl } from '../files';
+	import Presentation from '../presentation/Presentation.svelte';
+	import { preferences, museumContext } from '../presentation/settings.svelte';
 
 	// Modem speeds of the BBS years, and whole zooms down to the cell.
 	const SPEEDS = [300, 1200, BBS_BAUD, 9600, 14400, 28800, 57600]; // eslint-disable-line @typescript-eslint/no-magic-numbers
@@ -43,6 +43,8 @@ SPDX-License-Identifier: Apache-2.0
 		[record.credit.author, record.credit.group].filter(Boolean).join(' / ') || m.work_unsigned()
 	);
 
+	let comparing = $state(false);
+	let divider = $state(50); // eslint-disable-line @typescript-eslint/no-magic-numbers
 	let showAll = $state(false);
 	let replay = $state(0);
 	let baud = $state(BBS_BAUD);
@@ -52,6 +54,9 @@ SPDX-License-Identifier: Apache-2.0
 	let help = $state(false);
 	let lists: Lists = $state({ pack: null, author: null, year: null, days: null });
 
+	const transformed = $derived(
+		preferences.style !== 'original' || preferences.sampling === 'gaussian'
+	);
 	const seconds = $derived(work.grid ? secondsAt(lastByte(work.grid), baud) : null);
 	const ways: WaysOut = $derived(
 		waysOut(record.sha256, record.credit.pack, lists, seedOf(record.sha256))
@@ -59,15 +64,22 @@ SPDX-License-Identifier: Apache-2.0
 
 	$effect(() => {
 		const paths = record.lists;
+		museumContext.workId = record.sha256;
 		void record.sha256; // a new work starts its arrival again, with nothing pointed at
 		showAll = false;
 		cell = null;
+		let active = true;
 		Promise.all([
 			loadList(paths?.pack ?? null),
 			loadList(paths?.author ?? null),
 			loadList(paths?.year ?? null),
 			loadList(DAYS)
-		]).then(([pack, author, year, days]) => (lists = { pack, author, year, days }));
+		]).then(([pack, author, year, days]) => {
+			if (active) lists = { pack, author, year, days };
+		});
+		return () => {
+			active = false;
+		};
 	});
 
 	// The ways out are a few kilobytes each: fetched ahead, they open at once.
@@ -135,12 +147,11 @@ SPDX-License-Identifier: Apache-2.0
 <div class="screen">
 	<aside class="cartel">
 		<Cartel {record} {locale} seconds={work.grid ? seconds : null} {baud} {eyebrow} />
-		{#if record.research}<ResearchPanel research={record.research} {locale} />{/if}
 	</aside>
 
 	<!-- A swipe is a shortcut for the arrow keys and the ways out: nothing is reachable only by it. -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="stage" {ontouchstart} {ontouchend}>
+	<div class="stage" style:background={preferences.background} {ontouchstart} {ontouchend}>
 		{#if work.grid}
 			<WorkCanvas
 				grid={work.grid}
@@ -150,14 +161,25 @@ SPDX-License-Identifier: Apache-2.0
 				{replay}
 				{baud}
 				{zoom}
+				frameStyle={preferences.frame}
+				style={preferences.style}
+				sampling={preferences.sampling}
+				effectOptions={preferences}
+				{comparing}
+				{divider}
 				bind:scale
 				bind:cell
 			/>
+			{#if preferences.style !== 'original' || preferences.sampling !== 'pixels'}<p
+					class="interpretation"
+				>
+					{m.presentation_interpretation()}
+				</p>{/if}
 		{:else if record.shown === 'files'}
 			<img
 				class="conservation"
 				src={fileUrl(`works/${record.sha256}/conservation.png`)}
-				alt={`${title}, ${signed}`}
+				alt={title}
 			/>
 		{:else}
 			<p class="not-shown">{m.work_not_shown()}</p>
@@ -167,9 +189,12 @@ SPDX-License-Identifier: Apache-2.0
 	<aside class="tools">
 		{#if work.grid}
 			<div class="controls">
-				<button type="button" onclick={() => (showAll = true)}>{m.work_show_all()}</button>
+				<button type="button" disabled={transformed} onclick={() => (showAll = true)}
+					>{m.work_show_all()}</button
+				>
 				<button
 					type="button"
+					disabled={transformed}
 					onclick={() => {
 						showAll = false;
 						replay += 1;
@@ -177,7 +202,7 @@ SPDX-License-Identifier: Apache-2.0
 				>
 				<label>
 					<span class="visually-hidden">{m.work_speed()}</span>
-					<select bind:value={baud}>
+					<select bind:value={baud} disabled={transformed}>
 						{#each SPEEDS as speed (speed)}
 							<option value={speed}>{m.work_baud({ baud: speed })}</option>
 						{/each}
@@ -196,8 +221,22 @@ SPDX-License-Identifier: Apache-2.0
 				<button type="button" onclick={() => zoomBy(1)} aria-label={m.work_zoom_in()}>+</button>
 				<button type="button" class="help" onclick={() => (help = true)}>{m.help_open()}</button>
 			</div>
+			<label class="comparison-toggle"
+				><input type="checkbox" bind:checked={comparing} /> {m.presentation_compare()}</label
+			>
+			{#if comparing}<label class="comparison-divider"
+					>{m.presentation_compare_position()}<input
+						type="range"
+						min="0"
+						max="100"
+						bind:value={divider}
+					/></label
+				>
+				<p class="comparison-note">{m.presentation_compare_note()}</p>{/if}
+			<Presentation {work} {font} />
 			<CellInspector grid={work.grid} {cell} {baud} {locale} />
 		{/if}
+		{#if record.research}<ResearchPanel research={record.research} {locale} />{/if}
 		<Ways {ways} {hrefOf} />
 	</aside>
 </div>
@@ -205,6 +244,12 @@ SPDX-License-Identifier: Apache-2.0
 <Help bind:open={help} />
 
 <style>
+	.conservation {
+		display: block;
+		max-width: 100%;
+		height: auto;
+		image-rendering: pixelated;
+	}
 	.screen {
 		display: grid;
 		grid-template-areas: 'stage' 'cartel' 'tools';
@@ -214,13 +259,34 @@ SPDX-License-Identifier: Apache-2.0
 	.stage {
 		grid-area: stage;
 		min-width: 0;
+		padding-block: 1rem;
 	}
-	.conservation {
-		max-width: 100%;
-		height: auto;
-		image-rendering: pixelated;
-		display: block;
-		margin-inline: auto;
+	.comparison-toggle,
+	.comparison-divider,
+	.comparison-note {
+		font-size: 0.8rem;
+	}
+	.comparison-divider {
+		display: grid;
+		gap: 0.4rem;
+	}
+	.comparison-note {
+		color: var(--dim);
+		margin: 0;
+		line-height: 1.5;
+	}
+	.interpretation {
+		color: #808080;
+		font-size: 0.75rem;
+		text-align: center;
+		margin: 1rem;
+		padding: 0.4rem;
+		background: #000;
+	}
+	button:disabled,
+	select:disabled {
+		opacity: 0.5;
+		cursor: default;
 	}
 	.cartel {
 		grid-area: cartel;
@@ -269,7 +335,7 @@ SPDX-License-Identifier: Apache-2.0
 		cursor: pointer;
 	}
 	select {
-		background: #000;
+		background: var(--surface);
 	}
 	button:hover,
 	button:focus-visible,

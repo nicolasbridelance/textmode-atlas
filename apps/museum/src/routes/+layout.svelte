@@ -3,18 +3,46 @@ SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 SPDX-License-Identifier: Apache-2.0
 -->
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { browser } from '$app/env';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
+	import {
+		preferences,
+		museumContext,
+		restorePreferences,
+		savePreferences
+	} from '../lib/presentation/settings.svelte';
 	import type { Path } from '$app/types';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { browser } from '$app/env';
 	import { getLocale, locales, localizeHref } from '#lib/paraglide/runtime.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import favicon from '#lib/assets/favicon.svg';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
-	const context = $derived(browser ? `${page.url.search}${page.url.hash}` : '');
 
+	let restored = $state(false);
+	onMount(() => {
+		restorePreferences();
+		restored = true;
+	});
+	$effect(() => {
+		if (!browser || !restored) return;
+		document.documentElement.dataset.theme = preferences.theme;
+		savePreferences({ ...preferences });
+	});
+	const workId = $derived(
+		browser ? (page.url.searchParams.get('w') ?? museumContext.workId) : null
+	);
+	function exploreHref(view: string): string {
+		const query = new SvelteURLSearchParams(
+			browser && page.url.pathname.endsWith('/explore') ? page.url.search : ''
+		);
+		query.set('view', view);
+		if (workId && !query.has('w')) query.set('w', workId);
+		return `${resolve(localizeHref('/explore') as Path)}?${query}`;
+	}
 	const localeNames: Record<string, () => string> = {
 		en: m.locale_name_en,
 		fr: m.locale_name_fr
@@ -28,16 +56,46 @@ SPDX-License-Identifier: Apache-2.0
 
 <header class="top">
 	<a class="name" href={resolve(localizeHref('/') as Path)}>{m.museum_name()}</a>
-	<nav class="rooms" aria-label={m.atlas_rooms()}>
-		<a href={localizeHref('/explore')}>{m.atlas_collection()}</a>
+	<nav class="views" aria-label={m.nav_explore()}>
+		<a
+			href={resolve(localizeHref('/') as Path)}
+			aria-current={page.url.pathname === localizeHref('/') ? 'page' : undefined}>{m.nav_today()}</a
+		>
+		<a
+			href={exploreHref('grid')}
+			aria-current={page.url.pathname.endsWith('/explore') &&
+			(!browser || page.url.searchParams.get('view') === 'grid')
+				? 'page'
+				: undefined}>{m.atlas_collection()}</a
+		>
+		{#each ['pinterest', 'instagram', 'tinder'] as discoveryView (discoveryView)}
+			<a
+				href={exploreHref(discoveryView)}
+				aria-current={browser &&
+				page.url.pathname.endsWith('/explore') &&
+				(page.url.searchParams.get('view') ?? 'pinterest') === discoveryView
+					? 'page'
+					: undefined}
+			>
+				{discoveryView.slice(0, 1).toUpperCase() + discoveryView.slice(1)}
+			</a>
+		{/each}
 		<a href={localizeHref('/constellation')}>{m.atlas_constellation()}</a>
 		<a href={localizeHref('/research')}>{m.atlas_research()}</a>
 	</nav>
+	<label class="theme"
+		>{m.presentation_theme()}
+		<select bind:value={preferences.theme}>
+			<option value="dark">{m.theme_dark()}</option>
+			<option value="light">{m.theme_light()}</option>
+			<option value="system">{m.theme_system()}</option>
+		</select>
+	</label>
 	<!-- Also tells the prerenderer to crawl every localized version of the page. -->
 	<nav class="locales" aria-label={m.language_switch()}>
 		{#each locales as locale (locale)}
 			<a
-				href={`${resolve(localizeHref(page.url.pathname, { locale }) as Path)}${context}`}
+				href={`${resolve(localizeHref(page.url.pathname, { locale }) as Path)}${browser ? page.url.search : ''}`}
 				hreflang={locale}
 				data-sveltekit-reload
 				lang={locale}
@@ -52,6 +110,7 @@ SPDX-License-Identifier: Apache-2.0
 <style>
 	:global(:root) {
 		/* VGA's own greys and cyan, on black: the works set the palette, the museum stays quiet. */
+		--surface: #000;
 		--bright: #fff;
 		--ink: #aaa;
 		--dim: #808080;
@@ -62,8 +121,32 @@ SPDX-License-Identifier: Apache-2.0
 		--mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', 'DejaVu Sans Mono', monospace;
 		color-scheme: dark;
 	}
+	:global(:root[data-theme='light']) {
+		--surface: #f8f7f3;
+		--bright: #181b20;
+		--ink: #41464e;
+		--dim: #606873;
+		--faint: #737b85;
+		--line: #d3d5d7;
+		--panel: #eeede8;
+		--accent: #006e78;
+		color-scheme: light;
+	}
+	@media (prefers-color-scheme: light) {
+		:global(:root[data-theme='system']) {
+			--surface: #f8f7f3;
+			--bright: #181b20;
+			--ink: #41464e;
+			--dim: #606873;
+			--faint: #737b85;
+			--line: #d3d5d7;
+			--panel: #eeede8;
+			--accent: #006e78;
+			color-scheme: light;
+		}
+	}
 	:global(html) {
-		background: #000;
+		background: var(--surface);
 		color: var(--ink);
 	}
 	:global(body) {
@@ -91,9 +174,9 @@ SPDX-License-Identifier: Apache-2.0
 	.top {
 		display: flex;
 		align-items: baseline;
+		flex-wrap: wrap;
 		justify-content: space-between;
 		gap: 1rem;
-		flex-wrap: wrap;
 		padding: 0.9rem 1rem;
 		font-size: 0.75rem;
 		letter-spacing: 0.06em;
@@ -108,23 +191,32 @@ SPDX-License-Identifier: Apache-2.0
 		text-decoration: none;
 		text-transform: uppercase;
 	}
+	.views {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.8rem;
+	}
+	.views a {
+		text-decoration: none;
+	}
+	.views a[aria-current='page'] {
+		color: var(--accent);
+	}
+	.theme {
+		display: flex;
+		gap: 0.4rem;
+		align-items: center;
+	}
+	.theme select {
+		background: var(--panel);
+		color: var(--ink);
+		border: 1px solid var(--line);
+		font: inherit;
+		padding: 0.25rem;
+	}
 	.locales {
 		display: flex;
 		gap: 0.75rem;
-	}
-	.rooms {
-		display: flex;
-		gap: 1rem;
-		flex-wrap: wrap;
-	}
-	.rooms a {
-		text-decoration: none;
-	}
-	@media (max-width: 600px) {
-		.rooms {
-			order: 3;
-			width: 100%;
-		}
 	}
 	.locales a {
 		color: var(--faint);

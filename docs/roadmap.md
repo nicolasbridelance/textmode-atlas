@@ -31,6 +31,7 @@ Owner-directed consolidation (2026-10-09, [ADR 0027](adr/0027-one-museum-for-exp
 - [x] Unite collection, constellation, scientific reports and shared work records in the museum.
 - [x] Preserve search, scientific features and neighbours with server-side rights/audience gates.
 - [x] Define signed explanation/science/vision readings on the same work records.
+- [x] Bring back the preserved Pinterest/Instagram/Tinder layouts, local selections and presentation workshop in that same museum.
 - [ ] Produce reviewed model readings and an authoring workflow; no model run is implied by the UI.
 
 Local operation and remaining deployment limits: [unified museum](unified-museum.md).

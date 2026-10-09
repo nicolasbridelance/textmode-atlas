@@ -17,6 +17,8 @@ export interface Entry {
 	cols: number;
 	rows: number;
 	level: string;
+	/** Optional local-research rendering. Undefined uses the public conservation PNG. */
+	preview?: string | null;
 }
 
 export interface List {

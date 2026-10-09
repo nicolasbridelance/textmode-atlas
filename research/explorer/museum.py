@@ -10,7 +10,10 @@ from urllib.parse import unquote
 
 
 def asset(root: Path, path: str) -> tuple[str, bytes] | None:
-    relative = unquote(path).lstrip("/") or "index.html"
+    relative = unquote(path).lstrip("/")
+    # Svelte's default English locale is built at the root; accept explicit locale URLs.
+    relative = "" if relative == "en" else relative.removeprefix("en/")
+    relative = relative or "index.html"
     wanted = (root / relative).resolve()
     if not wanted.is_relative_to(root.resolve()):
         return None
