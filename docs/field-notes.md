@@ -16,6 +16,18 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-09 — PETSCII and ATASCII were made for the compo
+
+**PETSCII and ATASCII live in party compos, not in packs.** Of Demozoo's download links to
+scene.org for productions tagged `petscii`, 912 of 915 point under `/parties/`; all 109 for
+`atascii`, 124 of 127 for `teletext`. The compos have names of their own (`c64_petscii`,
+`ansi_ascii_petscii`, `text_art_petscii`, `xl_xe_atascii`, an `atascii_compo` party in 2023):
+these practices were shown at parties and voted on, where the PC art of the 1990s was released
+in monthly packs through BBSes. Two economies of the same craft. Coverage: Demozoo's links and
+scene.org only; CSDb, where most PETSCII lives, files releases by event too, not measured.
+*Evidence: Demozoo dump of 2026-10-09, `productions_productionlink` (`SceneOrgFile`); source
+note [scene-org.md](sources/scene-org.md); lead I63.*
+
 ## 2026-10-09 — Teletext art is remembered as pictures
 
 **Most teletext art in Demozoo survives as a screenshot, not as a page.** Of 447 productions
