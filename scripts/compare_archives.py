@@ -30,6 +30,7 @@ join artifact a on a.sha256 = p.pack_sha256
 join version v on v.id = a.version_id
 join work w on w.id = v.work_id
 left join set_member m on m.set_work_id = p.set_work_id
+where p.archive = '16colo'
 """
 FIELDS = [
     "year", "file", "description", "status", "namesake", "same_bytes", "members",
