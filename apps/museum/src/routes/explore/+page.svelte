@@ -28,6 +28,7 @@ SPDX-License-Identifier: Apache-2.0
 		type ResearchFacets
 	} from '../../lib/presentation/catalogue';
 	import { museumContext } from '../../lib/presentation/settings.svelte';
+	import { draw, newSeed } from '../../lib/presentation/chance';
 
 	const PAGE_SIZE = 48;
 	const RESEARCH_BASE = '';
@@ -52,6 +53,8 @@ SPDX-License-Identifier: Apache-2.0
 	let failed = $state(false);
 	let facets: ResearchFacets | null = $state(null);
 	let resetSerial = $state(0);
+	let drawing = $state(false);
+	let nothingToDraw = $state(false);
 	const corpus = $derived(
 		facets !== null && browser && page.url.searchParams.get('source') !== 'public'
 	);
@@ -149,6 +152,30 @@ SPDX-License-Identifier: Apache-2.0
 		resetSerial += 1;
 		museumContext.workId = null;
 		navigate({}, true);
+	}
+
+	function reshuffle(): void {
+		apply({ ...filters, order: '', seed: newSeed() });
+	}
+	/** One work drawn among the current filters; the server draws when it holds the corpus. */
+	async function surprise(): Promise<void> {
+		const seed = newSeed();
+		drawing = true;
+		nothingToDraw = false;
+		try {
+			const sha256 = corpus
+				? await fetch(`${RESEARCH_BASE}/api/surprise?${researchQuery({ ...filters, seed })}`).then(
+						async (response) =>
+							response.ok ? ((await response.json()) as { sha256: string }).sha256 : null
+					)
+				: (draw(visible, seed)?.sha256 ?? null);
+			if (sha256) await goto(href(sha256));
+			else nothingToDraw = true;
+		} catch {
+			nothingToDraw = true;
+		} finally {
+			drawing = false;
+		}
 	}
 
 	function clearSelection(): void {
@@ -286,6 +313,12 @@ SPDX-License-Identifier: Apache-2.0
 					></label
 				>{/if}
 			{#if !corpus && isWorkId(id)}<a href={href(id)}>{m.explore_back()}</a>{/if}
+			<div class="chance">
+				<button type="button" onclick={reshuffle}>{m.explore_reshuffle()}</button>
+				<button type="button" disabled={drawing} onclick={() => void surprise()}
+					>{m.explore_surprise()}</button
+				>
+			</div>
 			{#if discovery}
 				<div class="selection-toggle" role="group" aria-label={m.discovery_collection_label()}>
 					<button type="button" aria-pressed={!onlySaved} onclick={() => (onlySaved = false)}
@@ -313,6 +346,7 @@ SPDX-License-Identifier: Apache-2.0
 				{m.browse_selection_cleared()}
 				<button type="button" onclick={restoreSelection}>{m.browse_undo_clear()}</button>
 			</p>{/if}
+		{#if nothingToDraw}<p role="status">{m.explore_surprise_none()}</p>{/if}
 		{#if loading}<p role="status">{m.explore_loading()}</p>
 		{:else if failed && !works.length}<p role="alert">{m.browse_unavailable()}</p>
 		{:else if !matched.length}<p class="empty-selection">{m.browse_no_results()}</p>
@@ -458,12 +492,18 @@ SPDX-License-Identifier: Apache-2.0
 		margin: 0;
 	}
 
+	.chance {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
 	.selection-toggle {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.4rem;
 		margin-left: auto;
 	}
+	.chance button,
 	.selection-toggle button {
 		margin: 0;
 		border-radius: 2rem;

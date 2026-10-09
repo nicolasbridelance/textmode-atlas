@@ -36,7 +36,8 @@ SPDX-License-Identifier: Apache-2.0
 		archive: m.browse_archive,
 		format: m.browse_format,
 		kind: m.browse_kind,
-		order: m.browse_sort
+		order: m.browse_sort,
+		seed: m.explore_reshuffle
 	};
 	const kinds: Record<string, () => string> = {
 		coloured_blocks: m.browse_coloured_blocks,
@@ -59,7 +60,7 @@ SPDX-License-Identifier: Apache-2.0
 					{ key: 'group', values: valuesOf(entries, 'group') }
 				]
 	);
-	const active = $derived(FILTER_KEYS.filter((key) => filters[key]));
+	const active = $derived(FILTER_KEYS.filter((key) => key !== 'seed' && filters[key]));
 	const advanced = $derived(active.some((key) => key !== 'q'));
 	function submit(event: SubmitEvent): void {
 		event.preventDefault();
@@ -84,6 +85,7 @@ SPDX-License-Identifier: Apache-2.0
 </script>
 
 <form class="catalogue-controls" onsubmit={submit} role="search" aria-label={m.browse_search()}>
+	<input type="hidden" name="seed" value={filters.seed} />
 	<div class="search-line">
 		<label class="search-box"
 			><span>{m.browse_search()}</span>

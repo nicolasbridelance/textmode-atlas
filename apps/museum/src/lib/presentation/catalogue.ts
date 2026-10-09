@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { fileUrl } from '../files';
 import type { Entry } from '../work/visit';
+import { shuffled } from './chance';
 
 export const FILTER_KEYS = [
 	'q',
@@ -12,7 +13,8 @@ export const FILTER_KEYS = [
 	'archive',
 	'format',
 	'kind',
-	'order'
+	'order',
+	'seed'
 ] as const;
 export type BrowseFilters = Record<(typeof FILTER_KEYS)[number], string>;
 export const UNKNOWN = '__unknown__';
@@ -25,7 +27,8 @@ export const emptyFilters = (): BrowseFilters => ({
 	archive: '',
 	format: '',
 	kind: '',
-	order: ''
+	order: '',
+	seed: ''
 });
 
 export function readFilters(params: Pick<URLSearchParams, 'get'> | null): BrowseFilters {
@@ -56,6 +59,7 @@ function matches(entry: Entry, filters: BrowseFilters): boolean {
 }
 export function filterEntries(entries: Entry[], filters: BrowseFilters): Entry[] {
 	const filtered = entries.filter((entry) => matches(entry, filters));
+	if (!filters.order && filters.seed) return shuffled(filtered, filters.seed);
 	if (filters.order === 'title')
 		filtered.sort((a, b) => (a.title || a.file).localeCompare(b.title || b.file));
 	if (filters.order === 'year')
@@ -97,7 +101,7 @@ interface ResearchEntry {
 }
 export function researchQuery(filters: BrowseFilters): string {
 	const params = new URLSearchParams();
-	for (const key of ['q', 'words', 'year', 'archive', 'format', 'kind', 'order'] as const) {
+	for (const key of ['q', 'words', 'year', 'archive', 'format', 'kind', 'order', 'seed'] as const) {
 		if (filters[key]) params.set(key, filters[key]);
 	}
 	return params.toString();
