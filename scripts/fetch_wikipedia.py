@@ -39,7 +39,8 @@ from typing import Any
 USER_AGENT = "textmode-atlas/0.1 (https://github.com/nicolasbridelance/textmode-atlas; research)"
 PAUSE_SECONDS = 1.0
 BATCH = 50
-MAX_TRIES = 5
+MAX_TRIES = 12
+LONGEST_WAIT = 60.0  # Wikidata's lag often lasts minutes
 TOO_MANY = 429
 CATEGORY_NS = 14
 SEED_TITLES = [
@@ -67,7 +68,7 @@ class Client:
         query = urllib.parse.urlencode({**params, "format": "json", "maxlag": "5"})
         url = f"https://{host}/w/api.php?{query}"
         for attempt in range(MAX_TRIES):
-            time.sleep(PAUSE_SECONDS * (2**attempt))
+            time.sleep(min(PAUSE_SECONDS * (2**attempt), LONGEST_WAIT))
             try:
                 body = self._fetch(url)
             except urllib.error.HTTPError as err:
