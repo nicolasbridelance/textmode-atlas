@@ -57,6 +57,7 @@ Next, in this order:
 6. [x] D1 pilot: 21 train packs drawn by era (seven strata bounded by the mass, three each, systematic within a stratum by content and size, seed 20261009, weights recorded) and 3 added by hand with a reason ([ADR 0017](adr/0017-d1-pilot-sampling.md)); frozen in `datasets/d1/sample.yaml` with its datasheet; notebook and pre-registration templates in `research/templates/`
 7. [ ] `tm export` → public bucket: compact grid file and record JSON, gated by `can_display()`; refuses a shown file without credit (ADR 0009)
 8. [ ] Work screen, first version: canvas renderer from the grid and the bitmap font, credit as signed, source link, "withdraw or claim" on every record (ADR 0009)
+   - [ ] Owner's choices on the [museography proposal](museography.md) (rooms, games, feeds): the work screen is its first room
 
 Later, deliberately (nothing depends on them yet):
 
