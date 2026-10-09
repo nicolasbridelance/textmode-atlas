@@ -16,13 +16,13 @@ from typing import Any
 
 from sqlalchemy import Connection, Row, text
 from tm_render.conservation import BitmapFont, Settings, render
-from tm_render.grid import from_parquet
 from tm_render.sauce import Sauce
 from tm_render.versions import DECODER_VERSION, RENDERER_VERSION
 
 from tm.decode import DECODER
+from tm.grids import stored_grid
 from tm.shards import EVERYTHING, Shard, condition
-from tm.storage import IntegrityError, ObjectStore, grid_key, rendering_key, sha256_hex
+from tm.storage import IntegrityError, ObjectStore, rendering_key, sha256_hex
 
 LEVEL = "conservation"
 
@@ -76,9 +76,7 @@ def pending_renderings(
 def render_artifact(
     conn: Connection, derived: ObjectStore, font: BitmapFont, scale: int, row: Row[Any]
 ) -> Rendered:
-    grid = from_parquet(derived.get(grid_key(row.sha256, DECODER, DECODER_VERSION)))
-    if grid.digest() != row.grid_sha256:
-        raise IntegrityError(f"grid of {row.sha256} does not match its decoding row")
+    grid = stored_grid(derived, row.sha256, row.grid_sha256)
     # Flags of a record the decoder set aside are as unreliable as its width.
     sauce = None if row.sauce_problems else _sauce(row.sauce)
     rendering = render(grid, font, Settings.from_sauce(sauce, scale))
