@@ -51,8 +51,9 @@ and an ad drawn in blocks is not text to the extractor. Story: from the board's 
 artist's signature.*
 
 **The scene's letters were CP437's.** CP437 has é, ü, ñ, but no ã or õ: a Brazilian ANSI could
-not write `não` on a standard VGA screen, and one writes `näo`, borrowing the German ä, beside
-`soh` for `só`. Polish texts in the packs drop their diacritics (`juz`, `sie`). Ñ, the most
+not write `não` on a standard VGA screen. Black Maiden, a Brazilian group, borrowed the German
+letters throughout: `näo`, `milhäo`, `säo` for ã, `opiniöes` for õ (maiden14, 1997, `RORSHACK.ANS`),
+beside `soh` for `só`. Polish texts in the packs drop their diacritics (`juz`, `sie`). Ñ, the most
 drawn accented letter by far, is mostly texture, not Spanish. Writing in another language than
 English stays under 1% of the ANSI of every era, by a rough count of function words (two
 distinct ones per work); found: German, Brazilian Portuguese, Polish, Swedish, Dutch, French,
