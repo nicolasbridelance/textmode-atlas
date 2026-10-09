@@ -1,0 +1,327 @@
+{
+  "version": 2,
+  "levels": [
+    {
+      "code": "3",
+      "min_age": 3,
+      "colour": {
+        "background": 10,
+        "ink": 0
+      },
+      "label": {
+        "en": "Every audience",
+        "fr": "Tous publics"
+      },
+      "summary": {
+        "en": "Nothing on this grid. A work that has been reviewed and carries no descriptor.",
+        "fr": "Rien de cette grille. Une œuvre relue qui ne porte aucun descripteur."
+      }
+    },
+    {
+      "code": "7",
+      "min_age": 7,
+      "colour": {
+        "background": 2,
+        "ink": 15
+      },
+      "label": {
+        "en": "7 and over",
+        "fr": "7 ans et plus"
+      },
+      "summary": {
+        "en": "Cartoon violence, images that may frighten young children.",
+        "fr": "Violence de dessin animé, images qui peuvent effrayer les jeunes enfants."
+      }
+    },
+    {
+      "code": "12",
+      "min_age": 12,
+      "colour": {
+        "background": 14,
+        "ink": 0
+      },
+      "label": {
+        "en": "12 and over",
+        "fr": "12 ans et plus"
+      },
+      "summary": {
+        "en": "Horror imagery, violence against fantasy figures, innuendo, mild swearing, alcohol, the warez scene.",
+        "fr": "Imagerie d'horreur, violence envers des figures imaginaires, sous-entendus, jurons légers, alcool, la scène warez."
+      }
+    },
+    {
+      "code": "16",
+      "min_age": 16,
+      "colour": {
+        "background": 6,
+        "ink": 15
+      },
+      "label": {
+        "en": "16 and over",
+        "fr": "16 ans et plus"
+      },
+      "summary": {
+        "en": "Realistic violence and blood, erotic nudity, strong obscenities, illegal drugs, how-tos for illegal acts, hateful words shown without endorsement.",
+        "fr": "Violence réaliste et sang, nudité érotique, obscénités, drogues illégales, modes d'emploi d'actes illégaux, mots haineux montrés sans adhésion."
+      }
+    },
+    {
+      "code": "18",
+      "min_age": 18,
+      "colour": {
+        "background": 4,
+        "ink": 15
+      },
+      "label": {
+        "en": "Adults only",
+        "fr": "Réservé aux adultes"
+      },
+      "summary": {
+        "en": "Gross violence, explicit sex, drug use glamorised, works that promote hatred (shown only with a curator's text).",
+        "fr": "Violence extrême, sexe explicite, usage de drogues glorifié, œuvres qui promeuvent la haine (montrées seulement avec un texte de conservateur)."
+      }
+    },
+    {
+      "code": "withheld",
+      "min_age": null,
+      "colour": {
+        "background": 8,
+        "ink": 7
+      },
+      "label": {
+        "en": "Withheld",
+        "fr": "Retenue"
+      },
+      "summary": {
+        "en": "Never shown or exported. Kept in the archive for a decision by the owner and the lawyer.",
+        "fr": "Jamais montrée ni exportée. Conservée dans l'archive, en attente d'une décision du responsable et de l'avocat."
+      }
+    }
+  ],
+  "descriptors": [
+    {
+      "code": "violence",
+      "glyph": 30,
+      "label": {
+        "en": "Violence",
+        "fr": "Violence"
+      },
+      "levels": {
+        "7": {
+          "en": "Implied or cartoon violence, without detail (a fight between fantasy figures).",
+          "fr": "Violence suggérée ou de dessin animé, sans détail (un combat entre figures imaginaires)."
+        },
+        "12": {
+          "en": "Visible violence against fantasy creatures; unrealistic violence against people; weapons shown as a threat.",
+          "fr": "Violence visible envers des créatures imaginaires ; violence irréaliste envers des personnes ; armes brandies comme menace."
+        },
+        "16": {
+          "en": "Realistic violence against people, wounds, blood.",
+          "fr": "Violence réaliste envers des personnes, blessures, sang."
+        },
+        "18": {
+          "en": "Gross violence (gore, mutilation, torture), violence against the defenceless, killing glamorised.",
+          "fr": "Violence extrême (gore, mutilation, torture), violence envers des personnes sans défense, meurtre glorifié."
+        }
+      }
+    },
+    {
+      "code": "fear",
+      "glyph": 2,
+      "label": {
+        "en": "Fear",
+        "fr": "Peur"
+      },
+      "levels": {
+        "7": {
+          "en": "Images that may frighten young children (skulls, monsters, darkness) in an unrealistic style.",
+          "fr": "Images qui peuvent effrayer les jeunes enfants (crânes, monstres, ténèbres), dans un style irréaliste."
+        },
+        "12": {
+          "en": "Horror imagery (demons, the undead, occult symbols, disturbing faces).",
+          "fr": "Imagerie d'horreur (démons, morts-vivants, symboles occultes, visages inquiétants)."
+        },
+        "16": {
+          "en": "Graphic horror (body horror, realistic disturbing images).",
+          "fr": "Horreur graphique (corps déformés, images réalistes dérangeantes)."
+        }
+      }
+    },
+    {
+      "code": "sexual",
+      "glyph": 3,
+      "label": {
+        "en": "Sex and nudity",
+        "fr": "Sexe et nudité"
+      },
+      "levels": {
+        "12": {
+          "en": "Innuendo, suggestive poses, kissing; partial nudity that is not sexual.",
+          "fr": "Sous-entendus, poses suggestives, baisers ; nudité partielle non sexuelle."
+        },
+        "16": {
+          "en": "Erotic nudity; sexual activity implied, not shown.",
+          "fr": "Nudité érotique ; activité sexuelle suggérée, non montrée."
+        },
+        "18": {
+          "en": "Explicit sexual activity or explicit genitals, between adults.",
+          "fr": "Activité sexuelle ou organes génitaux explicites, entre adultes."
+        },
+        "withheld": {
+          "en": "Any sexual depiction that involves or appears to involve a minor, drawn or not.",
+          "fr": "Toute représentation sexuelle impliquant ou paraissant impliquer un mineur, dessinée ou non."
+        }
+      }
+    },
+    {
+      "code": "language",
+      "glyph": 19,
+      "label": {
+        "en": "Language",
+        "fr": "Langage"
+      },
+      "levels": {
+        "12": {
+          "en": "Mild swearing and insults.",
+          "fr": "Jurons et insultes légers."
+        },
+        "16": {
+          "en": "Strong obscenities, sexual insults.",
+          "fr": "Obscénités, insultes à caractère sexuel."
+        }
+      }
+    },
+    {
+      "code": "drugs",
+      "glyph": 247,
+      "label": {
+        "en": "Drugs",
+        "fr": "Drogues"
+      },
+      "levels": {
+        "12": {
+          "en": "Alcohol or tobacco shown or named.",
+          "fr": "Alcool ou tabac montrés ou cités."
+        },
+        "16": {
+          "en": "Illegal drugs shown or named.",
+          "fr": "Drogues illégales montrées ou citées."
+        },
+        "18": {
+          "en": "Illegal drug use glamorised, or instructions for it.",
+          "fr": "Usage de drogues illégales glorifié, ou mode d'emploi."
+        }
+      }
+    },
+    {
+      "code": "discrimination",
+      "glyph": 246,
+      "label": {
+        "en": "Discrimination",
+        "fr": "Discrimination"
+      },
+      "levels": {
+        "16": {
+          "en": "Slurs or hate symbols shown in a work that does not endorse them (quoted, mocked, part of a scene's history).",
+          "fr": "Insultes ou symboles haineux montrés dans une œuvre qui n'y adhère pas (cités, moqués, pris dans une histoire de la scène)."
+        },
+        "18": {
+          "en": "A work that promotes hatred of people for who they are; shown only with a text written by a curator.",
+          "fr": "Une œuvre qui promeut la haine de personnes pour ce qu'elles sont ; montrée seulement avec un texte écrit par un conservateur."
+        },
+        "withheld": {
+          "en": "A work that would be unlawful to publish, even in an archive (incitement, denial of crimes against humanity; to verify with the lawyer).",
+          "fr": "Une œuvre qu'il serait illégal de publier, même dans une archive (incitation, négationnisme ; à vérifier avec l'avocat)."
+        }
+      }
+    },
+    {
+      "code": "crime",
+      "glyph": 21,
+      "label": {
+        "en": "Crime",
+        "fr": "Délits"
+      },
+      "levels": {
+        "12": {
+          "en": "The warez and cracking scene named or advertised (groups, couriers, elite boards), as history.",
+          "fr": "La scène warez et le cracking nommés ou annoncés (groupes, couriers, BBS d'élite), comme histoire."
+        },
+        "16": {
+          "en": "How-tos for illegal acts (carding, phreaking, intrusion).",
+          "fr": "Modes d'emploi d'actes illégaux (carding, phreaking, intrusion)."
+        },
+        "withheld": {
+          "en": "Usable stolen data (card numbers, calling codes, passwords) or a private person's details.",
+          "fr": "Données volées utilisables (numéros de carte, codes d'appel, mots de passe) ou coordonnées d'une personne privée."
+        }
+      }
+    },
+    {
+      "code": "real_people",
+      "glyph": 1,
+      "label": {
+        "en": "Real people",
+        "fr": "Personnes réelles"
+      },
+      "levels": {
+        "12": {
+          "en": "Caricature of a public figure.",
+          "fr": "Caricature d'une personnalité publique."
+        },
+        "16": {
+          "en": "Insulting or degrading depiction of an identifiable person, a scener's handle included.",
+          "fr": "Représentation insultante ou dégradante d'une personne identifiable, pseudo de scener compris."
+        },
+        "18": {
+          "en": "Sexualised depiction of a public figure.",
+          "fr": "Représentation sexualisée d'une personnalité publique."
+        },
+        "withheld": {
+          "en": "Sexualised or degrading depiction of a private person.",
+          "fr": "Représentation sexualisée ou dégradante d'une personne privée."
+        }
+      }
+    }
+  ],
+  "notices": [
+    {
+      "code": "flashing",
+      "glyph": 15,
+      "label": {
+        "en": "Flashing",
+        "fr": "Clignotements"
+      },
+      "text": {
+        "en": "Blinking cells or fast redraws, which may affect photosensitive visitors. Playback can be paused, and reduced motion is honoured.",
+        "fr": "Cellules clignotantes ou redessins rapides, qui peuvent gêner les visiteurs photosensibles. La lecture peut être mise en pause, et la réduction des animations est respectée."
+      }
+    }
+  ],
+  "rules": [
+    {
+      "en": "A work's level is the highest level among its descriptors. A cartel can explain a work, never lower its level.",
+      "fr": "Le niveau d'une œuvre est le plus haut niveau parmi ses descripteurs. Un cartel peut expliquer une œuvre, jamais abaisser son niveau."
+    },
+    {
+      "en": "The grid rates what a work shows, in its time and its context, not the person who made it. A descriptor applies to a work, never to a person.",
+      "fr": "La grille classe ce qu'une œuvre montre, dans son temps et son contexte, pas la personne qui l'a faite. Un descripteur s'applique à une œuvre, jamais à une personne."
+    },
+    {
+      "en": "Every descriptor is an assertion with its author. A program may infer it; a named reviewer confirms or rejects it; the artist may declare it. Nothing is erased, so the history of a rating stays visible.",
+      "fr": "Chaque descripteur est une assertion avec son auteur. Un programme peut le déduire ; un relecteur nommé le confirme ou le rejette ; l'artiste peut le déclarer. Rien n'est effacé, l'histoire d'un classement reste visible."
+    },
+    {
+      "en": "Until a person has reviewed it, a descriptor inferred by a program counts. A work no one has reviewed and in which no program finds anything is shown up to 12, never lower; this is a trial, watched by a sample reviewed by people, and it ends if more than 1 in 100 such works turns out to call for 16 or more.",
+      "fr": "Tant qu'une personne ne l'a pas relu, un descripteur déduit par un programme compte. Une œuvre que personne n'a relue et où aucun programme ne trouve rien est montrée jusqu'à 12, jamais en dessous ; c'est un essai, surveillé par un échantillon relu par des personnes, et il s'arrête si plus d'une œuvre sur 100 de ce type appelle en fait 16 ou plus."
+    },
+    {
+      "en": "Levels are applied by the server when it exports and serves works, never by the page in the browser.",
+      "fr": "Les niveaux sont appliqués par le serveur quand il exporte et sert les œuvres, jamais par la page dans le navigateur."
+    },
+    {
+      "en": "Anyone can ask for a work to be rated again, with the same form as for withdrawal.",
+      "fr": "Chacun peut demander qu'une œuvre soit reclassée, avec le même formulaire que pour un retrait."
+    }
+  ]
+}
