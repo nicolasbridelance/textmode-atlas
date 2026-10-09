@@ -63,6 +63,7 @@ def test_static_host_cannot_read_outside_the_museum(tmp_path: Path):
     (tmp_path / "secret.env").write_text("private")
     (root / "work.html").write_text("shared work")
     assert museum.asset(root, "work") == ("text/html", b"shared work")
+    assert museum.asset(root, "en/work") == ("text/html", b"shared work")
     assert museum.asset(root, "../secret.env") is None
     assert museum.asset(root, "%2e%2e/secret.env") is None
 

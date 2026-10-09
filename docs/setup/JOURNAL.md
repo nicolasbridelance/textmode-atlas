@@ -110,3 +110,40 @@ Read design/UI/contracts/access/security modules 06/08/11/12/13 and existing mus
 - Replaced the owned previous explorer process with the built museum at the same loopback port. Existing Wi-Fi forward returns HTTP 200 for collection, constellation, research and facets. 92,782 accessible collection records; 85,449 visible graph nodes, 841,351 edges, 36 communities. No firewall/access expansion.
 - Module 07 inventory: the two former standalone HTML pages are retired as part of the explicitly requested functional fusion; graph interactions survive in its runtime and native Svelte room. No additional purge of restored worktrees, backups or intentional migration duplication. Hygiene verification follows the functional commit. Interpretation authoring/model runs and public exports remain separate future work; startup policy snapshots require restart after rights/audience changes, documented in `docs/unified-museum.md`.
 - Work remains on local `feat/unified-museum`; no GitHub publication or main merge for this change.
+
+## EV-009 — preserved discovery views
+
+2026-10-10, Europe/Paris — owner noticed that Pinterest/Instagram/Tinder were missing
+from the first fusion. Found their existing implementation and presentation workshop
+in preserved uncommitted `feat/visualizations` worktree edits. The first functional
+commit e1b28b9 had not included them; this is an integration omission, not removed data.
+
+Reintegrated existing components/tests/messages and workshop documentation without
+altering the preserved worktree. Discovery, grid and metadata-related views consume
+the unified gated API and open the shared work screen, retaining scientific readings.
+No former `/research` proxy or second viewer is restored. Theme, interpretation effects,
+comparison and browser-local selection survive. Added explicit English URL aliases to
+the static local host.
+
+Owner then identified duplicate navigation. Removed the secondary layout tabs and
+separate museum/research collection switch; the single header directly links Collection,
+Pinterest, Instagram, Tinder, Constellation and Research. Legacy metadata-related URLs
+remain compatible. Collection wording now reflects one museum.
+
+Validation: full isolated Linux `just check` passed (311 Python, 26 web unit tests,
+critical policy coverage 100%). Final navigation change passed Svelte checks without
+errors/warnings, Prettier/ESLint, production build and 22 e2e tests (18.2 seconds).
+Real-corpus Chromium checked all three layouts in EN/FR, desktop and 390px mobile:
+zero page errors, no duplicate menus, no horizontal overflow, shared scientific fiche
+and presentation workshop present. Latest build copied to the live local museum;
+existing Wi-Fi URL returns HTTP 200. Temporary staging server stopped; live museum
+kept running. Screenshots and helpers remain ignored. This integration follow-up is
+recorded on local `feat/unified-museum`; no push or main merge.
+
+Module 07 audit on the final integration diff: `just hygiene` exit 0, unused-code and
+dependency checks pass, duplication 0.15%. Retained historical migrations and the
+11-line light/system theme CSS repetition; no additional purge or refactor needed.
+Final source has one navigation, with retired catalogue adapter replaced by the shared
+discovery catalogue. Private backups/worktrees are preserved. Standard commit hooks
+remain enabled. Next product work is reviewed interpretation authoring/model evaluation,
+not another viewer; remote publication is still separate from this local checkpoint.

@@ -4,6 +4,15 @@ SPDX-License-Identifier: Apache-2.0
 -->
 <script lang="ts">
 	import { onDestroy } from 'svelte';
+	import { DEFAULT_EFFECT, type EffectOptions } from '../presentation/effects';
+	import { renderPixels } from '../presentation/render';
+	import {
+		FRAME_PADDING,
+		FRAME_COLOUR,
+		type FRAMES,
+		type ArtStyle,
+		type Sampling
+	} from '../presentation/settings.svelte';
 	import { CELL_HEIGHT, CELL_WIDTH, paintCell } from './draw';
 	import { BBS_BAUD } from './time';
 	import { arrivalOrder, type TmgGrid } from './tmg';
@@ -15,6 +24,7 @@ SPDX-License-Identifier: Apache-2.0
 	const RGBA = 4;
 	const OPAQUE = 255;
 	const MAX_FIT = 2;
+	const PERCENT = 100;
 
 	let {
 		grid,
@@ -24,6 +34,12 @@ SPDX-License-Identifier: Apache-2.0
 		replay = 0,
 		baud = BBS_BAUD,
 		zoom = 0,
+		style = 'original',
+		frameStyle = 'none',
+		sampling = 'pixels',
+		effectOptions = DEFAULT_EFFECT,
+		comparing = false,
+		divider = 50, // eslint-disable-line @typescript-eslint/no-magic-numbers
 		scale = $bindable(1),
 		cell = $bindable(null)
 	}: {
@@ -35,6 +51,12 @@ SPDX-License-Identifier: Apache-2.0
 		baud?: number;
 		/** 0 fits the work to the width it is given; otherwise a whole scale (1×, 2×…). */
 		zoom?: number;
+		style?: ArtStyle;
+		frameStyle?: (typeof FRAMES)[number];
+		sampling?: Sampling;
+		effectOptions?: EffectOptions;
+		comparing?: boolean;
+		divider?: number;
 		/** The scale the work is drawn at, read by the controls. */
 		scale?: number;
 		/** The cell under the pointer, by index, or null. */
@@ -42,6 +64,7 @@ SPDX-License-Identifier: Apache-2.0
 	} = $props();
 
 	let canvas: HTMLCanvasElement | undefined = $state();
+	let original: HTMLCanvasElement | undefined = $state();
 	let room = $state(0);
 	let frame = 0;
 
@@ -49,8 +72,9 @@ SPDX-License-Identifier: Apache-2.0
 	const height = $derived(grid.rows * CELL_HEIGHT);
 	// Fitting keeps whole scales while the work fits, so pixels stay square, up to 2× (larger is the
 	// visitor's choice); below one it shrinks.
+	const available = $derived(Math.max(1, room - FRAME_PADDING[frameStyle] * 2));
 	const fit = $derived(
-		room >= width ? Math.min(MAX_FIT, Math.floor(room / width)) : room / width || 1
+		available >= width ? Math.min(MAX_FIT, Math.floor(available / width)) : available / width || 1
 	);
 	$effect(() => {
 		scale = zoom > 0 ? zoom : fit;
@@ -61,6 +85,11 @@ SPDX-License-Identifier: Apache-2.0
 		const context = target.getContext('2d');
 		if (!context) return;
 		const image = context.createImageData(width, height);
+		if (style !== 'original' || sampling === 'gaussian') {
+			image.data.set(renderPixels(grid, font, style, sampling, effectOptions));
+			context.putImageData(image, 0, 0);
+			return;
+		}
 		for (let i = RGBA - 1; i < image.data.length; i += RGBA) image.data[i] = OPAQUE;
 		const order = arrivalOrder(grid);
 		const bytesPerMs = baud / BITS_PER_BYTE / MS_PER_S;
@@ -93,6 +122,15 @@ SPDX-License-Identifier: Apache-2.0
 		start(canvas, showAll || reduced);
 	});
 
+	$effect(() => {
+		if (!original || !comparing) return;
+		const context = original.getContext('2d');
+		if (!context) return;
+		const image = context.createImageData(width, height);
+		image.data.set(renderPixels(grid, font, 'original', 'pixels'));
+		context.putImageData(image, 0, 0);
+	});
+
 	onDestroy(() => cancelAnimationFrame(frame));
 
 	function point(event: PointerEvent): void {
@@ -115,19 +153,37 @@ SPDX-License-Identifier: Apache-2.0
 </script>
 
 <div class="room" bind:clientWidth={room}>
-	<figure role="img" aria-label={label} style:width="{width * scale}px">
+	<figure
+		role="img"
+		aria-label={label}
+		style:width="{width * scale}px"
+		style:border="{FRAME_PADDING[frameStyle]}px solid {FRAME_COLOUR[frameStyle]}"
+	>
 		<canvas
 			bind:this={canvas}
 			{width}
 			{height}
 			aria-hidden="true"
-			class:smooth={scale < 1}
+			class:smooth={scale < 1 || sampling !== 'pixels'}
 			style:width="{width * scale}px"
 			style:height="{height * scale}px"
 			onpointermove={point}
 			onpointerdown={point}
 			onpointerleave={() => (cell = null)}
 		></canvas>
+		{#if comparing}
+			<div class="original" style:width="{(width * scale * divider) / PERCENT}px">
+				<canvas
+					bind:this={original}
+					{width}
+					{height}
+					aria-hidden="true"
+					class:smooth={scale < 1}
+					style:width="{width * scale}px"
+					style:height="{height * scale}px"
+				></canvas>
+			</div>
+		{/if}
 		{#if outline && scale >= 2}
 			<span
 				class="cell"
@@ -157,6 +213,13 @@ SPDX-License-Identifier: Apache-2.0
 	/* Below one pixel per pixel, averaging keeps the drawing legible; whole scales stay sharp. */
 	canvas.smooth {
 		image-rendering: auto;
+	}
+	.original {
+		position: absolute;
+		inset: 0 auto 0 0;
+		overflow: hidden;
+		pointer-events: none;
+		border-right: 1px solid var(--accent);
 	}
 	.cell {
 		position: absolute;
