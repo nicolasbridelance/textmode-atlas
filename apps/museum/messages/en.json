@@ -4,5 +4,18 @@
 	"dedication": "Dedicated to the people who made the textmode scene.",
 	"language_switch": "Language",
 	"locale_name_en": "English",
-	"locale_name_fr": "Français"
+	"locale_name_fr": "Français",
+	"work_loading": "The work is arriving…",
+	"work_missing": "This work is not in the museum, or no longer.",
+	"work_not_shown": "The museum keeps the record of this work but does not show it here.",
+	"work_unsigned": "Unsigned",
+	"work_in_pack": "in the pack {pack}, {year}",
+	"work_source": "See it on {archive}",
+	"work_withdraw": "Withdraw or claim this work",
+	"work_show_all": "Show it at once (space)",
+	"work_replay": "Replay at 2,400 baud",
+	"work_audience": "Audience",
+	"work_unreviewed": "rated by a program, not yet reviewed by a person",
+	"work_grid_link": "How the museum rates works",
+	"work_size": "{cols} × {rows} characters"
 }

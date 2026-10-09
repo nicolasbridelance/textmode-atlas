@@ -4,5 +4,18 @@
 	"dedication": "Dédié à celles et ceux qui ont fait la scène textmode.",
 	"language_switch": "Langue",
 	"locale_name_en": "English",
-	"locale_name_fr": "Français"
+	"locale_name_fr": "Français",
+	"work_loading": "L'œuvre arrive…",
+	"work_missing": "Cette œuvre n'est pas au musée, ou ne l'est plus.",
+	"work_not_shown": "Le musée garde la fiche de cette œuvre mais ne la montre pas ici.",
+	"work_unsigned": "Non signée",
+	"work_in_pack": "dans le pack {pack}, {year}",
+	"work_source": "La voir sur {archive}",
+	"work_withdraw": "Retirer ou revendiquer cette œuvre",
+	"work_show_all": "Tout afficher (espace)",
+	"work_replay": "Rejouer à 2 400 bauds",
+	"work_audience": "Public",
+	"work_unreviewed": "classée par un programme, pas encore relue par une personne",
+	"work_grid_link": "Comment le musée classe les œuvres",
+	"work_size": "{cols} × {rows} caractères"
 }

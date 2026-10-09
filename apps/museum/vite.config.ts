@@ -7,6 +7,11 @@ import { sveltekit } from '@sveltejs/kit/vite';
 // In development, `/files` is proxied to the local public bucket (Garage web endpoint), which picks
 // the bucket from the Host header. In production the same keys are served by the CDN.
 const filesOrigin = process.env.TM_PUBLIC_FILES_ORIGIN ?? 'http://localhost:3902';
+const filesProxy = {
+	target: filesOrigin,
+	rewrite: (path: string) => path.replace(/^\/files/, ''),
+	headers: { Host: 'tm-public.web.localhost' }
+};
 
 export default defineConfig({
 	plugins: [
@@ -28,15 +33,9 @@ export default defineConfig({
 			strategy: ['url', 'baseLocale']
 		})
 	],
-	server: {
-		proxy: {
-			'/files': {
-				target: filesOrigin,
-				rewrite: (path) => path.replace(/^\/files/, ''),
-				headers: { Host: 'tm-public.web.localhost' }
-			}
-		}
-	},
+	server: { proxy: { '/files': filesProxy } },
+	// `vite preview` serves the built site the same way, for screenshots and end-to-end tests.
+	preview: { proxy: { '/files': filesProxy } },
 	test: {
 		expect: { requireAssertions: true },
 		projects: [
