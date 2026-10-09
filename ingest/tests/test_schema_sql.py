@@ -175,6 +175,16 @@ def test_features_histograms_have_their_size(db: Connection) -> None:
     db.execute(sql, {**good, "v": "ok"})
 
 
+def test_text_layer_rows_and_lines_go_together(db: Connection) -> None:
+    insert_artifact(db)
+    sql = text(
+        "insert into text_layer (sha256, extractor_version, grid_sha256, line_rows, lines)"
+        " values (:s, :v, :s, cast(:rows as integer[]), cast(:lines as text[]))"
+    )
+    fails(db, "check", lambda: db.execute(sql, {"s": SHA, "v": "1", "rows": [0], "lines": []}))
+    db.execute(sql, {"s": SHA, "v": "1", "rows": [0], "lines": ["rs^mdn"]})
+
+
 def test_authentic_representation_needs_profile(db: Connection) -> None:
     insert_artifact(db)
     sql = text(

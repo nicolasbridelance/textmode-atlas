@@ -28,12 +28,11 @@ import numpy as np
 from PIL import Image
 from tm.config import settings
 from tm.storage import S3Store, grid_key, rendering_key, s3_client
-from tm_analysis.text import text_lines
 from tm_render.conservation import BitmapFont, Settings, render
 from tm_render.grid import Grid, from_parquet
 
 ROOT = Path(__file__).resolve().parents[2]
-BUILD = ROOT / "datasets" / "build" / "works" / "3"
+BUILD = ROOT / "datasets" / "build" / "works" / "4"
 FONT = ROOT / "corpus" / "fonts" / "ibm-vga-8x16.f16"
 PAGE = Path(__file__).with_name("index.html")
 HOST, PORT = "127.0.0.1", 8737
@@ -76,6 +75,10 @@ class Corpus:
         self.db.execute(f"create view features as select * from '{build / 'features.parquet'}'")
         self.db.execute(
             "create table w as select * from works left join features using (sha256, cols, rows)"
+        )
+        self.db.execute(  # the words written in the works, folded once for search (leads I2)
+            f"create table lines as select sha256, row, text, lower(text) as folded"
+            f" from '{build / 'text.parquet'}'"
         )
         cfg = settings()
         self.derived = S3Store(s3_client(), cfg.derived_bucket)
@@ -129,30 +132,22 @@ class Corpus:
         }
 
     def wall(self, query: dict[str, str]) -> dict[str, Any]:
-        where, params = ["true"], []
-        if query.get("year"):
-            where.append("year = ?")
-            params.append(int(query["year"]))
-        for field, column in (("format", "format"), ("kind", "content_kind")):
-            if query.get(field):
-                where.append(f"{column} = ?")
-                params.append(query[field])
-        if text := query.get("q", "").strip().lower():
-            where.append(
-                "(lower(coalesce(sauce_group, '')) like ? or lower(coalesce(sauce_author, ''))"
-                " like ? or lower(pack) like ? or lower(path) like ?)"
-            )
-            params.extend([f"%{text}%"] * 4)
+        where, params = _conditions(query)
+        words = query.get("words", "").strip().lower()
+        hit = (  # the first line that matches, shown on the card
+            "(select text from lines l where l.sha256 = w.sha256 and folded like ?"
+            " order by row limit 1)"
+        )
         order = ORDERS.get(query.get("order", "random"), ORDERS["random"])
         offset = max(0, int(query.get("offset", "0")))
-        condition = " and ".join(where)
-        total = self.db.cursor().execute(f"select count(*) from w where {condition}", params)
+        total = self.db.cursor().execute(f"select count(*) from w where {where}", params)
         total = total.fetchone()
         works = self.rows(
             "select sha256, pack, year, path, format, content_kind, sauce_title, sauce_author,"
-            " sauce_group, cols, rows, decoding, rendering_sha256 is not null as rendered from w"
-            f" where {condition} order by {order}, sha256 limit {PAGE_SIZE} offset {offset}",
-            params,
+            " sauce_group, cols, rows, decoding, rendering_sha256 is not null as rendered,"
+            f" {hit if words else 'null'} as hit from w"
+            f" where {where} order by {order}, sha256 limit {PAGE_SIZE} offset {offset}",
+            ([f"%{words}%"] if words else []) + params,
         )
         return {"total": total[0] if total else 0, "offset": offset, "works": works}
 
@@ -179,11 +174,10 @@ class Corpus:
         return sorted(found, key=lambda w: rank[w["sha256"]])
 
     def text(self, sha: str) -> list[dict[str, Any]] | None:
-        """The text layer of the work's grid: rows that hold words (leads I2)."""
+        """The text layer of the work's grid, as the dataset holds it: rows with words."""
         if not self.rows("select 1 from w where sha256 = ? and decoding = 'ok'", [sha]):
             return None
-        grid = from_parquet(self.derived.get(grid_key(sha, self.decoder, self.decoder_version)))
-        return [{"row": line.row, "text": line.text} for line in text_lines(grid)]
+        return self.rows("select row, text from lines where sha256 = ? order by row", [sha])
 
     def image(self, sha: str, screen: bool) -> bytes | None:
         """The stored rendering, or a preview drawn from the grid; `screen` keeps the first
@@ -218,6 +212,28 @@ class Corpus:
             grid = Grid(grid.cols, min(grid.rows, SCREEN_ROWS), cells)
         drawn = render(grid, self.font, Settings(high_bg="ice" if ice else "blink"))
         return Image.open(io.BytesIO(drawn.png))
+
+
+def _conditions(query: dict[str, str]) -> tuple[str, list[Any]]:
+    """The wall's filters as SQL conditions on `w`, with their parameters."""
+    where, params = ["true"], []
+    if query.get("year"):
+        where.append("year = ?")
+        params.append(int(query["year"]))
+    for field, column in (("format", "format"), ("kind", "content_kind")):
+        if query.get(field):
+            where.append(f"{column} = ?")
+            params.append(query[field])
+    if text := query.get("q", "").strip().lower():
+        where.append(
+            "(lower(coalesce(sauce_group, '')) like ? or lower(coalesce(sauce_author, ''))"
+            " like ? or lower(pack) like ? or lower(path) like ?)"
+        )
+        params.extend([f"%{text}%"] * 4)
+    if words := query.get("words", "").strip().lower():
+        where.append("sha256 in (select sha256 from lines where folded like ?)")
+        params.append(f"%{words}%")
+    return " and ".join(where), params
 
 
 class Handler(BaseHTTPRequestHandler):

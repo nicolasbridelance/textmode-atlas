@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 # SPDX-License-Identifier: Apache-2.0
-"""Guard for ADR 0012: the declared version of the decoder, renderer and feature extractor
+"""Guard for ADR 0012: the declared version of the decoder, the renderer and each extractor
 matches their code.
 
 When this fails after a change to the code in COVERS:
@@ -18,7 +18,7 @@ from pathlib import Path
 import pytest
 import tm_analysis
 import tm_render
-from tm_analysis.versions import FEATURES_VERSION
+from tm_analysis.versions import FEATURES_VERSION, TEXT_VERSION
 from tm_render.versions import DECODER_VERSION, RENDERER_VERSION
 
 RENDER = Path(tm_render.__file__).parent
@@ -32,8 +32,14 @@ COVERS = {
     ),
     "renderer": (RENDER / "conservation.py",),
     "features": (ANALYSIS / "features.py",),
+    "text": (ANALYSIS / "text.py",),
 }
-DECLARED = {"decoder": DECODER_VERSION, "renderer": RENDERER_VERSION, "features": FEATURES_VERSION}
+DECLARED = {
+    "decoder": DECODER_VERSION,
+    "renderer": RENDERER_VERSION,
+    "features": FEATURES_VERSION,
+    "text": TEXT_VERSION,
+}
 PINS = {
     "decoder": {
         "1": "44389ece653d37c069bc8bf98d8e4bdea16f8506ee4a5411cf83acbfbe8205eb",
@@ -43,6 +49,7 @@ PINS = {
     },
     "renderer": {"1": "acf2f900bd645c61dac80da37121cceab3abb36ae5bbbc627da178422e6d5c28"},
     "features": {"1": "6722aeabbaa4cbee87caa167ef6d32a9abb8adfea9aa36ecb889ffa357271079"},
+    "text": {"1": "0a8ac6e2384a40190cbe4b256a4a6633e76e86cb2b4976fdb2b97bf7e7f5e334"},
 }
 
 

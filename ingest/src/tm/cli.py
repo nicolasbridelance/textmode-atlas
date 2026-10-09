@@ -23,6 +23,7 @@ from tm.packs import PackIngested, ingest_pack, pack_archives
 from tm.render import pending_renderings, render_artifact
 from tm.shards import Shard
 from tm.storage import S3Store, s3_client
+from tm.text_layer import pending_text, read_artifact
 
 app = typer.Typer(help="Digital Museum of Character Arts.", no_args_is_help=True)
 corpus_app = typer.Typer(help="YAML files in corpus/: validation and schemas.")
@@ -191,6 +192,23 @@ def features_command(
             features = extract_artifact(conn, derived, row)
         typer.echo(f"{row.source_path} fill {features.fill_ratio:.2f} colours {features.n_colors}")
     typer.echo(f"{len(todo)} measured")
+
+
+@app.command("text")
+def text_command(
+    shard: Annotated[str, typer.Option(help=SHARD_HELP)] = "0/1",
+) -> None:
+    """Read the text layer of every decoded grid that has none from this extractor version yet."""
+    cfg = settings()
+    derived = S3Store(s3_client(), cfg.derived_bucket)
+    engine = create_engine(cfg.database_url)
+    with engine.connect() as conn:
+        todo = pending_text(conn, _shard(shard))
+    for row in todo:
+        with engine.begin() as conn:  # one transaction per grid
+            lines = read_artifact(conn, derived, row)
+        typer.echo(f"{row.source_path} {len(lines)} lines")
+    typer.echo(f"{len(todo)} read")
 
 
 @ingest_app.command("pack")

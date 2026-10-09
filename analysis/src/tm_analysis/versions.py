@@ -1,8 +1,9 @@
 # SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 # SPDX-License-Identifier: Apache-2.0
-"""Version of the feature extractor (ADR 0012): raise it when what `features.py` computes changes.
+"""Versions of the extractors (ADR 0012): raise one when what its module computes changes.
 
-`tests/test_versions.py` fails until you do. The `features` rows record it.
+`tests/test_versions.py` fails until you do. The `features` and `text_layer` rows record them.
 """
 
-FEATURES_VERSION = "1"
+FEATURES_VERSION = "1"  # features.py
+TEXT_VERSION = "1"  # text.py

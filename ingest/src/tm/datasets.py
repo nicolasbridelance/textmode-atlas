@@ -22,7 +22,7 @@ import pyarrow.parquet as pq
 import yaml
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import Connection, text
-from tm_analysis.versions import FEATURES_VERSION
+from tm_analysis.versions import FEATURES_VERSION, TEXT_VERSION
 from tm_render.versions import DECODER_VERSION, RENDERER_VERSION
 
 from tm.decode import DECODER
@@ -42,11 +42,13 @@ PARAMETERS = {
     "decoder_version": DECODER_VERSION,
     "renderer_version": RENDERER_VERSION,
     "features_version": FEATURES_VERSION,
+    "text_version": TEXT_VERSION,
 }
 EXTRACTORS = {
     "decoder": f"{DECODER}@{DECODER_VERSION}",
     "renderer": RENDERER_VERSION,
     "features": FEATURES_VERSION,
+    "text": TEXT_VERSION,
 }
 
 
