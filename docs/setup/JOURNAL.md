@@ -88,3 +88,12 @@
 - git push -u origin fix/windows-restoration: exit 0, native pre-push hook full-check Passed through isolated Linux just check, no bypass. Published commit 575ed35b50bdea2fb568adbe911a5833a30a551a; live git ls-remote confirmed the same hash. GitHub main remains e8f36933; no PR merge or main change.
 - Prior to push, SHA-256 comparison of all 398 tracked files against Linux snapshot found 0 mismatches. Private data and local temporary tools are ignored; no artwork/dump/secret included. Root working tree clean after four coherent commits.
 - Final documentation follow-up updates this checkpoint to the actual published state; same authorized feature branch, standard hooks retained. Remote CI status is separate from successful local checks and has not been claimed green.
+
+## EV-007
+
+2026-10-09, Europe/Paris — owner explicitly requested Wi-Fi access to the research viewer.
+
+- Read access/security modules 12/13. Kept application listener on loopback; added an elevated Windows TCP forward to the existing viewer and a firewall allow rule restricted to the Wi-Fi interface, its local address, one viewer port and LocalSubnet. No database/S3 listener, router mapping or public tunnel added.
+- Windows UAC approved the machine-local setup. Forwarding listener, enabled firewall rule and local-subnet scope inspected. Wall API, graph page and real PNG return HTTP 200 through the Wi-Fi address; phone-side connection remains for the owner to verify.
+- Sensitive machine details and reversible enable/disable scripts remain ignored in .local-wifi-*.ps1/.local-wifi-result.json. No application code changed; no new full test run warranted by the local OS configuration.
+- Confirmed .local-integrity-result.json and .local-storage-result.json are ignored and absent from tracked files; their contents were not pushed to GitHub. This evidence entry is a local documentation follow-up, not yet pushed.
