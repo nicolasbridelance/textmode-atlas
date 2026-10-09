@@ -99,6 +99,11 @@ least in English and French, and other languages are welcome. Work titles are ne
 
 ## Getting started
 
+For installation tracking and session resumption, see [METS_TOI_BIEN.md](METS_TOI_BIEN.md).
+When restoring the private migration backup on Windows, follow
+[the local restoration notes](docs/setup/LOCAL-WINDOWS.md) before running setup:
+the SQL dump must be restored before migrations.
+
 In GitHub Codespaces the development container sets everything up. Locally you need Docker,
 [`uv`](https://docs.astral.sh/uv/), [`just`](https://just.systems/) and Node 24 with `pnpm`:
 
