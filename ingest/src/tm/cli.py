@@ -17,6 +17,7 @@ from tm import corpus as corpus_mod
 from tm import ratings
 from tm.acquisitions import load_acquisitions
 from tm.audience import rate_flashing, rate_words
+from tm.budget import BudgetError, Ledger
 from tm.config import settings
 from tm.datasets import DatasetError, build, draw_sample
 from tm.decode import decode_artifact, pending_artifacts
@@ -37,10 +38,12 @@ app = typer.Typer(help="Digital Museum of Character Arts.", no_args_is_help=True
 corpus_app = typer.Typer(help="YAML files in corpus/: validation and schemas.")
 dataset_app = typer.Typer(help="Frozen extracts of the database, for research.")
 dev_app = typer.Typer(help="Local development environment.")
+budget_app = typer.Typer(help="Paid model calls: the owner's grants and what was spent.")
 ingest_app = typer.Typer(help="Bring sources into the museum.", no_args_is_help=True)
 app.add_typer(corpus_app, name="corpus")
 app.add_typer(dataset_app, name="dataset")
 app.add_typer(dev_app, name="dev")
+app.add_typer(budget_app, name="budget")
 app.add_typer(ingest_app, name="ingest")
 
 CorpusRoot = Annotated[Path, typer.Option(help="Root of the corpus/ directory.")]
@@ -408,3 +411,38 @@ def _pack_summary(item: PackIngested) -> str:
     if item.unreadable:
         parts.append(f"{len(item.unreadable)} unreadable: {', '.join(item.unreadable)}")
     return "; ".join(parts)
+
+
+def _ledger() -> Ledger:
+    return Ledger(Path(settings().model_ledger))
+
+
+@budget_app.command("status")
+def budget_status() -> None:
+    """What each scope was granted, spent and has left."""
+    ledger = _ledger()
+    if not ledger.scopes():
+        typer.echo("no grant: no paid model call is allowed")
+    for scope in ledger.scopes():
+        b = ledger.balance(scope)
+        typer.echo(
+            f"{scope}: granted ${b.granted:.2f}, spent ${b.spent:.4f},"
+            f" reserved ${b.reserved:.4f}, left ${b.left:.4f}"
+        )
+
+
+@budget_app.command("grant")
+def budget_grant(
+    scope: Annotated[str, typer.Option(help="What the money is for, e.g. spike-0005-q33")],
+    usd: Annotated[float, typer.Option(help="The most that scope may spend, in dollars")],
+    note: Annotated[str, typer.Option(help="The owner's words or decision reference")],
+    by: Annotated[str, typer.Option(help="Who authorizes")] = "owner",
+) -> None:
+    """Record the owner's authorization. Asks for confirmation on the terminal, always."""
+    typer.confirm(f"Grant ${usd:.2f} to {scope!r} as {by}?", abort=True)
+    try:
+        _ledger().grant(scope, usd, by, note)
+    except BudgetError as err:
+        typer.echo(f"✗ {err}", err=True)
+        raise typer.Exit(1) from err
+    typer.echo(f"granted ${usd:.2f} to {scope}")
