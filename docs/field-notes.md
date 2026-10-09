@@ -16,6 +16,20 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-09 — Graffiti crews released artpacks
+
+**Train writers used the art scene's format.** Of the 289 textfiles.com archives that hold files
+16colo lacks, 168 are photo packs of graffiti, 1997–2000: Die Kranken Bomber's "Hannover
+Pieces" and "KVB Metro", Writaz Express's numbered "Photo Pack #08: Route 16 Cologne-Bonn",
+The Aeroholics' "Graffiti Pack #27: Chrome Series", Freeside's compilations from Brisbane, Omen's
+"Backjumps Train Special". They are named, numbered and dated like ANSI artpacks (`wx-020.zip`,
+`ahs-0027.lzh`), and travelled through the same file areas, until textfiles filed them beside
+ACiD and iCE. Most come from Cologne and other German cities. The artpack was a distribution
+format, open to any art that a crew could digitize, not only to art made of characters.
+*Evidence: textfiles.com listing descriptions (`index.tsv`, 2026-10-09), 2,948 JPEG among the
+ingested files, [archives note](../research/exploration/archives.md). Counted by keywords in the
+descriptions, so a floor. Story: where the bitmap and the spray can met the BBS.*
+
 ## 2026-10-09 — A pack on a Swedish FTP site in 1996
 
 **ACiD's packs travelled by FTP as well as by BBS.** The archive `acid-50a.zip` that 16colo holds
@@ -31,7 +45,7 @@ second network, the Internet before the Web.*
 ## 2026-10-09 — The archives copy each other
 
 **Three archives, one lineage.** 16colo, textfiles.com's artscene and Demozoo all put the peak
-of artpacks in 1996–97 and halve by 2000. But 92% of textfiles' 3,956 artpacks have a pack of
+of artpacks in 1996–97 and halve by 2000. But 92% of textfiles' 3,989 artpacks have a pack of
 the same name in 16colo, and from 2000 on their yearly counts are nearly equal (199 and 199 in
 2000, 109 and 103 in 2004); Demozoo links a quarter of its artpacks to 16colo. The history of
 the scene's output has, so far, one witness copied three times. *Evidence: directory listings of

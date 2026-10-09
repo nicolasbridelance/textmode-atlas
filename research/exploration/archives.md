@@ -12,7 +12,8 @@ counts only: no work is examined, so the test packs are not touched. Sources and
 
 - **16colo**: packs of dataset `catalogue` v1 by the year 16colo files them under (all splits).
 - **textfiles.com**: archives listed in `artscene.textfiles.com/artpacks/<year>/` (zip, arj, lzh,
-  rar, exe, 7z), 2026-10-09.
+  rar, exe, 7z), 2026-10-09. Corrected the same day: the first count missed rows where two shared
+  a line of the listing (3,956 then, 3,989 now; `scripts/mirror_textfiles.py`).
 - **Demozoo**: productions of type Artpack (51) with a release date, in the dump of 2026-10-09
   loaded into a local `demozoo_raw` database; 11 undated artpacks left out. Also its types ANSI,
   ASCII (with ASCII Collection) and BBStro, for comparison.
@@ -30,16 +31,16 @@ counts only: no work is examined, so the test packs are not touched. Sources and
 | 1993 | 246 | 105 | 98 | 166 | 58 | 13 | 93 | 971 |
 | 1994 | 598 | 357 | 354 | 429 | 130 | 86 | 105 | 1,954 |
 | 1995 | 747 | 435 | 429 | 425 | 113 | 48 | 238 | 2,175 |
-| 1996 | 851 | 638 | 600 | 476 | 124 | 140 | 177 | 1,025 |
-| 1997 | 948 | 690 | 630 | 161 | 66 | 85 | 179 | 310 |
-| 1998 | 615 | 548 | 460 | 103 | 39 | 115 | 152 | 78 |
-| 1999 | 434 | 397 | 348 | 76 | 26 | 78 | 242 | 27 |
+| 1996 | 851 | 639 | 609 | 476 | 124 | 140 | 177 | 1,025 |
+| 1997 | 948 | 706 | 638 | 161 | 66 | 85 | 179 | 310 |
+| 1998 | 615 | 563 | 463 | 103 | 39 | 115 | 152 | 78 |
+| 1999 | 434 | 398 | 348 | 76 | 26 | 78 | 242 | 27 |
 | 2000 | 199 | 199 | 156 | 41 | 12 | 48 | 73 | 10 |
 | 2001 | 190 | 140 | 134 | 20 | 6 | 21 | 45 | 5 |
 | 2002 | 165 | 140 | 130 | 26 | 2 | 20 | 51 | 2 |
 | 2003 | 133 | 125 | 113 | 31 | 5 | 14 | 102 | 5 |
-| 2004 | 109 | 103 | 97 | 33 | 6 | 12 | 67 | 2 |
-| 2005 | 44 | 39 | 37 | 15 | 3 | 13 | 68 | 0 |
+| 2004 | 109 | 103 | 101 | 33 | 6 | 12 | 67 | 2 |
+| 2005 | 44 | 39 | 38 | 15 | 3 | 13 | 68 | 0 |
 | 2006 | 16 | 12 | 12 | 5 | 0 | 10 | 48 | 2 |
 | 2007 | 6 | 6 | 6 | 3 | 0 | 10 | 56 | 2 |
 | 2008 | 7 | 6 | 5 | 6 | 1 | 13 | 27 | 0 |
@@ -51,9 +52,9 @@ the scene's revival is recorded as single works more than as packs.
 ## What it shows
 
 1. **The peak is in 1996–97 in all three**, and all three fall by half or more between 1997 and
-   2000. By packs, 16colo's peak is 1997 (948), not 1996; textfiles' is 1997 (690); Demozoo's is
+   2000. By packs, 16colo's peak is 1997 (948), not 1996; textfiles' is 1997 (706); Demozoo's is
    1996 (476).
-2. **But the three are not independent witnesses.** 92% of textfiles' artpacks (3,625 of 3,956)
+2. **But the three are not independent witnesses.** 92% of textfiles' artpacks (3,650 of 3,989)
    have a 16colo namesake, and from 2000 the yearly counts are nearly equal (199 and 199, 109
    and 103): 16colo probably grew out of textfiles' collection, or both out of one. Demozoo links
    about a quarter of its artpacks to 16colo, and is known to have imported from it. A
@@ -66,3 +67,31 @@ the scene's revival is recorded as single works more than as packs.
 So H8 is neither supported nor refuted: the mid-90s peak appears everywhere, but "everywhere" is
 one lineage of archives. An independent witness is needed: BBS file lists of the time, magazine
 release lists, or the packs' own NFO lists of members and releases (I28).
+
+## By hash: what textfiles holds that 16colo does not (2026-10-09)
+
+`scripts/compare_archives.py` reads every archive of the textfiles mirror and compares it with
+16colo by SHA-256: the archive's own bytes, and each file inside it against every file of every
+16colo pack (all splits; hashes only, no work is read). Measured on the 1,805 archives mirrored
+by then, which include all 339 without a 16colo namesake; the archives that have a namesake are
+still being mirrored, and their line below is partial.
+
+| textfiles archives | archives | same bytes as a 16colo pack | holding files 16colo lacks | those files |
+| --- | --- | --- | --- | --- |
+| without a 16colo namesake | 344 | 46 | 276 | 4,290 |
+| with one (partial) | 1,461 | 1,403 | 13 | 54 |
+
+1. **Names undercount the overlap.** 46 archives without a namesake are byte-identical to a
+   16colo pack filed under another name, and 22 more hold only files 16colo has.
+2. **Same name, same content, other bytes.** Where names match, 1,403 archives are the same
+   bytes; most of the others are the same files in another archive (repacked, or a comment
+   added): 16colo and textfiles hold one collection, not two.
+3. **What textfiles adds is mostly photographs of graffiti.** The 289 archives that bring
+   something new hold 2,948 JPEG, 112 GIF and 44 IFF files, against 61 textmode works (37 ANSI,
+   24 ASCII). By textfiles' own descriptions, 168 of them are graffiti photo packs of 1997–2000
+   (words graffiti, train, bomb, backjump, wall, crew): Die Kranken Bomber, Writaz Express,
+   The Aeroholics, Freeside Graffiti Compilation, Omen, mostly from Cologne and other German
+   cities, numbered like art packs. 16colo, an archive of textmode, does not hold them.
+
+The 289 archives were ingested as packs (`tm ingest pack --source textfiles`); the others add no
+file, and would only duplicate a set. Of the 61 textmode works, 39 are in train packs.
