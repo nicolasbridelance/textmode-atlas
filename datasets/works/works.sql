@@ -1,9 +1,12 @@
 -- SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 -- SPDX-License-Identifier: CC0-1.0
 --
--- One row per art file of the train packs (view work_split), whatever its format and whichever
+-- One row per art file of the train split (view work_split), whatever its format and whichever
 -- scene archive holds it (ADR 0018). A file in several packs is placed in the earliest one (by
 -- year, then archive, then path); `packs` says how many hold it, `archives` in which archives.
+-- A file an archive holds loose, outside any pack (ADR 0024), has no pack: its `path` is its
+-- path on the archive's site and `packs` is 0. `system` and `charset` come from the grid's
+-- header (ADR 0026).
 -- SAUCE fields are as recorded; `sauce_problems` says when the decoder set them aside.
 --
 -- `content_kind` says what the grid holds, since the extension does not (works note): text or
@@ -25,11 +28,11 @@ with placed as (
 select
   a.sha256,
   pl.pack_sha256,
-  pl.archive,
+  coalesce(pl.archive, s.archives[1]) as archive,
   pl.pack_url,
   pl.pack,
   pl.year,
-  pl.path,
+  coalesce(pl.path, a.source_path) as path,
   s.packs,
   s.archives,
   a.format,
@@ -43,6 +46,8 @@ select
   nullif(a.sauce ->> 'font', '') as sauce_font,
   d.status as decoding,
   d.error_class as decoding_error,
+  d.system,
+  d.charset,
   d.cols,
   d.rows,
   d.sauce_problems,
@@ -59,7 +64,7 @@ select
     else case when f.n_colors > 2 then 'coloured_text' else 'text' end
   end as content_kind
 from work_split s
-join placed pl on pl.sha256 = s.sha256
+left join placed pl on pl.sha256 = s.sha256
 join artifact a on a.sha256 = s.sha256
 join version av on av.id = a.version_id
 join work aw on aw.id = av.work_id and aw.kind = 'single'

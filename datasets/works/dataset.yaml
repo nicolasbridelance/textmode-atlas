@@ -3,8 +3,8 @@
 #
 # Built by `tm dataset build works`. Datasheet: DATASHEET.md.
 name: works
-version: "5"
-description: The art files of the train packs of every scene archive, with their decoding, rendering, grid features and text layer.
+version: "6"
+description: The art files of the train split of every scene archive, in packs or held loose, with their decoding, rendering, grid features and text layer.
 
 tables:
   works:
@@ -12,12 +12,12 @@ tables:
     key: [sha256]
     columns:
       - { name: sha256, type: string, description: SHA-256 of the art file }
-      - { name: pack_sha256, type: string, description: "The earliest pack holding the file (by year, then path)" }
+      - { name: pack_sha256, type: string, description: "The earliest pack holding the file (by year, then path); null for a file held loose (ADR 0024)" }
       - { name: archive, type: string, description: "Scene archive of that pack: 16colo, textfiles" }
       - { name: pack_url, type: string, description: "Where that archive shows the pack (scene publication, ADR 0009)" }
       - { name: pack, type: string, description: "Pack name: the archive name without extension" }
       - { name: year, type: int32, description: "Year the archive files that pack under; null outside a year directory" }
-      - { name: path, type: string, description: Path inside that pack }
+      - { name: path, type: string, description: "Path inside that pack, or on the archive's site for a file held loose" }
       - { name: packs, type: int32, description: Packs holding the same file }
       - { name: archives, type: "list<string>", description: "Scene archives holding the file, in any of their packs" }
       - { name: format, type: string, description: "Art format: ansi, ascii, xbin, bin, rip…" }
@@ -31,6 +31,8 @@ tables:
       - { name: sauce_font, type: string, description: SAUCE font name }
       - { name: decoding, type: string, description: "ok or error; null for a file never decoded" }
       - { name: decoding_error, type: string, description: "Classified error, including unsupported_format" }
+      - { name: system, type: string, description: "System the grid declares (ADR 0026): pc-vga…; null without a grid" }
+      - { name: charset, type: string, description: "Character set its glyph numbers index: cp437…; null without a grid" }
       - { name: cols, type: int32, description: Grid width }
       - { name: rows, type: int32, description: Grid height (last written row + 1) }
       - { name: sauce_problems, type: "list<string>", description: "Evidence for which the decoder set the SAUCE numbers aside (ADR 0015)" }
