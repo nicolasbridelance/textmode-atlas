@@ -50,6 +50,8 @@ Rules:
 | Q27 | Why do Demozoo's artpacks fall from 476 (1996) to 161 (1997) while 16colo and textfiles stay near their peak? An import that stopped, or editors' interests? | archives note | Demozoo's added dates and editors for artpacks (dump: `added_by`, `created_at`) | open |
 | Q28 | Demozoo lists 364 ANSI productions in 1992 and 13 in 1993, and 2,175 BBStros in 1995: which collections were imported in bulk, and from where? | archives note | creation dates and links of those productions in the dump | open |
 | Q29 | Which scholarship exists on the art scene beyond Gleb J. Albert (WiderScreen 2017)? A bibliography, read at the source. | cartography, sources register | Albert's references, WiderScreen, Google Scholar, theses on BBS culture | open |
+| Q30 | How precisely can a pack be dated? textfiles' listings describe most packs with a month ("ACME Release #5 (January, 1996)"), 16colo files them by year only. | textfiles mirror (`index.tsv`) | parse the descriptions, compare with SAUCE dates and NFO dates of the same pack | open |
+| Q31 | Were the BBSes advertised in the works real and where? BBS ads give a name, a number and often a network address; FidoNet nodelists and BBS lists of the time give the same with a date. An independent witness of the scene's geography. | sources discussion, 2026-10-09 | match ad text (text layer) with textfiles.com/bbs/BBSLISTS and archived nodelists | open |
 | Q20 | How alike are the works of one pack? Do packs have a house style, a template header or footer? | explorer | within-pack distances against between-pack | open |
 
 ## Hypotheses (to pre-register before a confirmatory test)
@@ -96,6 +98,15 @@ Rules:
 | I27 | Wikidata identifiers on records of groups, tools and formats (CC0), for "see also" across languages | museum, authority control | open |
 | I28 | An independent witness of how many packs were released per year: BBS file lists, art magazines' release lists, member lists in NFOs | H8, Q21 | open |
 | I29 | Separate sampling (draw, frozen sample) from dataset building in `tm`: `tm.datasets` now does both | audit after D1 | **taken**: `tm.pilots` draws and freezes samples, `tm.datasets` builds |
+| I30 | Import textfiles' descriptions (full group name, pack title, month) as assertions on the packs, signed with their source; they name groups that 16colo files only by tag | textfiles mirror | open |
+| I31 | Extend the train/test split (`pack_split`) to packs of other archives: the hash rule does not depend on the source, but the views read 16colo only, so textfiles packs stay out of exploration | ingesting textfiles | open |
+| I32 | A sample's guard checks the frame query's text, not its rows: a change in the data under the same query (a new source, a corrected artifact) goes unnoticed. Also hash the frame's rows at draw time | ingesting textfiles, D1 | open |
+| I33 | Discmaster (discmaster.textfiles.com) indexes the files of the CD-ROMs on the Internet Archive; shareware and BBS CDs carry artpacks with the CD's release date. Search our hashes there: an independent, dated witness for Q21 and H8, and first-seen dates | sources discussion | open |
+| I34 | The Internet Archive's `cdbbsarchive` collection (BBS CD-ROM images): artpacks as BBSes held them, dated by the disc | sources discussion | open |
+| I35 | The Git history of github.com/sixteencolors/sixteencolors-archive: when each pack entered 16colo, and from where (answers part of Q26) | sources discussion | open |
+| I36 | Usenet (`usenet-alt` on the Internet Archive; alt.ascii-art, alt.binaries.* and comp.bbs.* groups): ASCII art posted with a date and a sender, and release announcements of packs | sources discussion | open |
+| I37 | Teletext Archive (teletextarchive.com): pages recovered from VHS tapes, a source for platform teletext (R6) beside teletextart.com | sources discussion | open |
+| I38 | Today's scene on social networks and its own sites (Blocktronics, Mistigris, ANSI artists on Mastodon and Bluesky): where living artists can be asked for permission and testimony | sources discussion | open |
 | I19 | D1 sampling design: strata bounded by the mass, equal (or square-root) allocation per stratum so that thin years are over-represented, and each pack's inclusion weight recorded so that statistics can be reweighted to the corpus | owner: over-represent thin years | taken (roadmap step 6) |
 | I18 | Detect the artist's handle in NFO and in-grid text and link it to SAUCE authors, with confidence | linkage R1 | open |
 
