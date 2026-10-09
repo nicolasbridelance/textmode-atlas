@@ -31,6 +31,7 @@ from PIL import Image
 from thumbnails import MODES, thumbnail  # next to this file
 from tm.config import settings
 from tm.storage import S3Store, grid_key, rendering_key, s3_client
+from tm_analysis.neighbours import PROFILE, profile
 from tm_render.conservation import BitmapFont, Settings, render
 from tm_render.grid import from_parquet
 
@@ -42,7 +43,7 @@ GRAPH_PAGE = Path(__file__).with_name("graph.html")
 GRAPH = ROOT / "datasets" / "build" / "graph" / "1"
 HOST, PORT = "127.0.0.1", 8737
 PAGE_SIZE = 120
-NEIGHBOURS = 12
+NEIGHBOURS = 10  # as the graph build (k), so that the wall and the graph agree
 SHA = re.compile(r"^[0-9a-f]{64}$")
 ORDERS = {
     "random": "hash(sha256 || 'explorer')",
@@ -59,13 +60,6 @@ ORDERS = {
     "redrawn": "overwrites::double / greatest(writes, 1) desc nulls last",
     "clears": "clears desc nulls last",
 }
-# Measures that place a work among the others (neighbours); colours enter as shares.
-PROFILE = [
-    "fill_ratio", "glyph_entropy", "class_block", "class_half_block", "class_shade", "class_box",
-    "class_alphanumeric", "class_punctuation", "class_other", "high_bg_ratio", "symmetry_h",
-    "symmetry_v", "draw_order", "center_row", "center_col",
-]  # fmt: skip
-
 log = logging.getLogger(__name__)
 
 
@@ -92,18 +86,30 @@ class Corpus:
         self._profiles()
 
     def _profiles(self) -> None:
-        """Standardized feature vectors of every measured work, for nearest neighbours."""
+        """Profiles of every measured work (`tm_analysis.neighbours`), for the wall's neighbours
+        when no graph build exists."""
         names = ", ".join(PROFILE)
         rows = self.db.execute(
             f"select sha256, {names}, fg_hist from w where fill_ratio is not null order by sha256"
         ).fetchall()
         self.order = [row[0] for row in rows]
         self.index = {sha: i for i, sha in enumerate(self.order)}
-        measures = np.array([row[1 : len(PROFILE) + 1] for row in rows], dtype=float)
-        colours = np.array([row[-1] for row in rows], dtype=float)
-        colours /= np.maximum(colours.sum(axis=1, keepdims=True), 1)
-        matrix = np.hstack([measures, colours])
-        self.matrix = (matrix - matrix.mean(axis=0)) / (matrix.std(axis=0) + 1e-9)
+        self.matrix = profile([row[1:-1] for row in rows], [row[-1] for row in rows])
+        self.nearest: dict[str, list[str]] = {}
+
+    def use_graph(self, graph: Graph) -> None:
+        """Take the neighbours of the graph build, so that the wall shows the graph's ties."""
+        self.nearest = graph.neighbours()
+
+    def _nearest(self, sha: str) -> list[str]:
+        if sha in self.nearest:
+            return self.nearest[sha]
+        if sha not in self.index:
+            return []
+        distances = np.linalg.norm(self.matrix - self.matrix[self.index[sha]], axis=1)
+        distances[self.index[sha]] = np.inf
+        closest = np.argpartition(distances, NEIGHBOURS)[:NEIGHBOURS]
+        return [self.order[i] for i in closest[np.argsort(distances[closest], kind="stable")]]
 
     def rows(self, sql: str, params: list[Any]) -> list[dict[str, Any]]:
         cursor = self.db.cursor().execute(sql, params)  # one cursor per request thread
@@ -170,10 +176,9 @@ class Corpus:
         return work
 
     def neighbours(self, sha: str) -> list[dict[str, Any]]:
-        if sha not in self.index:
+        nearest = self._nearest(sha)
+        if not nearest:
             return []
-        distances = np.linalg.norm(self.matrix - self.matrix[self.index[sha]], axis=1)
-        nearest = [self.order[i] for i in np.argsort(distances)[1 : NEIGHBOURS + 1]]
         placeholders = ", ".join("?" * len(nearest))
         found = self.rows(
             "select sha256, pack, year, path, sauce_author, sauce_group, decoding from w"
@@ -332,6 +337,8 @@ def main() -> None:
     Handler.corpus = corpus
     if Graph.exists(GRAPH):
         Handler.graph = Graph(GRAPH, BUILD)
+        Handler.graph.check(corpus.manifest)
+        corpus.use_graph(Handler.graph)
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     log.info("Corpus explorer on http://%s:%d (%s works)", HOST, PORT, len(corpus.order))
     server.serve_forever()
