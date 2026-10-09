@@ -185,6 +185,16 @@ def done_titles(path: Path) -> dict[str, set[str]]:
     return done
 
 
+def deduplicate(path: Path) -> None:
+    """Keep the last copy of each article: a resumed run fetches again the titles a redirect
+    renamed, since language links name the redirect and the API returns the target."""
+    kept: dict[tuple[str, str], str] = {}
+    for line in path.read_text(encoding="utf-8").splitlines(keepends=True):
+        page = json.loads(line)
+        kept[(page["lang"], page["title"])] = line
+    path.write_text("".join(kept.values()), encoding="utf-8")
+
+
 def append(path: Path, rows: Iterator[dict[str, Any]]) -> int:
     count = 0
     with path.open("a", encoding="utf-8") as out:
@@ -216,6 +226,7 @@ def main() -> None:
             )
         except (OSError, ValueError, RuntimeError) as err:  # one language fails, not the rest
             print(f"{lang}: failed, {err}")
+    deduplicate(pages)
     qids = sorted({json.loads(line)["qid"] for line in pages.open(encoding="utf-8")} - {None})
     (root / "wikidata.jsonl").unlink(missing_ok=True)  # rewritten whole: items change
     count = append(root / "wikidata.jsonl", entities(client, qids))
