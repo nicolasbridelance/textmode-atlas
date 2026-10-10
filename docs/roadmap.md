@@ -41,7 +41,7 @@ Discovery by chance, owner's request of 2026-10-10 (leads I69–I73, Q38):
 - [ ] Random walks on the constellation, replayable (I71)
 - [ ] Famous works: a fame score with its witnesses, signed `algo:` (Q38; ADR first)
 - [ ] Local Wikipedia pages beside groups and artists (I72)
-- [ ] A live EDA read from PostgreSQL through the API (I73; ADR first)
+- [x] A live EDA read from PostgreSQL through the API (I73, [ADR 0028](adr/0028-a-live-exploration-of-the-database.md)): `/corpus`, five chapters with re-checked readings
 
 Local operation and remaining deployment limits: [unified museum](unified-museum.md).
 

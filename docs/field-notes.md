@@ -16,6 +16,36 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-10 — Who wrote SAUCE, and what came back after 2013
+
+**SAUCE arrived pack by pack, and group by group.** In 1994, the year SAUCE appears, packs are
+all or nothing: of 480 packs with five ANSI files or more, 297 have no SAUCE record at all and
+134 have it on 80% of their files or more; 15 sit in between. It was not the packager stamping
+everything at once: a fully stamped pack holds about 10 different SAUCE dates for 26 files, and
+only 7% of those packs carry a single date. Grouping packs by the prefix of their name, a pack
+makes its group's choice 83% of the time, against 72% when choices are shuffled across groups
+(no shuffle in 2,000 reaches it). ACiD's packs (`acdu…`), the group that proposed SAUCE, carry
+it in 13 of 16; iCE's (`ice…`), its rival, in 1 of 21 that year, and half in 1995. A standard
+spread through groups, and a rival held out for a year. Caveats: name prefixes stand for
+groups; a pack is "with SAUCE" when most of its ANSI files are. *Evidence: live exploration
+`/corpus`, chapter 3 (`tm eda`), PostgreSQL 2026-10-10; leads H9, I74. Story: the record that
+lets the museum credit a work was itself a matter of group politics.*
+
+**SAUCE nearly vanished between 2005 and 2012.** Its share of ANSI files falls from 82% (1996)
+to 1% (2006), then climbs back above 90% from 2015. The quiet years are also the years without
+the record. *Evidence: same chapter. Lead: the tools of each period (I75).*
+
+**The revival drew taller and brighter.** In the training packs, the median work is 24–25 rows
+high in every era up to 2004 (one screen) and 50 rows since 2013; works using bright
+backgrounds on more than 5% of their ink go from 0.3% at most to 9.6%. *Evidence: same page,
+chapter 5. Coverage: train packs; tools not yet ruled out (rule 6).*
+
+**The shades did not go away; the text came in.** From 1994–95 to 2000–04 the mean share of
+shade characters over ANSI files falls by 9.5 points; 5.9 of them come from the mix of works
+(coloured block art falls from 88% to 64% of ANSI files) and 3.7 from inside the kinds. A
+caution for any trend drawn over all files. *Evidence: same page, chapter 4 (Kitagawa
+decomposition, train packs); works note, constraint 1.*
+
 ## 2026-10-09 — Another scene, the same peak; teletext inside a PC pack
 
 **The colly scene peaks when the ANSI scene does.** aSCIIaRENA, the archive of ASCII
