@@ -180,6 +180,8 @@ Rules:
 | I94 | Loose text files found here and there (personal sites, FTP listings, Discmaster) for practices no archive keeps: each gets its basis, most will be records | owner, 2026-10-10 (ADR 0031) | open |
 | I95 | `record` and `reproduction` holdings need the schema to hold a work with no file, or with a link and a description only (ADR 0031): a migration with the first record | ADR 0031 | open |
 | I96 | `tm acquire` drops a URL's query: the Befunge page is stored at `w/index.php`, format `php`. Keep the query in the path and take the format from the content type when the path has no extension | first acquisition run | open |
+| I97 | A reader of ARJ on Windows: no build exists (2005 GPL sources only) and 7-Zip reads 1 of the corpus's 8 ARJ archives (ADR 0013). Ways: cross-compile `arj` for Windows in the Linux container (a time-boxed spike), or a reader in Python (methods 1-4: LZ77 with Huffman coding, like LHA's), tested against `arj` on the 8 archives | owner, 2026-10-10 ("trouver une alternative soit corriger le problème") | open; the test is skipped without `arj` meanwhile |
+| I98 | Practices the owner added on 2026-10-10: loading screens (C64 and Spectrum loaders, DOS game loaders), web error pages (404 and others, often drawn in ASCII), art left in browser consoles and page sources, character displays (split-flap boards, LED and flip-dot signs), receipt-printer art, calculator spelling. First sources: Demozoo and CSDb for loaders, the Wayback Machine for 404 pages, Commons for displays and calculators | owner, 2026-10-10 | open; in the registry |
 
 ## Curiosities
 
