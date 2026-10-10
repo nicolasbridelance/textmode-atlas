@@ -28,6 +28,13 @@ is a compatibility alias. The existing machine-local Wi-Fi forwarding still work
   one decoded work whose files may be shown, within the current filters.
 - `/fr/constellation` and `/constellation`: the scientific graph, its communities,
   neighbourhoods and existing interactive views. Selecting a work opens the shared screen.
+- `/fr/corpus` and `/corpus`: the corpus, explored ([ADR 0028](adr/0028-a-live-exploration-of-the-database.md)).
+  A path of questions read from the live PostgreSQL database by `tm.eda`, served at
+  `/api/eda` and printed by `tm eda`. Each chapter has figures, dated readings and checks;
+  the host recomputes everything when the database's write counter moves (looked at every
+  30 s), and the page says beside a reading when its check no longer holds. Catalogue
+  metadata over every pack, grid measures over train packs only, hidden works counted
+  nowhere. The first computation takes 10–30 s after the host starts.
 - `/fr/research` and `/research`: existing dated reports and research programme.
   Source documents retain their original language and dataset scope.
 - `/fr/work?w=<sha256>` and its English equivalent: conservation, credit, audience,

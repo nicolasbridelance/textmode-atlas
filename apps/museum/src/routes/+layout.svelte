@@ -68,6 +68,10 @@ SPDX-License-Identifier: Apache-2.0
 			>{m.atlas_collection()}</a
 		>
 		<a href={localizeHref('/constellation')}>{m.atlas_constellation()}</a>
+		<a
+			href={localizeHref('/corpus')}
+			aria-current={page.url.pathname.endsWith('/corpus') ? 'page' : undefined}>{m.nav_corpus()}</a
+		>
 		<a href={localizeHref('/research')}>{m.atlas_research()}</a>
 	</nav>
 	<label class="theme"
