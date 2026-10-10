@@ -6,7 +6,8 @@ ingestion made works of them.
 Each such artifact with no work gets a `single` work, with the rights and dating of the pack it
 was first met in (the one its source path names), or, loose, of its archive at its URL and its
 SAUCE date: what `tm ingest pack` and `tm ingest files` give the art beside it. A file whose bytes
-are binary stays an artifact. The original is read, never written. Run twice, the second run
+are binary stays an artifact, and one whose original is not in the store waits for a later run
+(`tm ingest restore`). The original is read, never written. Run twice, the second run
 changes nothing.
 """
 
@@ -21,7 +22,7 @@ from sqlalchemy import Connection, Row, text
 from tm.packs import DOCUMENTS, is_document
 from tm.records import Dating, insert_work, parse_sauce_date
 from tm.rights import Rights, ScenePublication
-from tm.storage import ObjectStore, get_original
+from tm.storage import ObjectStore, get_original, original_key
 
 FORMATS = sorted(set(DOCUMENTS.values()))
 
@@ -52,6 +53,7 @@ class Promoted:
     sha256: str
     source_path: str
     work: bool
+    held: bool = True  # False: the original is not in the store yet
 
 
 def promote_documents(conn: Connection, originals: ObjectStore) -> list[Promoted]:
@@ -62,6 +64,8 @@ def promote_documents(conn: Connection, originals: ObjectStore) -> list[Promoted
 
 def _promote(conn: Connection, originals: ObjectStore, row: Row[Any]) -> Promoted:
     name = PurePosixPath(row.source_path).name
+    if not originals.exists(original_key(row.sha256)):
+        return Promoted(row.sha256, row.source_path, work=False, held=False)
     if not is_document(name, get_original(originals, row.sha256)):
         return Promoted(row.sha256, row.source_path, work=False)
     version_id = insert_work(

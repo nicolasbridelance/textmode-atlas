@@ -503,8 +503,10 @@ def ingest_documents_command() -> None:
     with create_engine(cfg.database_url).begin() as conn:
         promoted = promote_documents(conn, store)
     works = sum(p.work for p in promoted)
+    waiting = sum(not p.held for p in promoted)
     typer.echo(
-        f"{len(promoted)} texts without a work: {works} works, {len(promoted) - works} binary"
+        f"{len(promoted)} texts without a work: {works} works,"
+        f" {len(promoted) - works - waiting} binary, {waiting} without their original"
     )
 
 
