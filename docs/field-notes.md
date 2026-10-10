@@ -16,6 +16,16 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-10 — The Minitel survives in hobbyists' repositories
+
+**The Minitel's pages live on as byte streams kept by those who still run servers.** No archive
+holds Minitel pages in bulk, but Christian Quest's pynitel, a library to write Minitel servers,
+ships the screens of the 3611 electronic directory and of 3615 ULLA (a messagerie rose) as
+videotex files: the escape codes the terminal received, 40 columns, mosaic graphics, double
+height. The museum's first Minitel page comes from there. *Evidence: github.com/cquest/pynitel,
+`ecrans/`, commit 0aa82435; `E.ANNUAIRE.vtx` acquired. Coverage: one repository; who first
+transcribed the pages, and from what, is to ask.*
+
 ## 2026-10-10 — Before the screen, the printer; a party for one character set
 
 **Computer labs printed posters on line printers, darkened by striking twice.** The DECUS
