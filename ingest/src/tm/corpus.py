@@ -1,8 +1,8 @@
 # SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 # SPDX-License-Identifier: Apache-2.0
 """Models for the YAML files in `corpus/`: rendering profiles, collections, radios, the
-audience grid, and the registries a grid's header names (ADR 0026): character systems,
-character sets, palettes.
+audience grid, the registry of practices (ADR 0031), and the registries a grid's header names
+(ADR 0026): character systems, character sets, palettes.
 
 Pydantic models are the source of truth. The JSON Schemas in `corpus/schema/` are derived from
 them by `tm corpus schema`; CI checks that they are current and that every YAML file conforms.
@@ -244,6 +244,68 @@ class Grid(BaseModel):
         return self
 
 
+Holding = Literal["file", "capture", "reproduction", "record"]
+LeadId = Annotated[str, Field(pattern=r"^[QHIC]\d+$")]
+
+
+class Family(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    code: Slug
+    label: LocalizedText
+
+
+class Representative(BaseModel):
+    """The artifact that stands for a practice in the holdings: its bytes, and `<source>:<path>`
+    where it came from."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    sha256: Sha256
+    path: Annotated[str, Field(pattern=r"^[a-z0-9.]+:\S.*$")]
+
+
+class Practice(BaseModel):
+    """One character art, held or not (ADR 0031)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    code: Slug
+    label: LocalizedText
+    family: Slug
+    holding: list[Holding] = Field(min_length=1)
+    representative: Representative | None = None
+    sources: list[str] = []
+    leads: list[LeadId] = []
+    note: str | None = None
+
+
+class Practices(BaseModel):
+    """The registry of practices: what the museum of the character arts covers, and its gaps."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    version: Annotated[int, Field(ge=1)]
+    families: list[Family] = Field(min_length=1)
+    practices: list[Practice] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _consistent(self) -> Practices:
+        families = [family.code for family in self.families]
+        codes = [practice.code for practice in self.practices]
+        for name, values in (("family", families), ("practice", codes)):
+            twice = sorted({v for v in values if values.count(v) > 1})
+            if twice:
+                raise ValueError(f"{name} codes must be unique: {', '.join(twice)}")
+        unknown = sorted({p.family for p in self.practices} - set(families))
+        if unknown:
+            raise ValueError(f"unknown families: {', '.join(unknown)}")
+        return self
+
+    def held(self) -> list[Practice]:
+        return [practice for practice in self.practices if practice.representative]
+
+
 KINDS: dict[str, type[BaseModel]] = {
     "system": CharacterSystem,
     "charset": Charset,
@@ -252,6 +314,7 @@ KINDS: dict[str, type[BaseModel]] = {
     "collection": Collection,
     "radios": Radios,
     "grid": Grid,
+    "practices": Practices,
 }
 
 
@@ -261,6 +324,8 @@ REGISTRIES = {"systems": "system", "charsets": "charset", "palettes": "palette"}
 def kind_of(path: Path) -> str:
     if path.name == "radios.yaml":
         return "radios"
+    if path.name == "practices.yaml":
+        return "practices"
     if path.parent.name in REGISTRIES:
         return REGISTRIES[path.parent.name]
     if path.parent.name == "profiles":
@@ -281,10 +346,14 @@ def load_grid(path: Path) -> Grid:
     return Grid.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))
 
 
+def load_practices(path: Path) -> Practices:
+    return Practices.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))
+
+
 def corpus_files(root: Path) -> list[Path]:
     folders = ["profiles", "collections", *REGISTRIES]
     files = sorted(path for folder in folders for path in root.glob(f"{folder}/*.yaml"))
-    extra = [root / "radios.yaml", root / "ratings" / "grid.yaml"]
+    extra = [root / "radios.yaml", root / "practices.yaml", root / "ratings" / "grid.yaml"]
     return files + [path for path in extra if path.exists()]
 
 

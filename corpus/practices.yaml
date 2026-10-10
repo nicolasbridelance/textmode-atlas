@@ -1,0 +1,543 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+#
+# The practices of the character arts, held or not (ADR 0031). A practice is held when a
+# representative is named: an artifact of the holdings, by SHA-256 and path at its source.
+# Holding: file (digital original), capture (screen read from a running program, with its
+# recipe), reproduction (scan or photograph of a physical object), record (description and
+# link only). Sources name entries of docs/sources/README.md or candidates to check there.
+version: 1
+
+families:
+  - code: scene
+    label: { en: "Computer art scenes", fr: "Scènes de l'art informatique" }
+  - code: home-computers
+    label: { en: "Home computers and their character sets", fr: "Micro-ordinateurs et leurs jeux de caractères" }
+  - code: networks
+    label: { en: "Networks and messages", fr: "Réseaux et messages" }
+  - code: broadcast
+    label: { en: "Broadcast and videotex", fr: "Télédiffusion et vidéotex" }
+  - code: machines
+    label: { en: "Teleprinters, printers and typewriters", fr: "Téléscripteurs, imprimantes et machines à écrire" }
+  - code: unicode
+    label: { en: "Unicode and non-Latin scripts", fr: "Unicode et écritures non latines" }
+  - code: moving
+    label: { en: "Animation and demos in text", fr: "Animation et démos en texte" }
+  - code: games
+    label: { en: "Games of characters", fr: "Jeux de caractères" }
+  - code: screens
+    label: { en: "Screens of systems and programs", fr: "Écrans des systèmes et des programmes" }
+  - code: documents
+    label: { en: "Documents in text mode", fr: "Documents en mode texte" }
+  - code: code
+    label: { en: "Code as image", fr: "Le code comme image" }
+  - code: type
+    label: { en: "Character fonts", fr: "Polices de caractères" }
+  - code: sound
+    label: { en: "Characters and sound", fr: "Caractères et son" }
+  - code: poetry
+    label: { en: "Visual poetry and the written image", fr: "Poésie visuelle et image écrite" }
+  - code: ancestors
+    label: { en: "Ancestors of the grid", fr: "Ancêtres de la grille" }
+
+practices:
+  # --- scene ---------------------------------------------------------------------------------
+  - code: ansi-art
+    label: { en: "ANSI art", fr: "Art ANSI" }
+    family: scene
+    holding: [file]
+    representative: { sha256: a5872317c1aa07d852da25fc5a505c3ec8dfb5d2a3681281ef9b44dfb64907bd, path: 16colo:1996/acid-50a.zip/ANS-50A.ANS }
+    sources: [16colo, textfiles]
+  - code: scene-ascii
+    label: { en: "Scene ASCII (oldskool and newskool)", fr: "ASCII de la scène (oldskool et newskool)" }
+    family: scene
+    holding: [file]
+    representative: { sha256: fb297190b60e0831b0a7bc777c4743d42fcb94abd2eebd0b187a87bd55c35d08, path: 16colo:1996/0196ciph.zip/OF-BV.ASC }
+    sources: [16colo, textfiles ascii/, asciiarena]
+  - code: amiga-ascii
+    label: { en: "Amiga ASCII (Topaz font)", fr: "ASCII Amiga (police Topaz)" }
+    family: scene
+    holding: [file]
+    representative: { sha256: 9cb1a5ec8ab47b8b20cdc93a42c244a3f308a5796658f737d294dde551ad0cd1, path: 16colo:2013/blocktronics_acid_trip.zip/skin-blocktronicsacidtrip.ASC }
+    sources: [16colo, asciiarena, amigascne mirror on scene.org]
+    note: A modern work declaring Topaz; an Amiga-era collection is still to find.
+  - code: nfo
+    label: { en: "NFO files", fr: "Fichiers NFO" }
+    family: scene
+    holding: [file]
+    representative: { sha256: d7e783ee73e1439e63ca90e9111e395e680b5899e81d5661478e1161a26c0d73, path: 16colo:1996/acid-50a.zip/ACID-50.NFO }
+    sources: [16colo, textfiles piracy/NFO, Defacto2]
+  - code: file-id-diz
+    label: { en: "FILE_ID.DIZ descriptions", fr: "Descriptions FILE_ID.DIZ" }
+    family: scene
+    holding: [file]
+    representative: { sha256: 74285572002955372aa951a3be2a3f9de0c719a1c69060f60d524404bbebc83c, path: 16colo:1996/acid-50a.zip/FILE_ID.DIZ }
+    sources: [16colo]
+  - code: xbin-art
+    label: { en: "XBIN art with its own font and palette", fr: "Art XBIN avec police et palette propres" }
+    family: scene
+    holding: [file]
+    representative: { sha256: 7a380c8b4e4bd7e57c5d792dfedc12f66fae1f7a65bd65a24f6c049b4d14fdd1, path: 16colo:1996/acdu0896.zip/CT-XBIN.XB }
+    sources: [16colo]
+  - code: bbs-screens
+    label: { en: "BBS screens (logins, menus, adverts)", fr: "Écrans de BBS (connexion, menus, publicités)" }
+    family: scene
+    holding: [file]
+    representative: { sha256: c4c726a64a2ce37d063eb903fb206306e407ba4c171b094190dc6541ba176dcd, path: textfiles:ansi/bbs/1014.ans }
+    sources: [textfiles ansi/, 16colo]
+  - code: pcboard-avatar
+    label: { en: "PCBoard and Avatar colour codes", fr: "Codes couleur PCBoard et Avatar" }
+    family: scene
+    holding: [file]
+    representative: { sha256: 697751f5998fd0b3012783ad91fd0679c3babdc44734bb9c5cbd254e501a63cc, path: 16colo:1994/vpi-0894.zip/FILE_ID.PCB }
+    sources: [16colo]
+  - code: ripscrip
+    label: { en: "RIPscrip vector BBS graphics", fr: "Graphismes vectoriels RIPscrip des BBS" }
+    family: scene
+    holding: [file]
+    representative: { sha256: 1e726e1fe35519dcd64c8dcc91512626a7e47a05fa0062007a73928a06ddf8e3, path: 16colo:1993/acdu0993.zip/RN-ACID1.RIP }
+    sources: [16colo]
+  - code: warez-documents
+    label: { en: "Warez scene texts (applications, courier lists, cracking)", fr: "Textes de la scène warez (candidatures, listes de courriers, crack)" }
+    family: scene
+    holding: [file]
+    sources: [textfiles piracy/, Defacto2]
+    leads: [Q40, I84]
+  - code: cracktros
+    label: { en: "Cracktros and BBStros", fr: "Cracktros et BBStros" }
+    family: scene
+    holding: [capture, record]
+    sources: [Defacto2, Demozoo, Pouët]
+    note: Programs; held as captures, only when a scene archive holds them on their own (ADR 0030).
+  - code: latin-american-bbs
+    label: { en: "Latin American BBS art", fr: "Art des BBS d'Amérique latine" }
+    family: scene
+    holding: [file]
+    representative: { sha256: 124d6c503b214192e20ca9f69fafed50af3844e2175ad0c230f7858453edb6bd, path: 16colo:1997/maiden14.rar/5D-AHL.ANS }
+    sources: [16colo]
+    leads: [C10]
+  - code: cyrillic-pseudographics
+    label: { en: "Cyrillic pseudographics and FidoNet", fr: "Pseudographie cyrillique et FidoNet" }
+    family: scene
+    holding: [file]
+    sources: [no source identified]
+    leads: [I83]
+  - code: modern-ansi
+    label: { en: "Contemporary ANSI and textmode art", fr: "ANSI et art en mode texte contemporains" }
+    family: scene
+    holding: [file]
+    representative: { sha256: e4d72580df042eabc904d6168a99e3c7fce8be37a987b596b2e6e76d88640b82, path: 16colo:2013/BLOCKTRONICS_16COLORS.zip/avg-16c.ans }
+    sources: [16colo, Blocktronics, Mistigris]
+
+  # --- home computers ------------------------------------------------------------------------
+  - code: petscii
+    label: { en: "PETSCII (Commodore)", fr: "PETSCII (Commodore)" }
+    family: home-computers
+    holding: [file]
+    sources: [scene.org compos, CSDb]
+  - code: atascii
+    label: { en: "ATASCII (Atari 8-bit)", fr: "ATASCII (Atari 8 bits)" }
+    family: home-computers
+    holding: [file]
+    sources: [scene.org compos, Atarimania]
+  - code: zx-spectrum
+    label: { en: "ZX81 and ZX Spectrum block graphics", fr: "Graphismes en blocs du ZX81 et du ZX Spectrum" }
+    family: home-computers
+    holding: [file]
+    sources: [ZXArt]
+  - code: bbc-mode7
+    label: { en: "BBC Micro Mode 7", fr: "Mode 7 du BBC Micro" }
+    family: home-computers
+    holding: [file]
+    sources: [edit.tf, scene.org compos]
+  - code: trs80-semigraphics
+    label: { en: "TRS-80 and early semigraphics", fr: "TRS-80 et premiers semi-graphiques" }
+    family: home-computers
+    holding: [file, capture]
+    sources: [to find]
+  - code: apple-ii-text
+    label: { en: "Apple II text and lo-res art", fr: "Art en texte et basse résolution de l'Apple II" }
+    family: home-computers
+    holding: [file, capture]
+    sources: [textfiles apple/]
+  - code: msx-cpc
+    label: { en: "MSX, Amstrad CPC and other 8-bit character art", fr: "Art en caractères du MSX, de l'Amstrad CPC et des autres 8 bits" }
+    family: home-computers
+    holding: [file]
+    sources: [Demozoo links, scene.org]
+  - code: pc98-art
+    label: { en: "NEC PC-98 text art", fr: "Art en texte du NEC PC-98" }
+    family: home-computers
+    holding: [file]
+    sources: [to find]
+  - code: amiga-ansi
+    label: { en: "Amiga ANSI and BBS screens", fr: "ANSI et écrans de BBS Amiga" }
+    family: home-computers
+    holding: [file]
+    sources: [amigascne mirror on scene.org, Aminet]
+
+  # --- networks ------------------------------------------------------------------------------
+  - code: usenet-ascii
+    label: { en: "Usenet ASCII art", fr: "Art ASCII d'Usenet" }
+    family: networks
+    holding: [file]
+    sources: [Internet Archive Giganews mbox, asciiart.eu Usenet archive]
+  - code: signatures
+    label: { en: "Email and Usenet signatures", fr: "Signatures de courriel et d'Usenet" }
+    family: networks
+    holding: [file]
+    sources: [Usenet archives]
+  - code: irc-art
+    label: { en: "IRC art (mIRC colour codes)", fr: "Art IRC (codes couleur mIRC)" }
+    family: networks
+    holding: [file]
+    sources: [to find]
+    leads: [I82]
+  - code: bbs-ascii
+    label: { en: "ASCII from BBSes and early Internet", fr: "ASCII des BBS et des débuts d'Internet" }
+    family: networks
+    holding: [file]
+    representative: { sha256: 5d7856f2ab3d1717ff33e471aea23bbd05590f2279d2c44221a5ad4b7d1e130c, path: textfiles:asciiart/LOGOS/afl1.txt }
+    sources: [textfiles asciiart/]
+  - code: web-ascii
+    label: { en: "ASCII art of the web (galleries, HTML comments)", fr: "Art ASCII du web (galeries, commentaires HTML)" }
+    family: networks
+    holding: [file]
+    sources: [chris.com via the Wayback Machine, asciiart.eu]
+  - code: gopher
+    label: { en: "Gopher holes and their menus", fr: "Trous Gopher et leurs menus" }
+    family: networks
+    holding: [file, capture]
+    sources: [to find]
+  - code: sms-art
+    label: { en: "SMS and pager art", fr: "Art SMS et pager" }
+    family: networks
+    holding: [file, record]
+    sources: [to find]
+  - code: social-media-text-art
+    label: { en: "Text art and bots of social networks", fr: "Art textuel et bots des réseaux sociaux" }
+    family: networks
+    holding: [file, record]
+    sources: [to find]
+
+  # --- broadcast -----------------------------------------------------------------------------
+  - code: teletext
+    label: { en: "Teletext art", fr: "Art télétexte" }
+    family: broadcast
+    holding: [file]
+    representative: { sha256: d2292a9ea6aa168c4c559a275bb42a4645bb3528b42dffde90f6dac6a54d05d0, path: 16colo:2016/mist1116.zip/ILLARTERATE-MISTFAX16.TTI }
+    sources: [16colo mist1116, edit.tf, teletextart.co.uk, broadcast recoveries]
+    leads: [I68]
+  - code: minitel
+    label: { en: "Minitel pages", fr: "Pages Minitel" }
+    family: broadcast
+    holding: [file, capture]
+    sources: [awesome-minitel, 3615 IUT Auxerre mirror, goto10]
+    leads: [I57, Q34]
+  - code: prestel-btx
+    label: { en: "Prestel, Bildschirmtext and European videotex", fr: "Prestel, Bildschirmtext et vidéotex européen" }
+    family: broadcast
+    holding: [file, reproduction]
+    sources: [archive.org captures]
+    leads: [I57]
+  - code: naplps-telidon
+    label: { en: "Telidon and NAPLPS", fr: "Telidon et NAPLPS" }
+    family: broadcast
+    holding: [file, reproduction]
+    sources: [to find]
+  - code: captain
+    label: { en: "CAPTAIN (Japan)", fr: "CAPTAIN (Japon)" }
+    family: broadcast
+    holding: [reproduction, record]
+    sources: [to find]
+  - code: closed-captions
+    label: { en: "Closed captions as a character grid", fr: "Sous-titres codés comme grille de caractères" }
+    family: broadcast
+    holding: [file, capture]
+    sources: [to find]
+
+  # --- machines ------------------------------------------------------------------------------
+  - code: rtty-art
+    label: { en: "RTTY art", fr: "Art RTTY" }
+    family: machines
+    holding: [file]
+    representative: { sha256: b5365f62fe74a820c591723e712dc91a24de042ea9ecefadb15a6b2ef37c3214, path: textfiles:rtty/COLLECTION/ARTWORK-01/000 }
+    sources: [textfiles rtty/, rtty.com]
+    leads: [I54]
+  - code: line-printer-art
+    label: { en: "Line printer art and early computer art", fr: "Art sur imprimante ligne et premier art informatique" }
+    family: machines
+    holding: [reproduction, file, record]
+    sources: [to find]
+  - code: banners
+    label: { en: "Printed banners (banner, line printer calendars)", fr: "Bannières imprimées (banner, calendriers d'imprimante)" }
+    family: machines
+    holding: [file, reproduction]
+    sources: [Unix sources, to find]
+  - code: typewriter-art
+    label: { en: "Typewriter art", fr: "Art de la machine à écrire" }
+    family: machines
+    holding: [reproduction, record]
+    sources: [Sackner Archive, public domain scans]
+
+  # --- unicode and scripts -------------------------------------------------------------------
+  - code: shift-jis-art
+    label: { en: "Shift_JIS art (AA)", fr: "Art Shift_JIS (AA)" }
+    family: unicode
+    holding: [file]
+    sources: [no source identified]
+  - code: kaomoji
+    label: { en: "Kaomoji", fr: "Kaomoji" }
+    family: unicode
+    holding: [file, record]
+    sources: [to find]
+  - code: emoticons
+    label: { en: "Emoticons", fr: "Émoticônes" }
+    family: unicode
+    holding: [file, record]
+    sources: [Fahlman's 1982 message, to find]
+  - code: cjk-bbs-art
+    label: { en: "Taiwanese and Korean BBS art (double-width cells)", fr: "Art des BBS taïwanais et coréens (cellules doubles)" }
+    family: unicode
+    holding: [file, capture]
+    sources: [PTT, to find]
+  - code: braille-art
+    label: { en: "Braille pattern art", fr: "Art en motifs braille" }
+    family: unicode
+    holding: [file]
+    sources: [to find]
+  - code: unicode-block-art
+    label: { en: "Unicode block and half-block art", fr: "Art en blocs et demi-blocs Unicode" }
+    family: unicode
+    holding: [file]
+    sources: [to find]
+  - code: emoji-art
+    label: { en: "Emoji art", fr: "Art en émojis" }
+    family: unicode
+    holding: [file, record]
+    sources: [to find]
+
+  # --- moving --------------------------------------------------------------------------------
+  - code: ansimation
+    label: { en: "ANSImation", fr: "ANSImation" }
+    family: moving
+    holding: [file]
+    representative: { sha256: 60c32391692c8a2c688cb5836983009f26c568310d7008b0b707053df0f330d6, path: 16colo:1996/fus-0196.zip/EXO-ANIM.FUS }
+    sources: [16colo]
+    note: 11,050 of its 13,049 writes overwrite a cell (decoder v3).
+  - code: vt100-animation
+    label: { en: "VT100 animation", fr: "Animation VT100" }
+    family: moving
+    holding: [file]
+    representative: { sha256: d9eb1727edfe5e80cf7f11c91892060e01d287c13b1acfee092e84c17d4a4374, path: textfiles:vt100/bambi_godzila }
+    sources: [textfiles vt100/]
+  - code: ascii-movies
+    label: { en: "ASCII movies (ASCIImation)", fr: "Films ASCII (ASCIImation)" }
+    family: moving
+    holding: [file, capture]
+    sources: [to find]
+  - code: textmode-demos
+    label: { en: "Textmode demos (TMDC)", fr: "Démos en mode texte (TMDC)" }
+    family: moving
+    holding: [capture, record]
+    sources: [Demozoo, Pouët, scene.org]
+  - code: sizecoding
+    label: { en: "Sizecoding in text mode", fr: "Sizecoding en mode texte" }
+    family: moving
+    holding: [capture, record]
+    sources: [Demozoo, Pouët]
+
+  # --- games ---------------------------------------------------------------------------------
+  - code: roguelikes
+    label: { en: "Roguelikes", fr: "Roguelikes" }
+    family: games
+    holding: [capture, file]
+    sources: [NetHack and other free sources]
+  - code: zzt
+    label: { en: "ZZT and MegaZeux worlds", fr: "Mondes ZZT et MegaZeux" }
+    family: games
+    holding: [file]
+    sources: [Museum of ZZT]
+    leads: [I88]
+  - code: muds
+    label: { en: "MUDs and their maps", fr: "MUD et leurs cartes" }
+    family: games
+    holding: [capture, file]
+    sources: [to find]
+  - code: door-games
+    label: { en: "BBS door games", fr: "Jeux de porte des BBS" }
+    family: games
+    holding: [capture, file]
+    sources: [shareware CDs]
+  - code: interactive-fiction
+    label: { en: "Interactive fiction", fr: "Fiction interactive" }
+    family: games
+    holding: [file, capture]
+    sources: [IF Archive, IFDB]
+  - code: text-mode-games
+    label: { en: "Other text-mode games", fr: "Autres jeux en mode texte" }
+    family: games
+    holding: [capture, record]
+    sources: [shareware CDs, Discmaster]
+
+  # --- screens -------------------------------------------------------------------------------
+  - code: os-screens
+    label: { en: "Operating system screens (prompts, setup, BIOS)", fr: "Écrans des systèmes (invites, installation, BIOS)" }
+    family: screens
+    holding: [capture, record]
+    sources: [captures]
+    leads: [I86]
+  - code: text-user-interfaces
+    label: { en: "Text user interfaces", fr: "Interfaces en mode texte" }
+    family: screens
+    holding: [capture, record]
+    sources: [captures]
+    leads: [I86]
+  - code: splash-screens
+    label: { en: "Splash and quit screens (ENDOOM)", fr: "Écrans d'accueil et de sortie (ENDOOM)" }
+    family: screens
+    holding: [file, capture]
+    sources: [idgames ENDOOM, cd.textfiles.com]
+    leads: [I85, I90]
+  - code: error-screens
+    label: { en: "Error screens (Guru Meditation, blue screens)", fr: "Écrans d'erreur (Guru Meditation, écrans bleus)" }
+    family: screens
+    holding: [capture, record]
+    sources: [captures]
+
+  # --- documents -----------------------------------------------------------------------------
+  - code: readme
+    label: { en: "Readme files", fr: "Fichiers readme" }
+    family: documents
+    holding: [file]
+    sources: [cd.textfiles.com, Discmaster]
+    leads: [I90]
+  - code: manuals
+    label: { en: "Manuals and on-line documentation", fr: "Manuels et documentation en ligne" }
+    family: documents
+    holding: [file, record]
+    sources: [textfiles piracy/SOFTDOCS]
+    leads: [C14]
+  - code: man-pages
+    label: { en: "Man pages", fr: "Pages de man" }
+    family: documents
+    holding: [file]
+    sources: [Unix history repository]
+    leads: [I87]
+  - code: walkthroughs-faqs
+    label: { en: "Walkthroughs, hints and FAQs", fr: "Soluces, astuces et FAQ" }
+    family: documents
+    holding: [file]
+    sources: [textfiles adventure/, textfiles games/]
+    leads: [Q41, I84]
+  - code: textfiles
+    label: { en: "BBS textfiles and e-zines", fr: "Textfiles et e-zines des BBS" }
+    family: documents
+    holding: [file]
+    sources: [textfiles.com]
+    representative: { sha256: 6c715d44b08af2fccc634923f065aee440518df07f887a9e1a21e01a4aa228fc, path: 16colo:2016/mist1116.zip/ANONYMOUS-KISS.LIT }
+    note: A literature pack's text stands in until textfiles.com's own sections are ingested.
+
+  # --- code ----------------------------------------------------------------------------------
+  - code: source-code-art
+    label: { en: "Source code as image (IOCCC)", fr: "Code source comme image (IOCCC)" }
+    family: code
+    holding: [file]
+    sources: [IOCCC winners]
+  - code: two-dimensional-languages
+    label: { en: "Two-dimensional languages (Befunge)", fr: "Langages en deux dimensions (Befunge)" }
+    family: code
+    holding: [file]
+    sources: [esolangs.org]
+  - code: comment-banners
+    label: { en: "Banners in source code and server greetings", fr: "Bannières dans le code source et accueils de serveurs" }
+    family: code
+    holding: [file]
+    sources: [free software sources]
+
+  # --- type ----------------------------------------------------------------------------------
+  - code: rom-fonts
+    label: { en: "ROM character fonts", fr: "Polices de caractères en ROM" }
+    family: type
+    holding: [file]
+    sources: [corpus/fonts, The Ultimate Oldschool PC Font Pack]
+    note: The VGA font is held as a profile asset (corpus/fonts), not as a work.
+  - code: figlet-fonts
+    label: { en: "FIGlet fonts", fr: "Polices FIGlet" }
+    family: type
+    holding: [file]
+    representative: { sha256: 3948f276db00cc726e31e6b5c91dac0b3ac5610c43d216c53fa0e6b4317f2cc0, path: textfiles:asciiart/FIGLETS/3x5.flf }
+    sources: [textfiles asciiart/FIGLETS, figlet.org]
+  - code: thedraw-fonts
+    label: { en: "TheDraw fonts", fr: "Polices TheDraw" }
+    family: type
+    holding: [file]
+    sources: [roysac.com]
+    leads: [I52]
+
+  # --- sound ---------------------------------------------------------------------------------
+  - code: tracker-patterns
+    label: { en: "Tracker modules and their pattern grids", fr: "Modules de tracker et leurs grilles de motifs" }
+    family: sound
+    holding: [file]
+    representative: { sha256: f768bd57a03edd49052d08f38d2cfb230a7efeea9ea41a02ccca77ad2f0f1ae8, path: 16colo:1993/adfa1193.zip/KS-DEADH.MOD }
+    sources: [16colo, Modland]
+  - code: ansi-music
+    label: { en: "ANSI music", fr: "Musique ANSI" }
+    family: sound
+    holding: [file]
+    sources: [textfiles ansimusic/]
+  - code: text-notation
+    label: { en: "Text notations (ABC, ASCII tablature)", fr: "Notations en texte (ABC, tablatures ASCII)" }
+    family: sound
+    holding: [file]
+    sources: [to find]
+  - code: teletype-music
+    label: { en: "Teletype music", fr: "Musique de téléscripteur" }
+    family: sound
+    holding: [record]
+    sources: [to find]
+
+  # --- poetry --------------------------------------------------------------------------------
+  - code: concrete-poetry
+    label: { en: "Concrete and visual poetry", fr: "Poésie concrète et visuelle" }
+    family: poetry
+    holding: [reproduction, record]
+    sources: [Sackner Archive]
+  - code: calligrams
+    label: { en: "Calligrams and pattern poems", fr: "Calligrammes et poèmes figurés" }
+    family: poetry
+    holding: [reproduction, record]
+    sources: [public domain editions]
+  - code: technopaignia
+    label: { en: "Technopaignia and carmina figurata", fr: "Technopaignia et carmina figurata" }
+    family: poetry
+    holding: [reproduction, record]
+    sources: [public domain editions]
+  - code: micrography
+    label: { en: "Micrography", fr: "Micrographie" }
+    family: poetry
+    holding: [reproduction, record]
+    sources: [library digitizations]
+
+  # --- ancestors -----------------------------------------------------------------------------
+  - code: jacquard
+    label: { en: "Jacquard weaving and its cards", fr: "Tissage Jacquard et ses cartes" }
+    family: ancestors
+    holding: [reproduction, record]
+    sources: [museum digitizations]
+  - code: punched-cards
+    label: { en: "Punched cards and paper tape", fr: "Cartes perforées et bandes de papier" }
+    family: ancestors
+    holding: [reproduction, record]
+    sources: [museum digitizations]
+  - code: cross-stitch
+    label: { en: "Cross-stitch and needlework grids", fr: "Point de croix et grilles de broderie" }
+    family: ancestors
+    holding: [reproduction, record]
+    sources: [museum digitizations]
+  - code: mosaic
+    label: { en: "Mosaic", fr: "Mosaïque" }
+    family: ancestors
+    holding: [reproduction, record]
+    sources: [museum digitizations]
