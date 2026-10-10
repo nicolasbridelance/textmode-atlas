@@ -158,7 +158,7 @@ const P_FLOOR = 0.001;
 const LABEL_ROOM = 8; // pixels between two axis labels
 export const CHAR_PX = 7; // width of a character of the axis font
 
-export const PUBLISHED = 'eda/snapshot.json'; // as tm.eda.PUBLIC_KEY
+const PUBLISHED = 'eda/snapshot.json'; // as tm.eda.PUBLIC_KEY
 
 export interface Found {
 	snapshot: Snapshot;
