@@ -288,8 +288,21 @@
         "capture",
         "record"
       ],
-      "representative": null,
-      "acquired": null
+      "representative": {
+        "sha256": "bf7639ad6820b18fe32c39ef136c80440b7fe170c5e3a462339965168ee88222",
+        "path": "scene.org:get/demos/compilations/lost_found_and_more/cracktro/knights_of_legend_cracktro.zip"
+      },
+      "acquired": {
+        "title": "Knights Of Legend cracktro (THG)",
+        "why": {
+          "en": "A text-mode cracktro of 1990, the intro alone (3,463 bytes), without the game it came with.",
+          "fr": "Une cracktro en mode texte de 1990, l’intro seule (3 463 octets), sans le jeu qu’elle accompagnait."
+        },
+        "url": "https://files.scene.org/get/demos/compilations/lost_found_and_more/cracktro/knights_of_legend_cracktro.zip",
+        "basis": "scene",
+        "license": null,
+        "credit": null
+      }
     },
     {
       "code": "latin-american-bbs",
@@ -415,8 +428,21 @@
         "file",
         "excerpt"
       ],
-      "representative": null,
-      "acquired": null
+      "representative": {
+        "sha256": "14bf9df5293888e9449de3273d317b8329f38c0109b10a42f5f58d9ff80992d4",
+        "path": "scene.org:get/parties/2017/nova17/oldschool_demo/bitshifters-teletextr.zip"
+      },
+      "acquired": {
+        "title": "Teletextr",
+        "why": {
+          "en": "Winner of the oldschool demo compo at Nova 2017: a BBC Micro demo drawn in Mode 7, the computer's teletext screen.",
+          "fr": "Lauréate de la compétition de démos oldschool à la Nova 2017 : une démo pour BBC Micro dessinée en Mode 7, l’écran télétexte de la machine."
+        },
+        "url": "https://files.scene.org/get/parties/2017/nova17/oldschool_demo/bitshifters-teletextr.zip",
+        "basis": "scene",
+        "license": null,
+        "credit": null
+      }
     },
     {
       "code": "trs80-semigraphics",
@@ -487,8 +513,21 @@
         "file",
         "excerpt"
       ],
-      "representative": null,
-      "acquired": null
+      "representative": {
+        "sha256": "721ea936e332b6df3de99b2946e0c228b56e8126336e912fcc2000b23b3a0201",
+        "path": "scene.org:get/parties/2015/evoke15/amiga_ansi_ascii/ldn-dharmachakra.zip"
+      },
+      "acquired": {
+        "title": "dharmachakra",
+        "why": {
+          "en": "Winner of the Amiga ANSI and ASCII compo at Evoke 2015, drawn for the Amiga's own fonts and palette.",
+          "fr": "Lauréate de la compétition ANSI et ASCII Amiga à l’Evoke 2015, dessinée pour les polices et la palette de l’Amiga."
+        },
+        "url": "https://files.scene.org/get/parties/2015/evoke15/amiga_ansi_ascii/ldn-dharmachakra.zip",
+        "basis": "scene",
+        "license": null,
+        "credit": null
+      }
     },
     {
       "code": "usenet-ascii",
@@ -988,8 +1027,21 @@
         "capture",
         "record"
       ],
-      "representative": null,
-      "acquired": null
+      "representative": {
+        "sha256": "5ea50d6b17d225ce14470511c1a9881bd08a5b4e331a958cce7603667da810c4",
+        "path": "scene.org:get/parties/2018/dihalt18lite/hiend_1k/sensenstahl-demozoo_ad.zip"
+      },
+      "acquired": {
+        "title": "Demozoo Ad",
+        "why": {
+          "en": "Winner of the 1 KB intro compo at DiHalt 2018 Lite: a text-mode intro in a thousand bytes.",
+          "fr": "Lauréate de la compétition d’intros de 1 Ko à la DiHalt 2018 Lite : une intro en mode texte tenant en mille octets."
+        },
+        "url": "https://files.scene.org/get/parties/2018/dihalt18lite/hiend_1k/sensenstahl-demozoo_ad.zip",
+        "basis": "scene",
+        "license": null,
+        "credit": null
+      }
     },
     {
       "code": "roguelikes",
@@ -1090,8 +1142,21 @@
         "capture",
         "record"
       ],
-      "representative": null,
-      "acquired": null
+      "representative": {
+        "sha256": "22aa3f0cc30839ddf79fe94d58979b85309c40408f9373417d67815bdb0378fa",
+        "path": "scene.org:get/demos/compos/256_byte_game_compo/kitty_of_death.zip"
+      },
+      "acquired": {
+        "title": "Kitty Of Death",
+        "why": {
+          "en": "A game in 256 bytes, from the 1995 256 Byte Game Compo, played in text mode.",
+          "fr": "Un jeu en 256 octets, de la 256 Byte Game Compo de 1995, joué en mode texte."
+        },
+        "url": "https://files.scene.org/get/demos/compos/256_byte_game_compo/kitty_of_death.zip",
+        "basis": "scene",
+        "license": null,
+        "credit": null
+      }
     },
     {
       "code": "os-screens",
