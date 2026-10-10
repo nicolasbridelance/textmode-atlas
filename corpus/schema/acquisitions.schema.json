@@ -29,7 +29,8 @@
           "enum": [
             "scene",
             "license",
-            "public-domain"
+            "public-domain",
+            "excerpt"
           ],
           "title": "Basis",
           "type": "string"
@@ -45,6 +46,55 @@
           ],
           "default": null,
           "title": "License"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "enum": [
+                "ansi",
+                "ascii",
+                "rtty",
+                "vt100",
+                "unicode"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format"
+        },
+        "lines": {
+          "anyOf": [
+            {
+              "pattern": "^[1-9][0-9]*-[1-9][0-9]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lines"
+        },
+        "html": {
+          "default": false,
+          "title": "Html",
+          "type": "boolean"
+        },
+        "credit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Credit"
         },
         "why": {
           "title": "Why",

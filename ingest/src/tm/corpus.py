@@ -245,7 +245,7 @@ class Grid(BaseModel):
         return self
 
 
-Holding = Literal["file", "capture", "reproduction", "record"]
+Holding = Literal["file", "excerpt", "capture", "reproduction", "record"]
 LeadId = Annotated[str, Field(pattern=r"^[QHIC]\d+$")]
 
 
@@ -307,7 +307,9 @@ class Practices(BaseModel):
         return [practice for practice in self.practices if practice.representative]
 
 
-Basis = Literal["scene", "license", "public-domain"]
+Basis = Literal["scene", "license", "public-domain", "excerpt"]
+DeclaredFormat = Literal["ansi", "ascii", "rtty", "vt100", "unicode"]
+Lines = Annotated[str, Field(pattern=r"^[1-9][0-9]*-[1-9][0-9]*$")]
 SourceName = Annotated[str, Field(pattern=r"^[a-z0-9]+([.-][a-z0-9]+)*$")]
 
 
@@ -330,6 +332,13 @@ class Acquisition(BaseModel):
     source: SourceName
     basis: Basis
     license: str | None = None
+    # The art kind, when the file does not say it (a printer poster saved as .txt).
+    format: DeclaredFormat | None = None
+    # An excerpt (ADR 0032): the lines cut from the fetched page, tags removed if it is HTML,
+    # and the maker as signed, or "unknown".
+    lines: Lines | None = None
+    html: bool = False
+    credit: str | None = None
     why: str
 
     @model_validator(mode="after")
@@ -338,6 +347,8 @@ class Acquisition(BaseModel):
             raise ValueError(f"{self.url}: a licensed file names its licence")
         if self.basis == "scene" and self.source not in get_args(SceneArchive):
             raise ValueError(f"{self.url}: {self.source} is not a scene archive (ADR 0009)")
+        if (self.basis == "excerpt") != bool(self.lines and self.credit):
+            raise ValueError(f"{self.url}: an excerpt, and only an excerpt, names lines and credit")
         return self
 
 

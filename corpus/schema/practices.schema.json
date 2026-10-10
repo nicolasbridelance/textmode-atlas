@@ -52,6 +52,7 @@
           "items": {
             "enum": [
               "file",
+              "excerpt",
               "capture",
               "reproduction",
               "record"
