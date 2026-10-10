@@ -46,7 +46,10 @@ TIMEOUT_SECONDS = 120
 KEPT_HEADERS = ("Last-Modified", "ETag", "Content-Type")
 TAG = re.compile(r"<[^>]*>")
 NEWLINE = b"\n"
+HARD_SPACE = "\N{NO-BREAK SPACE}"
 CHARSET_PARAM = re.compile(r"charset=([\w-]+)", re.IGNORECASE)
+CHARSET_META = re.compile(rb"charset=[\"']?([\w-]+)", re.IGNORECASE)
+BLOCK_END = re.compile(r"</pre>|</p>|<br\s*/?>", re.IGNORECASE)
 
 
 @dataclass(frozen=True)
@@ -93,20 +96,39 @@ def _how(entry: Acquisition) -> str:
 
 
 def cut(data: bytes, entry: Acquisition, charset: str) -> bytes:
-    """The lines an excerpt names, byte for byte; from HTML, the text without its tags."""
+    """The lines an excerpt names: byte for byte, or, from HTML, the text without its tags; and
+    from each line, when the manifest gives a pattern, only what its group matches."""
     first, last = (int(n) for n in (entry.lines or "").split("-"))
     chosen = NEWLINE.join(data.split(NEWLINE)[first - 1 : last]).rstrip()
     if not chosen.strip():
         raise ValueError(f"{entry.url}: lines {entry.lines} are empty or outside the page")
-    if not entry.html:
-        return chosen + NEWLINE
-    page = chosen.decode(charset, errors="replace")
-    return html.unescape(TAG.sub("", page)).rstrip().encode("utf-8") + NEWLINE
+    if entry.html:
+        chosen = _text_of(chosen.decode(charset, errors="replace")).encode("utf-8")
+    if entry.pattern:
+        chosen = NEWLINE.join(_matched(entry, line) for line in chosen.splitlines())
+    return chosen.rstrip() + NEWLINE
 
 
-def _charset(remote: dict[str, str]) -> str:
-    found = CHARSET_PARAM.search(remote.get("Content-Type", ""))
-    return found.group(1) if found else "utf-8"
+def _text_of(page: str) -> str:
+    """HTML as the reader saw it: blocks end lines, tags go, entities and hard spaces are read."""
+    text = html.unescape(TAG.sub("", BLOCK_END.sub("\n", page))).replace(HARD_SPACE, " ")
+    return "\n".join(line.rstrip() for line in text.splitlines())
+
+
+def _matched(entry: Acquisition, line: bytes) -> bytes:
+    found = re.search(entry.pattern or "", line.decode("latin-1"))
+    if not found:
+        raise ValueError(f"{entry.url}: a line of the cut does not match the pattern: {line!r}")
+    return found.group(1).encode("latin-1")
+
+
+def page_charset(remote: dict[str, str], data: bytes) -> str:
+    """The page's encoding: from the HTTP header, else from the page's own meta tag."""
+    found = CHARSET_PARAM.search(remote.get("Content-Type", "")) or CHARSET_META.search(data)
+    if found is None:
+        return "utf-8"
+    name = found.group(1)
+    return name if isinstance(name, str) else name.decode("ascii")
 
 
 def _path(entry: Acquisition) -> str:
@@ -114,6 +136,22 @@ def _path(entry: Acquisition) -> str:
     parts = urllib.parse.urlsplit(str(entry.url))
     path = urllib.parse.unquote(parts.path).lstrip("/") + (f"?{parts.query}" if parts.query else "")
     return path + (f"#lines={entry.lines}" if entry.lines else "")
+
+
+def _charset_of(declared: str | None) -> str | None:
+    return CHARSET_CP437 if declared in ("ansi", "ascii") else None
+
+
+def _declare(conn: Connection, sha256: str, entry: Acquisition) -> None:
+    """The manifest's word on the art kind of a file it acquired, when it declares one."""
+    if entry.format:
+        conn.execute(
+            text(
+                "update artifact set format = :format, charset = :charset"
+                " where sha256 = :sha256 and format is distinct from :format"
+            ),
+            {"sha256": sha256, "format": entry.format, "charset": _charset_of(entry.format)},
+        )
 
 
 def acquire(
@@ -133,13 +171,14 @@ def acquire(
         {"url": url, "how": how},
     ).scalar()
     if held is not None:
+        _declare(conn, held.strip(), entry)
         return Acquired(url, held.strip(), fetched=False, new_work=False)
     got = fetch(url)
     remote = dict(got.remote)
     data = got.data
     if entry.basis == "excerpt":
         remote |= {"cut": how, "page_sha256": sha256_hex(got.data)}
-        data = cut(got.data, entry, _charset(got.remote))
+        data = cut(got.data, entry, page_charset(got.remote, got.data))
     sha256, _ = put_original(store, data)
     source_id = ensure_source(conn, "archive", source.name, str(source.url), source.note)
     new_work = not artifact_known(conn, sha256)
@@ -153,7 +192,7 @@ def acquire(
                 sha256=sha256,
                 bytes=len(data),
                 format=entry.format or extension(urllib.parse.urlsplit(url).path),
-                charset=CHARSET_CP437 if entry.format in ("ansi", "ascii") else None,
+                charset=_charset_of(entry.format),
                 sauce=None,
                 source_id=source_id,
                 source_path=path,

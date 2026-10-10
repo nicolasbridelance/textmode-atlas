@@ -8,7 +8,7 @@ import pytest
 from pydantic import ValidationError
 from sqlalchemy import Connection, text
 from stores import Stores
-from tm.acquire import Download, acquire, cut, rights_of
+from tm.acquire import Download, acquire, cut, page_charset, rights_of
 from tm.corpus import Acquisition, Acquisitions, AcquisitionSource
 from tm.storage import sha256_hex
 
@@ -26,7 +26,7 @@ def entry(**changes: object) -> Acquisition:
         "url": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Jacquard.jpg",
         "source": "wikimedia-commons",
         "basis": "public-domain",
-        "why": "A woven image.",
+        "why": {"en": "A woven image.", "fr": "Une image tissée."},
     }
     return Acquisition.model_validate(values | changes)
 
@@ -46,7 +46,7 @@ EXCERPT = Acquisition(
     lines="2-3",
     html=True,
     credit="unknown",
-    why="A face.",
+    why={"en": "A face.", "fr": "Un visage."},
 )
 
 
@@ -103,6 +103,34 @@ def test_the_cut_keeps_the_lines_and_drops_the_tags() -> None:
     assert cut(PAGE, raw, "utf-8") == lines("<pre>  (^_^)  &lt;hi&gt;", "  /|\\</pre>")
     with pytest.raises(ValueError, match="outside the page"):
         cut(PAGE, EXCERPT.model_copy(update={"lines": "40-41"}), "utf-8")
+
+
+def test_html_blocks_end_lines_and_hard_spaces_are_spaces() -> None:
+    word = lines("<pre>19-Sep-82\xa0\xa0 Fahlman</pre><pre>:-)</pre>")
+    one = EXCERPT.model_copy(update={"lines": "1-1"})
+    assert cut(word.replace(b"\xc2", b""), one, "cp1252") == lines("19-Sep-82   Fahlman", ":-)")
+
+
+def test_a_pattern_keeps_only_the_drawing() -> None:
+    forth = lines('\ts"   ,  ,"   logo+', '\ts"  (o o)\\"  logo+')
+    beastie = EXCERPT.model_copy(
+        update={"html": False, "lines": "1-2", "pattern": r's"(.*)"\s+logo\+'}
+    )
+    assert cut(forth, beastie, "utf-8") == lines("   ,  ,", "  (o o)\\")
+    with pytest.raises(ValueError, match="does not match"):
+        cut(lines("no drawing here"), beastie.model_copy(update={"lines": "1-1"}), "utf-8")
+
+
+def test_a_pattern_keeps_one_group() -> None:
+    with pytest.raises(ValidationError, match="one group"):
+        EXCERPT.model_validate(EXCERPT.model_dump() | {"pattern": "(a)(b)"})
+
+
+def test_the_page_names_its_encoding_when_the_server_does_not() -> None:
+    page = b'<meta http-equiv=Content-Type content="text/html; charset=windows-1252">'
+    assert page_charset({}, page) == "windows-1252"
+    assert page_charset({"Content-Type": "text/html; charset=ISO-8859-1"}, page) == "ISO-8859-1"
+    assert page_charset({}, b"<html>") == "utf-8"
 
 
 @pytest.mark.db
@@ -173,3 +201,17 @@ def test_an_excerpt_stores_only_the_cut_and_says_where_from(db: Connection, stor
     other = EXCERPT.model_copy(update={"lines": "3-3"})
     second = acquire(db, stores.originals, other, WAYBACK, Downloads(PAGE))
     assert second.fetched
+
+
+@pytest.mark.db
+def test_the_manifest_declares_the_art_kind_of_a_file_it_acquired(
+    db: Connection, stores: Stores
+) -> None:
+    poster = entry(url="https://www.textfiles.com/art/DECUS/bach.txt", title="Bach")
+    got = acquire(db, stores.originals, poster, COMMONS, Downloads(b"  ##  \n"))
+    declared = poster.model_copy(update={"format": "ascii"})
+    acquire(db, stores.originals, declared, COMMONS, Downloads(b"never fetched"))
+    row = db.execute(
+        text("select format, charset from artifact where sha256 = :s"), {"s": got.sha256}
+    ).one()
+    assert tuple(row) == ("ascii", "cp437")

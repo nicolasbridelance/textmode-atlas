@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import re
 from pathlib import Path
 from typing import Annotated, Any, Literal, get_args
 
@@ -338,8 +339,10 @@ class Acquisition(BaseModel):
     # and the maker as signed, or "unknown".
     lines: Lines | None = None
     html: bool = False
+    # A regular expression whose group keeps, from each line of the cut, only the drawing.
+    pattern: str | None = None
     credit: str | None = None
-    why: str
+    why: LocalizedText
 
     @model_validator(mode="after")
     def _basis_is_complete(self) -> Acquisition:
@@ -349,6 +352,8 @@ class Acquisition(BaseModel):
             raise ValueError(f"{self.url}: {self.source} is not a scene archive (ADR 0009)")
         if (self.basis == "excerpt") != bool(self.lines and self.credit):
             raise ValueError(f"{self.url}: an excerpt, and only an excerpt, names lines and credit")
+        if self.pattern is not None and re.compile(self.pattern).groups != 1:
+            raise ValueError(f"{self.url}: a pattern keeps one group of each line")
         return self
 
 
@@ -424,6 +429,37 @@ def load_grid(path: Path) -> Grid:
 
 def load_practices(path: Path) -> Practices:
     return Practices.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))
+
+
+def practices_view(root: Path) -> str:
+    """The registry as the site reads it (`corpus/practices.json`): each practice with what
+    represents it, and, for an acquired representative, its title, reason, source and basis."""
+    registry = load_practices(root / "practices.yaml")
+    manifest = root / "acquisitions.yaml"
+    chosen = (
+        {e.practice: e for e in load_acquisitions(manifest).entries} if manifest.exists() else {}
+    )
+    practices = []
+    for practice in registry.practices:
+        entry = chosen.get(practice.code)
+        acquired = (
+            {
+                "title": entry.title,
+                "why": entry.why,
+                "url": str(entry.url),
+                "basis": entry.basis,
+                "license": entry.license,
+                "credit": entry.credit,
+            }
+            if entry and practice.representative
+            else None
+        )
+        practices.append(
+            practice.model_dump(include={"code", "label", "family", "holding", "representative"})
+            | {"acquired": acquired}
+        )
+    view = {"families": [f.model_dump() for f in registry.families], "practices": practices}
+    return json.dumps(view, indent=2, ensure_ascii=False) + "\n"
 
 
 def corpus_files(root: Path) -> list[Path]:
