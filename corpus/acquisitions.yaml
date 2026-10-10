@@ -1,0 +1,147 @@
+# SPDX-FileCopyrightText: 2026 textmode-atlas contributors
+# SPDX-License-Identifier: CC0-1.0
+#
+# Single acquisitions (ADR 0031): one file chosen to represent a practice, its source, and the
+# basis on which the museum holds it: `scene` (released by the scene, held by a scene archive,
+# ADR 0009), `license` (a licence its author gave, named), `public-domain`. `tm acquire` fetches
+# them one at a time. Every URL and licence here was checked at the source on 2026-10-10.
+version: 1
+
+sources:
+  - name: scene.org
+    url: https://files.scene.org/
+    note: Demoscene file archive; mirroring encouraged; rights stay with the authors (docs/sources/scene-org.md).
+  - name: textfiles
+    url: http://www.textfiles.com/
+    note: Jason Scott's textfiles.com; no terms stated, removal on request (docs/sources/textfiles.md).
+  - name: wikimedia-commons
+    url: https://commons.wikimedia.org/
+    note: Free media repository; each file's licence or public-domain status is stated on its page.
+  - name: unix-history-repo
+    url: https://github.com/dspinellis/unix-history-repo
+    note: Git history of Unix from 1970, by Diomidis Spinellis; each file keeps its original licence.
+  - name: ioccc
+    url: https://www.ioccc.org/
+    note: International Obfuscated C Code Contest; winning entries under CC BY-SA 4.0 (ioccc.org/license.html).
+  - name: int10h
+    url: https://int10h.org/oldschool-pc-fonts/
+    note: The Ultimate Oldschool PC Font Pack by VileR; CC BY-SA 4.0.
+  - name: esolangs
+    url: https://esolangs.org/
+    note: Esolang wiki; all content under CC0 1.0.
+
+entries:
+  # --- home computers, demoscene -------------------------------------------------------------
+  - practice: petscii
+    title: Fågel
+    url: https://files.scene.org/get/parties/2013/datastorm13/c64/petscii/acidt-rrorreast-faagel.zip
+    source: scene.org
+    basis: scene
+    why: Winner of the C64 PETSCII compo at Datastorm 2013 (Demozoo production 51978).
+  - practice: atascii
+    title: Attack Of The Giant Bugs
+    url: https://files.scene.org/get/parties/2021/atascii_compo21/atascii_compo/bugs.zip
+    source: scene.org
+    basis: scene
+    why: Winner of the ATASCII Compo 2021, a party held for the Atari 8-bit character set alone (Demozoo 298070).
+  - practice: textmode-demos
+    title: Ringnes Motion
+    url: https://files.scene.org/get/parties/1996/distortion96/demo/ringnesm.zip
+    source: scene.org
+    basis: scene
+    why: Winner of the demo compo at Distortion 1996, tagged textmode on Demozoo (29686); a PC demo drawn in character cells.
+
+  # --- textfiles.com ---------------------------------------------------------------------------
+  - practice: line-printer-art
+    title: Ludwig Van Beethoven (DECUS printer art)
+    url: http://www.textfiles.com/art/DECUS/beethoven.txt
+    source: textfiles
+    basis: scene
+    why: From the DECUS poster collection, printer art of computer labs about 1985, overprinted lines for near-black cells.
+  - practice: ansi-music
+    title: Beethoven's 5th Symphony
+    url: http://artscene.textfiles.com/ansimusic/songs/5th-symp.ams
+    source: textfiles
+    basis: scene
+    why: ANSI music by Ed Bragg (April 3, 1992), music played by the escape sequences of a BBS terminal.
+  - practice: walkthroughs-faqs
+    title: "Walkthrough: The Original Colossal Cave"
+    url: http://www.textfiles.com/adventure/adventure.txt
+    source: textfiles
+    basis: scene
+    why: A walkthrough of the first text adventure, from textfiles' adventure section (I84).
+  - practice: warez-documents
+    title: You Hack 'Em, We Hump 'Em, or Why YOU should be a Software Courier
+    url: http://www.textfiles.com/piracy/courier.txt
+    source: textfiles
+    basis: scene
+    why: A courier's recruiting text by Dixie Flatline, from textfiles' piracy section (I84, Q40).
+
+  # --- documents and code ----------------------------------------------------------------------
+  - practice: man-pages
+    title: ls(1), 4.4BSD-Lite2
+    url: https://raw.githubusercontent.com/dspinellis/unix-history-repo/BSD-4_4_Lite2/usr/src/bin/ls/ls.1
+    source: unix-history-repo
+    basis: license
+    license: BSD-4-Clause-UC
+    why: The manual page of ls as Berkeley released it in 1995, in roff, read on a character terminal (I87).
+  - practice: source-code-art
+    title: westley.c (IOCCC 1988, best layout)
+    url: https://www.ioccc.org/1988/westley/westley.c
+    source: ioccc
+    basis: license
+    license: CC-BY-SA-4.0
+    why: Brian Westley's 1988 winner for best layout, a program whose source is drawn as a circle.
+  - practice: two-dimensional-languages
+    title: Befunge (Esolang wiki page)
+    url: https://esolangs.org/w/index.php?title=Befunge&action=raw
+    source: esolangs
+    basis: license
+    license: CC0-1.0
+    why: Befunge-93 (Chris Pressey, 1993), a language whose program is a grid of characters the instruction pointer walks; the page holds its examples.
+  - practice: rom-fonts
+    title: The Ultimate Oldschool PC Font Pack v2.2
+    url: https://int10h.org/oldschool-pc-fonts/download/oldschool_pc_font_pack_v2.2_FULL.zip
+    source: int10h
+    basis: license
+    license: CC-BY-SA-4.0
+    why: Remakes of the character ROMs of IBM PCs and compatibles, from VileR's dumps of the original hardware.
+
+  # --- poetry and ancestors, reproductions ----------------------------------------------------
+  - practice: calligrams
+    title: Il pleut (Guillaume Apollinaire, Calligrammes)
+    url: https://upload.wikimedia.org/wikipedia/commons/9/9b/Guillaume_Apollinaire_-_Calligramme_-_Il_pleut.png
+    source: wikimedia-commons
+    basis: public-domain
+    why: The calligram whose letters fall as rain (written 1916, published 1918); public domain.
+  - practice: concrete-poetry
+    title: Un coup de dés jamais n'abolira le hasard (Stéphane Mallarmé, 1914 edition)
+    url: https://upload.wikimedia.org/wikipedia/commons/1/18/Mallarm%C3%A9_-_Un_coup_de_d%C3%A9s%2C_1914.djvu
+    source: wikimedia-commons
+    basis: public-domain
+    why: The poem laid out on the double page as Mallarmé wished it, first published so in 1914; the founding text of spatial poetry.
+  - practice: micrography
+    title: The Five Scrolls in multilingual micrography (Aaron Wolf Herlingen, 1748)
+    url: https://upload.wikimedia.org/wikipedia/commons/e/e0/Scribe_and_illuminator-_Aaron_Wolf_Herlingen_-_The_Five_Scrolls_in_multilingual_micrography_Ruth%2C_Song_of_Songs%2C_Ecclesiastes%2C_Esther%2C_and_Lamentat..._-_Google_Art_Project.jpg
+    source: wikimedia-commons
+    basis: public-domain
+    why: Pictures drawn with lines of minute script, by a Viennese scribe; public domain (Google Art Project).
+  - practice: jacquard
+    title: Portrait of Joseph Marie Jacquard, woven in silk (1839)
+    url: https://upload.wikimedia.org/wikipedia/commons/e/e1/Jacquard_Joseph_Marie_woven_silk.jpg
+    source: wikimedia-commons
+    basis: public-domain
+    why: A portrait woven on a Jacquard loom from about 24,000 punched cards, an image made of discrete cells a century before the screen.
+  - practice: punched-cards
+    title: 80-column punched card
+    url: https://upload.wikimedia.org/wikipedia/commons/5/53/80-column_punched_card_edited_by_sub-assemblies_of_a_Pentaconta_electromechanical_telephone_exchange.jpg
+    source: wikimedia-commons
+    basis: license
+    license: CC0-1.0
+    why: The 80-column card whose width became the terminal's 80 columns.
+  - practice: cross-stitch
+    title: Sampler (England, 1774)
+    url: https://upload.wikimedia.org/wikipedia/commons/c/cb/Sampler_%28England%29%2C_1774_%28CH_18727633%29.jpg
+    source: wikimedia-commons
+    basis: public-domain
+    why: Letters and motifs stitched on a grid of threads, Cooper Hewitt collection; public domain.

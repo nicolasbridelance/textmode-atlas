@@ -1,0 +1,126 @@
+{
+  "$defs": {
+    "Acquisition": {
+      "additionalProperties": false,
+      "description": "One file chosen to represent a practice, and why the museum may hold it (ADR 0031).",
+      "properties": {
+        "practice": {
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "title": "Practice",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "source": {
+          "pattern": "^[a-z0-9]+([.-][a-z0-9]+)*$",
+          "title": "Source",
+          "type": "string"
+        },
+        "basis": {
+          "enum": [
+            "scene",
+            "license",
+            "public-domain"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "license": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License"
+        },
+        "why": {
+          "title": "Why",
+          "type": "string"
+        }
+      },
+      "required": [
+        "practice",
+        "title",
+        "url",
+        "source",
+        "basis",
+        "why"
+      ],
+      "title": "Acquisition",
+      "type": "object"
+    },
+    "AcquisitionSource": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "pattern": "^[a-z0-9]+([.-][a-z0-9]+)*$",
+          "title": "Name",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "url",
+        "note"
+      ],
+      "title": "AcquisitionSource",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The manifest of single acquisitions: what `tm acquire` fetches, from where, on what basis.",
+  "properties": {
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/AcquisitionSource"
+      },
+      "minItems": 1,
+      "title": "Sources",
+      "type": "array"
+    },
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/Acquisition"
+      },
+      "minItems": 1,
+      "title": "Entries",
+      "type": "array"
+    }
+  },
+  "required": [
+    "version",
+    "sources",
+    "entries"
+  ],
+  "title": "Acquisitions",
+  "type": "object"
+}
