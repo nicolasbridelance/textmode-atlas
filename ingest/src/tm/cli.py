@@ -35,6 +35,7 @@ from tm.loose import LooseIngested, ingest_loose, loose_files
 from tm.packs import PACK_SOURCES, PackIngested, PackSource, ingest_pack, pack_archives
 from tm.pilots import SampleError
 from tm.render import pending_renderings, render_artifact
+from tm.restore import restore_originals
 from tm.shards import Shard
 from tm.storage import S3Store, s3_client
 from tm.text_layer import pending_text, read_artifact
@@ -480,6 +481,21 @@ def ingest_documents_command() -> None:
     works = sum(p.work for p in promoted)
     typer.echo(
         f"{len(promoted)} texts without a work: {works} works, {len(promoted) - works} binary"
+    )
+
+
+@ingest_app.command("restore")
+def ingest_restore_command(
+    paths: Annotated[list[Path], typer.Argument(help="Mirrors: files, archives, directories.")],
+) -> None:
+    """Put back the originals the database records and the store lacks, from a local mirror."""
+    cfg = settings()
+    store = S3Store(s3_client(), cfg.originals_bucket)
+    with create_engine(cfg.database_url).connect() as conn:
+        restored = restore_originals(conn, store, paths)
+    typer.echo(
+        f"{restored.written} originals restored, {restored.present} already stored,"
+        f" {restored.unknown} files not recorded, {restored.unreadable} archives unreadable"
     )
 
 
