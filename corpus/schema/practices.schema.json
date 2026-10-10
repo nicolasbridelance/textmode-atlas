@@ -1,0 +1,170 @@
+{
+  "$defs": {
+    "Family": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "patternProperties": {
+            "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$": {
+              "type": "string"
+            }
+          },
+          "title": "Label",
+          "type": "object"
+        }
+      },
+      "required": [
+        "code",
+        "label"
+      ],
+      "title": "Family",
+      "type": "object"
+    },
+    "Practice": {
+      "additionalProperties": false,
+      "description": "One character art, held or not (ADR 0031).",
+      "properties": {
+        "code": {
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "patternProperties": {
+            "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$": {
+              "type": "string"
+            }
+          },
+          "title": "Label",
+          "type": "object"
+        },
+        "family": {
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "title": "Family",
+          "type": "string"
+        },
+        "holding": {
+          "items": {
+            "enum": [
+              "file",
+              "capture",
+              "reproduction",
+              "record"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Holding",
+          "type": "array"
+        },
+        "representative": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Representative"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sources": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Sources",
+          "type": "array"
+        },
+        "leads": {
+          "default": [],
+          "items": {
+            "pattern": "^[QHIC]\\d+$",
+            "type": "string"
+          },
+          "title": "Leads",
+          "type": "array"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "code",
+        "label",
+        "family",
+        "holding"
+      ],
+      "title": "Practice",
+      "type": "object"
+    },
+    "Representative": {
+      "additionalProperties": false,
+      "description": "The artifact that stands for a practice in the holdings: its bytes, and `<source>:<path>`\nwhere it came from.",
+      "properties": {
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "path": {
+          "pattern": "^[a-z0-9.]+:\\S.*$",
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sha256",
+        "path"
+      ],
+      "title": "Representative",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The registry of practices: what the museum of the character arts covers, and its gaps.",
+  "properties": {
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "families": {
+      "items": {
+        "$ref": "#/$defs/Family"
+      },
+      "minItems": 1,
+      "title": "Families",
+      "type": "array"
+    },
+    "practices": {
+      "items": {
+        "$ref": "#/$defs/Practice"
+      },
+      "minItems": 1,
+      "title": "Practices",
+      "type": "array"
+    }
+  },
+  "required": [
+    "version",
+    "families",
+    "practices"
+  ],
+  "title": "Practices",
+  "type": "object"
+}

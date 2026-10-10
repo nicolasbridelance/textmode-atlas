@@ -96,6 +96,20 @@ def corpus_schema(root: CorpusRoot = Path("corpus")) -> None:
         typer.echo(f"wrote corpus/schema/{name}")
 
 
+@corpus_app.command("practices")
+def corpus_practices(root: CorpusRoot = Path("corpus")) -> None:
+    """Say which practices of the character arts the holdings represent, family by family."""
+    registry = corpus_mod.load_practices(root / "practices.yaml")
+    held = {practice.code for practice in registry.held()}
+    for family in registry.families:
+        codes = [p.code for p in registry.practices if p.family == family.code]
+        missing = [code for code in codes if code not in held]
+        typer.echo(f"{family.code}: {len(codes) - len(missing)} of {len(codes)} held")
+        if missing:
+            typer.echo(f"  missing: {', '.join(missing)}")
+    typer.echo(f"{len(held)} of {len(registry.practices)} practices have a representative")
+
+
 @corpus_app.command("ratings")
 def corpus_ratings(root: CorpusRoot = Path("corpus"), docs: DocsRoot = Path("docs")) -> None:
     """Write the audience grid's badges and pages from corpus/ratings/grid.yaml."""

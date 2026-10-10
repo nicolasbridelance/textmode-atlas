@@ -68,3 +68,43 @@ def test_malformed_locale_tag_is_refused() -> None:
         corpus.Collection.model_validate(
             {"title": {"en": "x", "fr": "x", "French": "x"}, "where": {"system": ["a"]}}
         )
+
+
+def _practices(**changes: object) -> dict[str, object]:
+    practice = {
+        "code": "ansi-art",
+        "label": {"en": "ANSI art", "fr": "Art ANSI"},
+        "family": "scene",
+        "holding": ["file"],
+    }
+    registry = {
+        "version": 1,
+        "families": [{"code": "scene", "label": {"en": "Scenes", "fr": "Scènes"}}],
+        "practices": [practice],
+    }
+    return registry | changes
+
+
+def test_practices_registry_names_a_representative_for_some() -> None:
+    registry = corpus.load_practices(ROOT / "practices.yaml")
+    assert 0 < len(registry.held()) < len(registry.practices)
+
+
+def test_practice_codes_are_unique() -> None:
+    registry = _practices()
+    twice = registry["practices"] * 2  # type: ignore[operator]
+    with pytest.raises(ValidationError, match="practice codes must be unique: ansi-art"):
+        corpus.Practices.model_validate(registry | {"practices": twice})
+
+
+def test_practice_family_must_be_declared() -> None:
+    with pytest.raises(ValidationError, match="unknown families: scene"):
+        corpus.Practices.model_validate(
+            _practices(families=[{"code": "other", "label": {"en": "O", "fr": "A"}}])
+        )
+
+
+def test_representative_names_its_source() -> None:
+    with pytest.raises(ValidationError):
+        corpus.Representative(sha256="0" * 64, path="1996/acid-50a.zip/ANS-50A.ANS")
+    assert corpus.Representative(sha256="0" * 64, path="16colo:1996/acid-50a.zip/ANS-50A.ANS")
