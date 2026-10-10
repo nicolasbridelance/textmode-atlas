@@ -21,7 +21,7 @@ from sqlalchemy import Connection, text
 
 from tm.archives import ArchiveError, expand
 from tm.packs import ARCHIVES
-from tm.storage import ObjectStore, put_original, sha256_hex
+from tm.storage import ObjectStore, original_key, put_original, sha256_hex
 
 
 @dataclass
@@ -37,12 +37,14 @@ def restore_originals(conn: Connection, store: ObjectStore, paths: list[Path]) -
     recorded = set(conn.execute(text("select sha256 from artifact")).scalars())
     restored = Restored()
     for data in _files(paths, restored):
-        if sha256_hex(data) not in recorded:
+        digest = sha256_hex(data)
+        if digest not in recorded:
             restored.unknown += 1
-        elif put_original(store, data)[1]:
-            restored.written += 1
-        else:
+        elif store.exists(original_key(digest)):  # a restart skips what an earlier run stored
             restored.present += 1
+        else:
+            put_original(store, data)
+            restored.written += 1
     return restored
 
 
