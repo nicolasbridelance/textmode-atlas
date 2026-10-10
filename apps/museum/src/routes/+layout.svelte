@@ -70,7 +70,7 @@ SPDX-License-Identifier: Apache-2.0
 		<a href={localizeHref('/constellation')}>{m.atlas_constellation()}</a>
 		<a
 			href={localizeHref('/research')}
-			aria-current={page.url.pathname.endsWith('/research') ? 'page' : undefined}
+			aria-current={/\/research(\/|$)/.test(page.url.pathname) ? 'page' : undefined}
 			>{m.atlas_research()}</a
 		>
 	</nav>

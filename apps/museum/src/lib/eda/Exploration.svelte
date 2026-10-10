@@ -15,6 +15,8 @@
 	import Sauce from '../../lib/eda/chapters/Sauce.svelte';
 	import { REFRESH_MS, formatter, loadSnapshot, type Snapshot } from '../../lib/eda/eda';
 
+	// A study page gives the title and summary itself (ADR 0029).
+	let { titled = true }: { titled?: boolean } = $props();
 	const WRITTEN = '2026-10-10'; // when the readings below were written
 	let snap = $state<Snapshot | null>(null);
 	let live = $state(true);
@@ -55,8 +57,8 @@
 
 <section class="exploration" id="corpus" aria-labelledby="corpus-title">
 	<header class="intro">
-		<h2 id="corpus-title">{m.eda_title()}</h2>
-		<p class="lede">{m.eda_lede()}</p>
+		<h2 id="corpus-title" class:hidden={!titled}>{m.eda_title()}</h2>
+		{#if titled}<p class="lede">{m.eda_lede()}</p>{/if}
 		<p>{m.eda_live({ date: WRITTEN })}</p>
 		<p class="rules">{m.eda_rules()}</p>
 		{#if snap}
@@ -145,6 +147,13 @@
 	}
 	.exploration :global(p) {
 		max-width: 68ch;
+	}
+	.hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
 	}
 	.lede {
 		font-size: 1.1rem;
