@@ -119,7 +119,10 @@ def _matched(entry: Acquisition, line: bytes) -> bytes:
     found = re.search(entry.pattern or "", line.decode("latin-1"))
     if not found:
         raise ValueError(f"{entry.url}: a line of the cut does not match the pattern: {line!r}")
-    return found.group(1).encode("latin-1")
+    kept = found.group(1)
+    if entry.escapes:
+        kept = kept.encode("latin-1").decode("unicode_escape")
+    return kept.encode("latin-1")
 
 
 def page_charset(remote: dict[str, str], data: bytes) -> str:

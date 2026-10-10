@@ -121,6 +121,14 @@ def test_a_pattern_keeps_only_the_drawing() -> None:
         cut(lines("no drawing here"), beastie.model_copy(update={"lines": "1-1"}), "utf-8")
 
 
+def test_escapes_read_a_drawing_kept_in_c_strings() -> None:
+    c = lines('    "   /    REST    \\\\",', '    "  _)/\\\\_//(\\\\/(_", 0')
+    stone = EXCERPT.model_copy(
+        update={"html": False, "lines": "1-2", "pattern": r'"(.*)"', "escapes": True}
+    )
+    assert cut(c, stone, "utf-8") == lines("   /    REST    \\", "  _)/\\_//(\\/(_")
+
+
 def test_a_pattern_keeps_one_group() -> None:
     with pytest.raises(ValidationError, match="one group"):
         EXCERPT.model_validate(EXCERPT.model_dump() | {"pattern": "(a)(b)"})

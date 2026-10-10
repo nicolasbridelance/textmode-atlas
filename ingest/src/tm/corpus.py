@@ -341,6 +341,8 @@ class Acquisition(BaseModel):
     html: bool = False
     # A regular expression whose group keeps, from each line of the cut, only the drawing.
     pattern: str | None = None
+    # The drawing sits in string literals of code: read their backslash escapes (`\\` is one).
+    escapes: bool = False
     credit: str | None = None
     why: LocalizedText
 
