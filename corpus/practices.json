@@ -648,6 +648,35 @@
       "acquired": null
     },
     {
+      "code": "web-error-pages",
+      "label": {
+        "en": "Error pages of the web (404 and others)",
+        "fr": "Pages d’erreur du web (404 et autres)"
+      },
+      "family": "networks",
+      "holding": [
+        "excerpt",
+        "capture",
+        "record"
+      ],
+      "representative": null,
+      "acquired": null
+    },
+    {
+      "code": "browser-console-art",
+      "label": {
+        "en": "Art in browser consoles and page sources",
+        "fr": "Art dans les consoles de navigateur et le code des pages"
+      },
+      "family": "networks",
+      "holding": [
+        "excerpt",
+        "capture"
+      ],
+      "representative": null,
+      "acquired": null
+    },
+    {
       "code": "teletext",
       "label": {
         "en": "Teletext art",
@@ -822,6 +851,76 @@
       "family": "machines",
       "holding": [
         "excerpt",
+        "reproduction",
+        "record"
+      ],
+      "representative": {
+        "sha256": "19259a656a75b715e7fe2a9c07f5648e38448d5e6979de8cb99419be068c1f48",
+        "path": "wikimedia-commons:wikipedia/commons/d/d1/Typewritten_portrait_of_Charlie_Chaplin.jpg"
+      },
+      "acquired": {
+        "title": "Typewritten portrait of Charlie Chaplin",
+        "why": {
+          "en": "A portrait struck letter by letter on a typewriter, the overtyping building the greys: typewriter art of the silent-film era.",
+          "fr": "Un portrait frappé lettre par lettre à la machine à écrire, les surfrappes faisant les gris : l’art de la machine à écrire au temps du cinéma muet."
+        },
+        "url": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Typewritten_portrait_of_Charlie_Chaplin.jpg",
+        "basis": "public-domain",
+        "license": null,
+        "credit": null
+      }
+    },
+    {
+      "code": "character-displays",
+      "label": {
+        "en": "Character displays: split-flap boards, LED and flip-dot signs",
+        "fr": "Afficheurs de caractères : tableaux à palettes, enseignes LED et à pastilles"
+      },
+      "family": "machines",
+      "holding": [
+        "reproduction",
+        "capture",
+        "record"
+      ],
+      "representative": {
+        "sha256": "7ed202809979788e90eec480f8e5fa28b4c75ab2057d27246c6596b8efb307dd",
+        "path": "wikimedia-commons:wikipedia/commons/6/61/Travellers_reading_the_flap_display_at_the_Paris_Nord_Train_Station_-_2014.jpg"
+      },
+      "acquired": {
+        "title": "Travellers reading the flap display, Paris Nord (2014)",
+        "why": {
+          "en": "A split-flap departure board: each cell a set of printed flaps turning until the right character shows, in the Gare du Nord.",
+          "fr": "Un tableau des départs à palettes : chaque cellule, un jeu de palettes imprimées qui tournent jusqu’au bon caractère, à la gare du Nord."
+        },
+        "url": "https://upload.wikimedia.org/wikipedia/commons/6/61/Travellers_reading_the_flap_display_at_the_Paris_Nord_Train_Station_-_2014.jpg",
+        "basis": "license",
+        "license": "CC-BY-4.0",
+        "credit": null
+      }
+    },
+    {
+      "code": "receipt-printer-art",
+      "label": {
+        "en": "Receipt and ticket printer art",
+        "fr": "Art des imprimantes de tickets"
+      },
+      "family": "machines",
+      "holding": [
+        "reproduction",
+        "file",
+        "record"
+      ],
+      "representative": null,
+      "acquired": null
+    },
+    {
+      "code": "calculator-spelling",
+      "label": {
+        "en": "Calculator spelling (digits read upside down)",
+        "fr": "Écriture à la calculatrice (chiffres lus à l’envers)"
+      },
+      "family": "machines",
+      "holding": [
         "reproduction",
         "record"
       ],
@@ -1253,6 +1352,34 @@
         "excerpt",
         "capture",
         "record"
+      ],
+      "representative": {
+        "sha256": "21301d2eefc8c2fef2f6800f10b866e6807f7293a7de3377c7beeaf4e27731c1",
+        "path": "wikimedia-commons:wikipedia/commons/b/b2/Amiga_Guru_Meditation.gif"
+      },
+      "acquired": {
+        "title": "Guru Meditation (Amiga)",
+        "why": {
+          "en": "The Amiga's fatal error: a blinking red frame and two lines of text at the top of a black screen.",
+          "fr": "L’erreur fatale de l’Amiga : un cadre rouge clignotant et deux lignes de texte en haut d’un écran noir."
+        },
+        "url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Amiga_Guru_Meditation.gif",
+        "basis": "public-domain",
+        "license": null,
+        "credit": null
+      }
+    },
+    {
+      "code": "loading-screens",
+      "label": {
+        "en": "Loading screens of games and programs",
+        "fr": "Écrans de chargement des jeux et des programmes"
+      },
+      "family": "screens",
+      "holding": [
+        "file",
+        "excerpt",
+        "capture"
       ],
       "representative": null,
       "acquired": null
