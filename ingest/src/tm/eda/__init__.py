@@ -11,17 +11,20 @@ from __future__ import annotations
 import json
 import time
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
 from sqlalchemy import Connection, text
 
 from tm.access import load_access
+from tm.corpus import load_practices
 from tm.eda.base import Scope
+from tm.eda.breadth import breadth
 from tm.eda.chapters import contents, makers, peak, sauce
 from tm.eda.grids import grids
 from tm.storage import ObjectStore
 
-SCHEMA = 2
+SCHEMA = 3  # 3: the breadth of the collection (ADR 0031)
 PUBLIC_KEY = "eda/snapshot.json"  # where the static site finds the last published snapshot
 SERIAL = "set local max_parallel_workers_per_gather = 0"  # for this snapshot's transaction
 # Any write anywhere changes it: inserts, updates and deletes counted by PostgreSQL itself.
@@ -34,8 +37,9 @@ def fingerprint(conn: Connection) -> int:
     return int(conn.execute(text(FINGERPRINT)).scalar_one())
 
 
-def snapshot(conn: Connection) -> dict[str, Any]:
-    """Every chapter, computed now, with when and in how long."""
+def snapshot(conn: Connection, corpus: Path = Path("corpus")) -> dict[str, Any]:
+    """Every chapter, computed now, with when and in how long; `corpus` holds the registry of
+    practices the breadth chapter reads."""
     started = time.perf_counter()
     # Parallel scans share memory through /dev/shm, which Docker caps at 64 MB: the grid scan
     # filled it ("could not resize shared memory segment"). Serial, it costs a few seconds.
@@ -57,6 +61,7 @@ def snapshot(conn: Connection) -> dict[str, Any]:
             "composition": measured["composition"],
             "palette": measured["palette"],
             "revival": measured["revival"],
+            "breadth": breadth(conn, scope, load_practices(corpus / "practices.yaml")),
         },
         "seconds": round(time.perf_counter() - started, 2),
     }

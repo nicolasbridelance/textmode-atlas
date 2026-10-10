@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -157,3 +158,35 @@ def test_a_published_snapshot_is_the_json_the_page_reads(tmp_path: Path) -> None
 def test_the_snapshot_reads_without_parallel_workers(db: Connection) -> None:
     snapshot(db)
     assert db.execute(text("show max_parallel_workers_per_gather")).scalar_one() == "0"
+
+
+@pytest.mark.db
+@pytest.mark.usefixtures("corpus")
+def test_a_practice_counts_as_held_when_its_work_is_in_the_database(
+    db: Connection, tmp_path: Path
+) -> None:
+    horizon = hashlib.sha256(HORIZON).hexdigest()
+    registry = {
+        "version": 1,
+        "families": [{"code": "scene", "label": {"en": "Scenes", "fr": "Scènes"}}],
+        "practices": [
+            {"code": "ansi-art", "label": {"en": "ANSI", "fr": "ANSI"}, "family": "scene",
+             "holding": ["file"], "representative": {"sha256": horizon, "path": "golden:h.ans"}},
+            {"code": "ghost", "label": {"en": "Ghost", "fr": "Fantôme"}, "family": "scene",
+             "holding": ["file"], "representative": {"sha256": "0" * 64, "path": "nowhere:x"}},
+            {"code": "petscii", "label": {"en": "PETSCII", "fr": "PETSCII"}, "family": "scene",
+             "holding": ["file"]},
+        ],
+    }  # fmt: skip
+    (tmp_path / "practices.yaml").write_text(json.dumps(registry), encoding="utf-8")
+    found = snapshot(db, tmp_path)["chapters"]["breadth"]
+    assert found["families"] == [
+        {"family": "scene", "label": {"en": "Scenes", "fr": "Scènes"}, "total": 3, "held": 1}
+    ]
+    assert found["checks"]["representatives_held"] == {
+        "holds": False,
+        "missing": 1,
+        "names": "ghost",
+    }
+    assert {b["basis"] for b in found["bases"]} == {"scene"}
+    assert sum(s["works"] for s in found["sources"]) == 2

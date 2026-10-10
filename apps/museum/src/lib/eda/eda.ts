@@ -114,6 +114,12 @@ export interface Snapshot {
 		};
 		palette: { eras: PaletteEra[]; checks: Checks };
 		revival: { eras: Era[]; checks: Checks };
+		breadth: {
+			families: { family: string; label: Record<string, string>; total: number; held: number }[];
+			sources: { source: string; works: number }[];
+			bases: { basis: string; works: number }[];
+			checks: Checks;
+		};
 	};
 }
 
@@ -125,7 +131,7 @@ export function checkState(check: Check | undefined): CheckState {
 	return check.holds ? 'holds' : 'broken';
 }
 
-const SCHEMA = 2; // as tm.eda: an older host is not read
+const SCHEMA = 3; // as tm.eda: an older host is not read
 
 /** The sixteen colours of the VGA palette, in attribute order: the works' own ink. */
 export const VGA = [
