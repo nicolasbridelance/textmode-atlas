@@ -289,6 +289,7 @@ practices:
     label: { en: "Shift_JIS art (AA)", fr: "Art Shift_JIS (AA)" }
     family: unicode
     holding: [file, excerpt]
+    representative: { sha256: dd56f06e7bd370c52c059eb18ea4bd54d3543cd188df07c1e26cc3e97e6589cc, path: "ja.wikipedia:w/index.php?title=%E3%83%A2%E3%83%8A%E3%83%BC&oldid=110719286&action=raw#lines=41-47" }
     sources: [no source identified]
   - code: kaomoji
     label: { en: "Kaomoji", fr: "Kaomoji" }
@@ -358,6 +359,7 @@ practices:
     label: { en: "Roguelikes", fr: "Roguelikes" }
     family: games
     holding: [excerpt, capture, file]
+    representative: { sha256: f177c3f166703ca667b77c4410ee70fd7d09ac10728db2e031c093c70ddea6aa, path: "nethack:NetHack/NetHack/NetHack-3.6.6_Released/src/rip.c#lines=24-38" }
     sources: [NetHack and other free sources]
   - code: zzt
     label: { en: "ZZT and MegaZeux worlds", fr: "Mondes ZZT et MegaZeux" }
@@ -398,6 +400,7 @@ practices:
     label: { en: "Text user interfaces", fr: "Interfaces en mode texte" }
     family: screens
     holding: [excerpt, capture, record]
+    representative: { sha256: 4e21c761a9383ccf2ad9d69a6a20155624a1fa84cfcced0ae6fd89fd3c4a13d1, path: "wikimedia-commons:wikipedia/commons/6/6b/Midnight_Commander_screenshot.png" }
     sources: [captures]
     leads: [I86]
   - code: splash-screens
@@ -559,4 +562,5 @@ practices:
     label: { en: "Mosaic", fr: "Mosaïque" }
     family: ancestors
     holding: [reproduction, record]
+    representative: { sha256: bb5b0e81660cddcae21b9b2ed76dbcffe5d6293103bb098b4b643891c06f07f5, path: "wikimedia-commons:wikipedia/commons/7/74/Justinian_mosaic,_San_Vitale,_consecrated_547,_Ravenna,_Italy.jpg" }
     sources: [museum digitizations]
