@@ -439,7 +439,7 @@ def practices_view(root: Path) -> str:
     chosen = (
         {e.practice: e for e in load_acquisitions(manifest).entries} if manifest.exists() else {}
     )
-    practices = []
+    practices: list[dict[str, Any]] = []
     for practice in registry.practices:
         entry = chosen.get(practice.code)
         acquired = (
