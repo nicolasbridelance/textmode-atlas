@@ -28,9 +28,9 @@ export const STATUSES = [
 ] as const;
 export const LIVE = 'live:';
 
-export type Kind = (typeof KINDS)[number];
+type Kind = (typeof KINDS)[number];
 export type Strand = (typeof STRANDS)[number];
-export type Status = (typeof STATUSES)[number];
+type Status = (typeof STATUSES)[number];
 type Localized = Record<string, string>;
 
 export interface Study {
