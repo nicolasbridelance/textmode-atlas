@@ -734,9 +734,11 @@ Le rapport préalable ([docs/research/03_juridique.md](research/03_juridique.md)
 L'affichage suit la règle de l'[ADR 0009](adr/0009-show-what-the-scene-released.md), qui remplace la permission seule de l'ADR 0006 :
 
 1. **La permission.** Un artiste qui revendique ses œuvres peut accorder l'affichage en un geste. La prise de contact avec la scène commence en M0 et ne s'arrête pas.
-2. **Ce que la scène a diffusé librement** et qu'une archive de la scène conserve (16colo, Demozoo, scene.org, textfiles) est montré par défaut, **crédité tel que signé** (pseudonyme, groupe, pack, lien vers l'archive source), avec sur chaque fiche **« C'est votre œuvre ? Retirer ou revendiquer »**. Le retrait est immédiat, sans justification. Rien de commercial, rien de privé, pas de posts Usenet personnels ; aucune génération ; les modèles entraînés sur les œuvres ne sont pas distribués.
-3. **Le dépôt.** Un auteur ou un archiviste verse lui-même des fichiers ; le musée agit alors en hébergeur.
-4. **La fiche sans fichier.** Pour tout le reste, `can_display()` renvoie `metadata` : cartel, mesures, relations et lien vers l'archive source.
+2. **Ce que la scène a diffusé librement** et qu'une archive de la scène conserve (16colo, Demozoo, scene.org, textfiles) est montré par défaut, **crédité tel que signé** (pseudonyme, groupe, pack, lien vers l'archive source), avec sur chaque fiche **« C'est votre œuvre ? Retirer ou revendiquer »**. Le retrait est immédiat, sans justification. Rien de commercial, rien de privé (pas de message privé, pas de post Usenet en entier) ; aucune génération ; les modèles entraînés sur les œuvres ne sont pas distribués.
+3. **La licence.** Une œuvre que son auteur a placée sous une licence libre, ou qui est dans le domaine public, est montrée avec sa licence et son crédit.
+4. **Le prélèvement.** Le musée découpe lui-même l'œuvre textuelle là où elle se trouve (signature d'un forum, en-tête d'un manuel, écran d'un logiciel, page conservée par la Wayback Machine), sans jamais garder l'ensemble dont elle vient ; il la montre créditée, avec sa provenance exacte et le même retrait sur demande ([ADR 0032](adr/0032-excerpts-taken-where-the-art-is.md)).
+5. **Le dépôt.** Un auteur ou un archiviste verse lui-même des fichiers ; le musée agit alors en hébergeur.
+6. **La fiche sans fichier.** Pour tout le reste, `can_display()` renvoie `metadata` : cartel, mesures, relations et lien vers l'archive source.
 
 Ce modèle est celui des archives de la scène. Il ne rend pas l'affichage licite en droit français : il en limite les conséquences, et le risque est assumé par le porteur du projet (ADR 0009). 16colo et Demozoo sont informés avant l'ouverture publique ; un juriste est consulté avant le passage à l'échelle (M4).
 
