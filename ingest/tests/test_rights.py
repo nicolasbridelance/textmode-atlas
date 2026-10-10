@@ -1,15 +1,17 @@
 # SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 # SPDX-License-Identifier: Apache-2.0
+import datetime as dt
 from dataclasses import dataclass, field
 
 import pytest
 from tm.rights import (
     Displayable,
+    Excerpt,
+    MuseumPolicy,
     Permission,
     Privacy,
     Rights,
     ScenePublication,
-    ScenePublishedPolicy,
     can_display,
 )
 
@@ -56,9 +58,36 @@ def test_policy_is_injected() -> None:
     assert can_display(Work(rights=GRANTED), NeverPolicy()) == "file"
 
 
-def test_scene_policy_needs_a_scene_archive() -> None:
-    assert ScenePublishedPolicy().allows(Work(rights=SCENE))
-    assert not ScenePublishedPolicy().allows(Work(rights=GRANTED))
+EXCERPT = Excerpt(
+    taken_from="https://web.archive.org/web/1999/http://example.org/sig.html",
+    cut="lines 12-18",
+    taken_at=dt.date(2026, 10, 10),
+    credit="unknown",
+)
+
+
+@pytest.mark.parametrize(
+    "rights",
+    [SCENE, Rights(license="CC0-1.0"), Rights(license="public-domain"), Rights(excerpt=EXCERPT)],
+)
+def test_the_museum_policy_shows_scene_licensed_and_excerpted_works(rights: Rights) -> None:
+    assert MuseumPolicy().allows(Work(rights=rights))
+    assert can_display(Work(rights=rights)) == "file"
+
+
+def test_the_museum_policy_needs_a_basis() -> None:
+    assert not MuseumPolicy().allows(Work(rights=GRANTED))
+    assert not MuseumPolicy().allows(Work())
+
+
+def test_withdrawal_wins_over_an_excerpt() -> None:
+    work = Work(rights=Rights(excerpt=EXCERPT), privacy=Privacy(withdrawn=True))
+    assert can_display(work) == "none"
+
+
+def test_an_excerpt_names_its_credit() -> None:
+    with pytest.raises(ValueError, match="credit"):
+        Excerpt.model_validate(EXCERPT.model_dump() | {"credit": ""})
 
 
 def test_only_scene_archives_count() -> None:
