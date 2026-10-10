@@ -114,6 +114,9 @@ output through `typer.echo`; `print` only in `scripts/`.
   `tm.budget.Ledger.call`; ask him first with an estimate ([model budget](docs/model-budget.md)).
   Never print or read `.env` whole: it holds API keys.
 - Preliminary reports in `docs/research/` are leads to verify at the primary source.
+- A study visitors may read is registered in `research/studies.json` (title and summary in every
+  required locale, kind, strand, status, source): the research room lists it and gives it a page
+  (ADR 0029).
 
 ## Commands
 

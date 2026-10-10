@@ -93,3 +93,8 @@ At the owner's request, the exploration is no longer a room of its own: it is th
 of the research room (`/research`), above the dated studies, so that the museum has one place
 for research and one header link. The chapters, checks and data sources are unchanged; the
 exploration's address is `/research#corpus`.
+
+## Amendment 3 (2026-10-10): its own page in the research room
+
+The research room becomes an index of studies (ADR 0029); the exploration is one of them, at
+`/research/corpus`. `/research#corpus` sends there.
