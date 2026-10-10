@@ -69,7 +69,7 @@
 
 {#if eras.length}
 	<section id="palette">
-		<h2>{m.eda_pal_title()}</h2>
+		<h3>{m.eda_pal_title()}</h3>
 		<p>{m.eda_pal_why()}</p>
 		<Figure
 			caption={m.eda_pal_fig_ink()}

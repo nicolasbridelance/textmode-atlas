@@ -69,10 +69,10 @@ SPDX-License-Identifier: Apache-2.0
 		>
 		<a href={localizeHref('/constellation')}>{m.atlas_constellation()}</a>
 		<a
-			href={localizeHref('/corpus')}
-			aria-current={page.url.pathname.endsWith('/corpus') ? 'page' : undefined}>{m.nav_corpus()}</a
+			href={localizeHref('/research')}
+			aria-current={page.url.pathname.endsWith('/research') ? 'page' : undefined}
+			>{m.atlas_research()}</a
 		>
-		<a href={localizeHref('/research')}>{m.atlas_research()}</a>
 	</nav>
 	<label class="theme"
 		>{m.presentation_theme()}

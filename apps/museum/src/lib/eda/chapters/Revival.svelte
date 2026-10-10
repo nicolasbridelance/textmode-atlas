@@ -29,7 +29,7 @@
 </script>
 
 <section id="revival">
-	<h2>{m.eda_rev_title()}</h2>
+	<h3>{m.eda_rev_title()}</h3>
 	<p>{m.eda_rev_why()}</p>
 	<Figure
 		caption={m.eda_rev_fig_years()}

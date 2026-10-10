@@ -33,7 +33,7 @@
 
 {#if before && after && split}
 	<section id="composition">
-		<h2>{m.eda_comp_title()}</h2>
+		<h3>{m.eda_comp_title()}</h3>
 		<p>{m.eda_comp_why()}</p>
 		<Figure
 			caption={m.eda_comp_fig()}
