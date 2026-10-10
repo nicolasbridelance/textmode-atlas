@@ -26,6 +26,6 @@ Do not commit migration archives, dumps, storage objects or original artworks.
 Machine-private files are excluded through `.git/info/exclude`.
 Python 3.12 and frozen uv dependencies are required; Node >=24 and pnpm 12.3.4
 are the web requirements. `just check` is the full validation command.
-The offline research explorer uses `datasets/build/works/6` and private derived
+The offline research explorer uses `datasets/build/works/7` and private derived
 S3 objects, listens on 127.0.0.1:8737, and is started with `just explore`.
 See the setup checkpoint for commands actually verified on this machine.

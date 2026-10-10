@@ -44,7 +44,7 @@ is a compatibility alias. The existing machine-local Wi-Fi forwarding still work
 - `/fr/work?w=<sha256>` and its English equivalent: conservation, credit, audience,
   withdrawal, measured features, computed neighbours and signed readings.
 
-The live host reads `datasets/build/works/6`, `datasets/build/graph/2`, PostgreSQL
+The live host reads `datasets/build/works/7`, `datasets/build/graph/2`, PostgreSQL
 rights/audience records and private derived S3 objects. Neither originals nor those
 private inputs become web build assets or Git files. Rights and audience are enforced
 on the server; withheld/withdrawn records are absent, metadata-only and adult records

@@ -37,7 +37,7 @@ public exports. Preserve the source ZIP and dumps until local verification is co
 The foundation document and `CLAUDE.md` remain authoritative. Python workspaces
 `ingest`, `renderers`, `analysis` and `api` produce versioned grids and datasets;
 `apps/museum` consumes public exports or its local host's gated records. That host
-consumes works/6, graph/2 and derived S3 objects; `just museum` (alias `just explore`)
+consumes works/7, graph/2 and derived S3 objects; `just museum` (alias `just explore`)
 serves collection, constellation and research together. See [the museum contract](../unified-museum.md).
 SQL contracts live in Alembic migrations;
 grid contracts and audience/display permissions have repository tests.

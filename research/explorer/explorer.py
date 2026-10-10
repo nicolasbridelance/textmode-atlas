@@ -42,7 +42,7 @@ from tm_render.conservation import BitmapFont, Settings, render
 from tm_render.grid import from_parquet
 
 ROOT = Path(__file__).resolve().parents[2]
-BUILD = ROOT / "datasets" / "build" / "works" / "6"
+BUILD = ROOT / "datasets" / "build" / "works" / "7"
 FONT = ROOT / "corpus" / "fonts" / "ibm-vga-8x16.f16"
 SITE = ROOT / "apps" / "museum" / "build"
 GRAPH_SCRIPT = Path(__file__).with_name("graph.js")
