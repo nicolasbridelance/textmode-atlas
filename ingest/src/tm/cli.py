@@ -34,6 +34,7 @@ from tm.lists import collect, write_lists
 from tm.loose import LooseIngested, ingest_loose, loose_files
 from tm.packs import PACK_SOURCES, PackIngested, PackSource, ingest_pack, pack_archives
 from tm.pilots import SampleError
+from tm.rebuild import rebuild_grids, rebuild_renderings
 from tm.render import pending_renderings, render_artifact
 from tm.restore import restore_originals
 from tm.shards import Shard
@@ -272,6 +273,29 @@ def decode_command(
         )
         typer.echo(f"{item.path} {outcome}")
     typer.echo(f"{len(todo)} decoded")
+
+
+@app.command("rebuild")
+def rebuild_command(
+    font: Annotated[Path, typer.Option(help="Bitmap font (.f16).")] = Path(
+        "corpus/fonts/ibm-vga-8x16.f16"
+    ),
+    shard: Annotated[str, typer.Option(help=SHARD_HELP)] = "0/1",
+) -> None:
+    """Make again the grids and renderings the database records but the store lacks."""
+    cfg = settings()
+    client = s3_client()
+    originals = S3Store(client, cfg.originals_bucket)
+    derived = S3Store(client, cfg.derived_bucket)
+    with create_engine(cfg.database_url).connect() as conn:
+        for name, rebuilt in (
+            ("grids", rebuild_grids(conn, originals, derived, _shard(shard))),
+            ("renderings", rebuild_renderings(conn, derived, BitmapFont.load(font), _shard(shard))),
+        ):
+            typer.echo(
+                f"{name}: {rebuilt.rebuilt} rebuilt, {rebuilt.no_source} without source,"
+                f" {len(rebuilt.different)} different: {' '.join(rebuilt.different[:20])}"
+            )
 
 
 @app.command("render")
