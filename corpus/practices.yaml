@@ -108,6 +108,7 @@ practices:
     label: { en: "Cracktros and BBStros", fr: "Cracktros et BBStros" }
     family: scene
     holding: [capture, record]
+    representative: { sha256: bf7639ad6820b18fe32c39ef136c80440b7fe170c5e3a462339965168ee88222, path: "scene.org:get/demos/compilations/lost_found_and_more/cracktro/knights_of_legend_cracktro.zip" }
     sources: [Defacto2, Demozoo, Pouët]
     note: Programs; held as captures, only when a scene archive holds them on their own (ADR 0030).
   - code: latin-american-bbs
@@ -152,6 +153,7 @@ practices:
     label: { en: "BBC Micro Mode 7", fr: "Mode 7 du BBC Micro" }
     family: home-computers
     holding: [file, excerpt]
+    representative: { sha256: 14bf9df5293888e9449de3273d317b8329f38c0109b10a42f5f58d9ff80992d4, path: "scene.org:get/parties/2017/nova17/oldschool_demo/bitshifters-teletextr.zip" }
     sources: [edit.tf, scene.org compos]
   - code: trs80-semigraphics
     label: { en: "TRS-80 and early semigraphics", fr: "TRS-80 et premiers semi-graphiques" }
@@ -177,6 +179,7 @@ practices:
     label: { en: "Amiga ANSI and BBS screens", fr: "ANSI et écrans de BBS Amiga" }
     family: home-computers
     holding: [file, excerpt]
+    representative: { sha256: 721ea936e332b6df3de99b2946e0c228b56e8126336e912fcc2000b23b3a0201, path: "scene.org:get/parties/2015/evoke15/amiga_ansi_ascii/ldn-dharmachakra.zip" }
     sources: [amigascne mirror on scene.org, Aminet]
 
   # --- networks ------------------------------------------------------------------------------
@@ -352,6 +355,7 @@ practices:
     label: { en: "Sizecoding in text mode", fr: "Sizecoding en mode texte" }
     family: moving
     holding: [capture, record]
+    representative: { sha256: 5ea50d6b17d225ce14470511c1a9881bd08a5b4e331a958cce7603667da810c4, path: "scene.org:get/parties/2018/dihalt18lite/hiend_1k/sensenstahl-demozoo_ad.zip" }
     sources: [Demozoo, Pouët]
 
   # --- games ---------------------------------------------------------------------------------
@@ -386,6 +390,7 @@ practices:
     label: { en: "Other text-mode games", fr: "Autres jeux en mode texte" }
     family: games
     holding: [excerpt, capture, record]
+    representative: { sha256: 22aa3f0cc30839ddf79fe94d58979b85309c40408f9373417d67815bdb0378fa, path: "scene.org:get/demos/compos/256_byte_game_compo/kitty_of_death.zip" }
     sources: [shareware CDs, Discmaster]
 
   # --- screens -------------------------------------------------------------------------------

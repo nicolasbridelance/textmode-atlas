@@ -265,3 +265,45 @@ entries:
     why:
       en: "An image built of small square tesserae, each one colour: the grid of cells fifteen centuries before the screen."
       fr: "Une image faite de petites tesselles carrées, chacune d’une couleur : la grille de cellules quinze siècles avant l’écran."
+
+  # --- more of the demoscene, found through Demozoo's tags and placings (lead I91) -------------
+  - practice: amiga-ansi
+    title: dharmachakra
+    url: https://files.scene.org/get/parties/2015/evoke15/amiga_ansi_ascii/ldn-dharmachakra.zip
+    source: scene.org
+    basis: scene
+    why:
+      en: "Winner of the Amiga ANSI and ASCII compo at Evoke 2015, drawn for the Amiga's own fonts and palette."
+      fr: "Lauréate de la compétition ANSI et ASCII Amiga à l’Evoke 2015, dessinée pour les polices et la palette de l’Amiga."
+  - practice: bbc-mode7
+    title: Teletextr
+    url: https://files.scene.org/get/parties/2017/nova17/oldschool_demo/bitshifters-teletextr.zip
+    source: scene.org
+    basis: scene
+    why:
+      en: "Winner of the oldschool demo compo at Nova 2017: a BBC Micro demo drawn in Mode 7, the computer's teletext screen."
+      fr: "Lauréate de la compétition de démos oldschool à la Nova 2017 : une démo pour BBC Micro dessinée en Mode 7, l’écran télétexte de la machine."
+  - practice: cracktros
+    title: Knights Of Legend cracktro (THG)
+    url: https://files.scene.org/get/demos/compilations/lost_found_and_more/cracktro/knights_of_legend_cracktro.zip
+    source: scene.org
+    basis: scene
+    why:
+      en: "A text-mode cracktro of 1990, the intro alone (3,463 bytes), without the game it came with."
+      fr: "Une cracktro en mode texte de 1990, l’intro seule (3 463 octets), sans le jeu qu’elle accompagnait."
+  - practice: sizecoding
+    title: Demozoo Ad
+    url: https://files.scene.org/get/parties/2018/dihalt18lite/hiend_1k/sensenstahl-demozoo_ad.zip
+    source: scene.org
+    basis: scene
+    why:
+      en: "Winner of the 1 KB intro compo at DiHalt 2018 Lite: a text-mode intro in a thousand bytes."
+      fr: "Lauréate de la compétition d’intros de 1 Ko à la DiHalt 2018 Lite : une intro en mode texte tenant en mille octets."
+  - practice: text-mode-games
+    title: Kitty Of Death
+    url: https://files.scene.org/get/demos/compos/256_byte_game_compo/kitty_of_death.zip
+    source: scene.org
+    basis: scene
+    why:
+      en: "A game in 256 bytes, from the 1995 256 Byte Game Compo, played in text mode."
+      fr: "Un jeu en 256 octets, de la 256 Byte Game Compo de 1995, joué en mode texte."
