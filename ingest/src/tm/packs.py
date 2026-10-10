@@ -273,9 +273,12 @@ def _add_member(
 
 
 def is_document(name: str, data: bytes) -> bool:
-    """An NFO, a FILE_ID.DIZ or a text file that reads as text: a work of its own (ADR 0033)."""
+    """An NFO, a FILE_ID.DIZ or a text file that reads as text: a work of its own (ADR 0033).
+
+    Only what DOS `type` shows is looked at: a SAUCE record's binary fields hold NUL bytes."""
     suffix = PurePosixPath(name).suffix.lower()
-    return suffix in DOCUMENTS and not binary_format(data) and NUL not in data
+    shown = split(data)[0].split(EOF_BYTE, 1)[0]
+    return suffix in DOCUMENTS and not binary_format(data) and NUL not in shown
 
 
 def art_format(

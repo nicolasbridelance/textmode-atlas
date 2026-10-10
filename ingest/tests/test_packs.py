@@ -271,3 +271,9 @@ def test_a_text_member_is_a_work_unless_its_bytes_are_binary(
         " left join version v on v.id = a.version_id left join work w on w.id = v.work_id"
         " order by m.position",
     ) == [("MEMBERS.TXT", "text", "MEMBERS.TXT"), ("SETUP.TXT", "text", None)]
+
+
+def test_a_text_signed_with_sauce_is_a_work(db: Connection, stores: Stores, tmp_path: Path) -> None:
+    signed = b"greetings to all\r\n\x1a" + HORIZON[-128:]  # SAUCE fields hold NUL bytes
+    ingest_pack(db, stores.originals, make_pack(tmp_path / "1996" / "s.zip", {"S.NFO": signed}))
+    assert rows(db, "select count(*) from work where kind = 'single'") == [(1,)]
