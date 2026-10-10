@@ -16,6 +16,35 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-10 — The words in the works (spike 0006)
+
+**The internet replaced the BBS inside the art, and they crossed in 1996.** The share of files
+that hold a phone number falls from 20–29% (1992–94) to 6.7% in 1996 and under 1% from 2000;
+the share holding a URL or an e-mail address rises from under 0.5% (1993) to 9.6% in 1996 and
+14–15% from 1998. The art carried its own distribution channel, and changed it within two years.
+*Evidence: spike 0006, text layer of works v6, train packs, filing years; shares of decoded
+files, not weighted by text. Exploratory: to test on the test packs (Q25).*
+
+**A number could be shown and hidden at once.** About 2,500 board numbers in the art are
+masked: `PRI-VATE` (and `PRi-VATE`, `PRI.VATE`), `XXX-XXXX`, sometimes a message (`NOT-OPEN`,
+`DiE-FEDS`). The masked share rises from 7% (1992) to 20% (1997–98) and 45% (1999): the ads kept
+their slot after the boards went private or closed. *Evidence: same spike, phone readings.*
+
+**Even phone numbers were written in elite spelling.** About a quarter of the numbers read from
+1992 to 1999 write some digits as letters: `9o9.685.o749`, `6l3-83O-6964`, `2i9.864.7845`.
+*Evidence: same spike, 1,758 of 10,584 readings. Story: style reached the one string that had
+to be dialled.*
+
+**Polish wrote without its letters.** Of 215 files read as Polish (two groups, 1999–2003:
+`l0p*`, `spr_*`), only 9 show Polish letters, and those through the Mazovia code page drawn as
+CP437 (`piækne` for "piękne"); the rest write Polish in plain ASCII, as on IRC. *Evidence: same
+spike, language at file level, confidence 0.9 or more. See C10 for the Brazilian habit.*
+
+**English is the scene's language, with pockets.** Of 32,220 files with fifteen words or more
+of text, about 740 are confidently in another language: Polish, German, Swedish, Spanish,
+French, Portuguese (song lyrics by Legião Urbana in `mdn-9709`), Finnish, Dutch. Their share
+of files peaks near 3% around 2000. *Evidence: same spike.*
+
 ## 2026-10-10 — A crowd at the peak, an art of greys
 
 **The peak was a crowd.** Grouping packs by the prefix of their name, the ten largest groups
