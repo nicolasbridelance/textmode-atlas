@@ -181,11 +181,21 @@ def _collect(files: dict[str, Path], names: list[str], failed: set[str]) -> Expa
     result = Expanded()
     for name in names:
         target = files.get(name)
-        if target and name not in failed and target.stat().st_size <= MAX_MEMBER_BYTES:
-            result.members.append((name, target.read_bytes()))
+        data = _read(target) if target and name not in failed else None
+        if data is not None:
+            result.members.append((name, data))
         else:
             result.unreadable.append(name)
     return result
+
+
+def _read(target: Path) -> bytes | None:
+    """An extracted file, unless oversize or one the system cannot open (a DOS device name
+    such as `AUX` or `CON` on Windows)."""
+    try:
+        return target.read_bytes() if target.stat().st_size <= MAX_MEMBER_BYTES else None
+    except OSError:
+        return None
 
 
 def _extracted(tmp: str) -> dict[str, Path]:
