@@ -36,7 +36,7 @@ from tm_analysis.neighbours import PROFILE, nearest, profile
 from tm_analysis.versions import NEIGHBOURS_VERSION
 
 ROOT = Path(__file__).resolve().parents[2]
-WORKS = ROOT / "datasets" / "build" / "works" / "6"
+WORKS = ROOT / "datasets" / "build" / "works" / "7"
 VERSION = "2"  # of this graph build: k, the community and layout methods and their seeds
 OUT = ROOT / "datasets" / "build" / "graph" / VERSION
 K = 10
