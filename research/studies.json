@@ -1,0 +1,156 @@
+{
+  "studies": [
+    {
+      "id": "programme",
+      "date": "2026-10-07",
+      "kind": "programme",
+      "strand": "programme",
+      "status": "ongoing",
+      "dataset": null,
+      "leads": [],
+      "source": "docs/research-program.md",
+      "language": "en",
+      "title": {
+        "en": "Research programme",
+        "fr": "Programme de recherche"
+      },
+      "summary": {
+        "en": "What the museum asks of its corpus, from which data, with which methods and in which order: the linkage layer, the atlas of the corpus and seven workstreams, with the rules every study follows.",
+        "fr": "Ce que le musée demande à son corpus, avec quelles données, quelles méthodes et dans quel ordre : la couche de liaison, l’atlas du corpus et sept chantiers, avec les règles que suit chaque étude."
+      }
+    },
+    {
+      "id": "corpus",
+      "date": "2026-10-10",
+      "kind": "exploration",
+      "strand": "description",
+      "status": "exploratory",
+      "dataset": "live",
+      "leads": ["I73", "Q21", "H2", "H9"],
+      "source": "live:corpus",
+      "language": "en",
+      "title": {
+        "en": "The corpus, explored",
+        "fr": "Le corpus, exploré"
+      },
+      "summary": {
+        "en": "Seven chapters computed from the live database and recomputed when it changes: what the corpus holds, the peak, the makers, SAUCE, composition, palette and the revival, each reading re-checked against its numbers.",
+        "fr": "Sept chapitres calculés sur la base en direct et recalculés quand elle change : ce que contient le corpus, le pic, les auteurs, SAUCE, la composition, la palette et le renouveau, chaque lecture revérifiée par ses chiffres."
+      }
+    },
+    {
+      "id": "archives",
+      "date": "2026-10-09",
+      "kind": "study",
+      "strand": "description",
+      "status": "exploratory",
+      "dataset": "16colo, textfiles.com, Demozoo",
+      "leads": ["Q21", "H8"],
+      "source": "research/exploration/archives.md",
+      "language": "en",
+      "title": {
+        "en": "Three archives, one curve?",
+        "fr": "Trois archives, une seule courbe ?"
+      },
+      "summary": {
+        "en": "Artpacks per year in 16colo, textfiles.com and Demozoo: the peak is 1996–97 in all three, but they share one lineage, so none is yet an independent witness.",
+        "fr": "Les artpacks par année dans 16colo, textfiles.com et Demozoo : le pic tombe en 1996–97 dans les trois, mais elles descendent d’une même lignée, aucune n’est donc encore un témoin indépendant."
+      }
+    },
+    {
+      "id": "neighbours",
+      "date": "2026-10-09",
+      "kind": "study",
+      "strand": "W1",
+      "status": "exploratory",
+      "dataset": "works v5",
+      "leads": ["I48", "H3"],
+      "source": "research/exploration/neighbours.md",
+      "language": "en",
+      "title": {
+        "en": "Nearest works and attribution",
+        "fr": "Œuvres voisines et attribution"
+      },
+      "summary": {
+        "en": "Each work linked to its ten nearest by measured form, read as a social network: one continent with no stars, communities, and neighbours that share an author 6.7 times more often than chance, which is not yet attribution.",
+        "fr": "Chaque œuvre reliée à ses dix plus proches par sa forme mesurée, lue comme un réseau social : un seul continent sans étoiles, des communautés, et des voisines qui partagent leur auteur 6,7 fois plus souvent que le hasard, ce qui n’est pas encore une attribution."
+      }
+    },
+    {
+      "id": "works",
+      "date": "2026-10-08",
+      "kind": "study",
+      "strand": "description",
+      "status": "exploratory",
+      "dataset": "works v3",
+      "leads": [],
+      "source": "research/exploration/works.md",
+      "language": "en",
+      "title": {
+        "en": "Reading the corpus",
+        "fr": "Lire le corpus"
+      },
+      "summary": {
+        "en": "A first look at the decoded grids of the training packs: sizes, colours, glyphs, content kinds, animation, and the constraints they put on every later step.",
+        "fr": "Un premier regard sur les grilles décodées des packs d’entraînement : tailles, couleurs, glyphes, genres, animation, et les contraintes qu’elles imposent aux étapes suivantes."
+      }
+    },
+    {
+      "id": "catalogue",
+      "date": "2026-10-08",
+      "kind": "study",
+      "strand": "description",
+      "status": "exploratory",
+      "dataset": "catalogue v1",
+      "leads": [],
+      "source": "research/exploration/catalogue.md",
+      "language": "en",
+      "title": {
+        "en": "Catalogue exploration",
+        "fr": "Exploration du catalogue"
+      },
+      "summary": {
+        "en": "What the whole 16colo mirror holds before any sample is drawn: years, groups, formats, SAUCE, widths, fonts, NFO and DIZ files.",
+        "fr": "Ce que contient tout le miroir de 16colo avant de tirer un échantillon : années, groupes, formats, SAUCE, largeurs, polices, fichiers NFO et DIZ."
+      }
+    },
+    {
+      "id": "workshop",
+      "date": "2026-10-09",
+      "kind": "study",
+      "strand": "museum",
+      "status": "ongoing",
+      "dataset": null,
+      "leads": [],
+      "source": "docs/presentation-workshop.md",
+      "language": "en",
+      "title": {
+        "en": "Visitor presentation workshop",
+        "fr": "Atelier de présentation"
+      },
+      "summary": {
+        "en": "How a visitor may change the frame of a work (themes, backgrounds, mounts, scripted interpretations) without ever changing the work itself.",
+        "fr": "Comment un visiteur peut changer le cadre d’une œuvre (thèmes, fonds, passe-partout, interprétations scriptées) sans jamais changer l’œuvre elle-même."
+      }
+    },
+    {
+      "id": "experiments",
+      "date": "2026-10-09",
+      "kind": "study",
+      "strand": "museum",
+      "status": "exploratory",
+      "dataset": null,
+      "leads": [],
+      "source": "docs/presentation-experiments.md",
+      "language": "en",
+      "title": {
+        "en": "Image-processing experiments",
+        "fr": "Expériences de traitement d’image"
+      },
+      "summary": {
+        "en": "Scripted image methods compared on public works, with no model, and what the workshop changed as a result.",
+        "fr": "Des méthodes d’image scriptées comparées sur des œuvres publiques, sans modèle, et ce que l’atelier en a retenu."
+      }
+    }
+  ]
+}
