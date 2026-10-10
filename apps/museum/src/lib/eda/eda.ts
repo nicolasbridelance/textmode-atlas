@@ -5,23 +5,23 @@
 // every number and every check; the page only formats and draws them.
 
 export type Check = { holds: boolean } & Record<string, number | boolean | null>;
-export type Checks = Record<string, Check>;
+type Checks = Record<string, Check>;
 
-export interface Year {
+interface Year {
 	year: number;
 	works: number;
 	packs: number;
 	median_art: number;
 }
 
-export interface SauceYear {
+interface SauceYear {
 	year: number;
 	format: 'ansi' | 'ascii';
 	works: number;
 	share: number;
 }
 
-export interface Era {
+interface Era {
 	era: string;
 	works: number;
 	median_rows: number;
@@ -29,7 +29,7 @@ export interface Era {
 	ice: number;
 }
 
-export interface KindShare {
+interface KindShare {
 	share: number;
 	shade: number;
 }
