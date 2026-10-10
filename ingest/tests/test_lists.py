@@ -102,9 +102,22 @@ def test_an_unsigned_undated_tall_work_is_only_in_its_pack() -> None:
     row = SimpleNamespace(
         sha256="0" * 64, source_path="x/TALL.ANS", pack_path="TALL.ANS", sauce=None, title=None,
         pack="demo95", archive="16colo", pack_url="https://16colo.rs/pack/demo95/", year=None,
-        cols=80, rows=500,
+        cols=80, rows=500, own_url=None, license=None, excerpt_credit=None,
     )  # fmt: skip
     lists = Lists()
     lists.add(row, "12")  # pyright: ignore[reportArgumentType]
     assert list(lists.entries) == [PACK]
     assert lists.days == []
+
+
+def test_an_excerpt_in_no_pack_is_only_in_its_author_list() -> None:
+    row = SimpleNamespace(
+        sha256="1" * 64, source_path="web/sig.html#lines=3-9", pack_path=None, sauce=None,
+        title="A signature", pack=None, archive=None, pack_url=None, year=None, cols=80, rows=7,
+        own_url="https://web.archive.org/web/1999/http://example.org/sig.html", license=None,
+        excerpt_credit="Ola",
+    )  # fmt: skip
+    lists = Lists()
+    lists.add(row, "3")  # pyright: ignore[reportArgumentType]
+    assert list(lists.entries) == ["lists/authors/ola.json"]
+    assert list(lists.heads) == ["lists/authors/ola.json"]

@@ -29,6 +29,8 @@ export interface WorkRecord {
 		pack: string | null;
 		archive: string | null;
 		url: string | null;
+		/** A licence or "public-domain" (ADR 0032); absent from records written before it. */
+		license?: string | null;
 	};
 	audience: { level: string; descriptors: string[]; notices: string[]; reviewed: boolean };
 	shown: 'files' | 'record';

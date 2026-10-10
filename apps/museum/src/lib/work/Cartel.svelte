@@ -72,9 +72,18 @@ SPDX-License-Identifier: Apache-2.0
 	<details>
 		<summary>{m.work_context()}</summary>
 		<ul class="plain">
-			{#if credit.url && credit.archive}
+			{#if credit.url}
 				<li>
-					<a href={credit.url} rel="external">{m.work_source({ archive: credit.archive })}</a>
+					<a href={credit.url} rel="external"
+						>{credit.archive ? m.work_source({ archive: credit.archive }) : m.work_source_page()}</a
+					>
+				</li>
+			{/if}
+			{#if credit.license}
+				<li>
+					{credit.license === 'public-domain'
+						? m.work_public_domain()
+						: m.work_license({ license: credit.license })}
 				</li>
 			{/if}
 			{#each record.provenance as fetched, i (i)}
