@@ -5,7 +5,7 @@
 // practices --write` derives from corpus/practices.yaml and the acquisitions manifest.
 import registry from '../../../../../corpus/practices.json';
 
-export const HOLDINGS = ['file', 'excerpt', 'capture', 'reproduction', 'record'] as const;
+const HOLDINGS = ['file', 'excerpt', 'capture', 'reproduction', 'record'] as const;
 export type Holding = (typeof HOLDINGS)[number];
 type Localized = Record<string, string>;
 
