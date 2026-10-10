@@ -158,3 +158,22 @@ def test_dos_names_are_read_as_cp437() -> None:
 
 def test_dos_paths_use_portable_separators() -> None:
     assert archives._dos_name(b"SUB\\FILE_ID.DIZ") == "SUB/FILE_ID.DIZ"  # pyright: ignore[reportPrivateUsage]
+
+
+def test_a_member_the_system_cannot_open_is_unreadable(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    good, device = tmp_path / "GOOD.ANS", tmp_path / "AUX.ANS"
+    good.write_bytes(b"art")
+    device.write_bytes(b"")
+    real = Path.read_bytes
+
+    def read_bytes(self: Path) -> bytes:
+        if self.name == "AUX.ANS":  # Windows: [Errno 22] Invalid argument
+            raise OSError(22, "Invalid argument")
+        return real(self)
+
+    monkeypatch.setattr(Path, "read_bytes", read_bytes)
+    files = {"GOOD.ANS": good, "AUX.ANS": device}
+    expanded = archives._collect(files, ["GOOD.ANS", "AUX.ANS"], set())  # pyright: ignore[reportPrivateUsage]
+    assert (expanded.members, expanded.unreadable) == ([("GOOD.ANS", b"art")], ["AUX.ANS"])
