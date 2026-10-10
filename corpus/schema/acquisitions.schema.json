@@ -84,6 +84,18 @@
           "title": "Html",
           "type": "boolean"
         },
+        "pattern": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pattern"
+        },
         "credit": {
           "anyOf": [
             {
@@ -97,8 +109,13 @@
           "title": "Credit"
         },
         "why": {
+          "patternProperties": {
+            "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$": {
+              "type": "string"
+            }
+          },
           "title": "Why",
-          "type": "string"
+          "type": "object"
         }
       },
       "required": [
