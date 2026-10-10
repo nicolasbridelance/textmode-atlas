@@ -1,7 +1,17 @@
 // SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 // SPDX-License-Identifier: Apache-2.0
 import { describe, expect, it } from 'vitest';
-import { families, inFamily, isHeld, placeOf, practices, say } from './practices';
+import type { Work } from '../work/record';
+import {
+	families,
+	inFamily,
+	isHeld,
+	placeOf,
+	practices,
+	say,
+	standingOf,
+	type Practice
+} from './practices';
 
 describe('the registry of practices', () => {
 	it('puts every practice in a declared family', () => {
@@ -34,5 +44,23 @@ describe('say', () => {
 	it('falls back to English', () => {
 		expect(say({ en: 'Mosaic', fr: 'Mosaïque' }, 'de')).toBe('Mosaic');
 		expect(say({ en: 'Mosaic', fr: 'Mosaïque' }, 'fr')).toBe('Mosaïque');
+	});
+});
+
+describe('standingOf', () => {
+	const held = practices.find(isHeld) as Practice;
+	const missing = practices.find((p) => !isHeld(p)) as Practice;
+	const published = (shown: 'files' | 'record') => async () =>
+		({ record: { shown }, grid: null }) as unknown as Work;
+
+	it('says a practice with no representative is missing, without asking', async () => {
+		const load = () => Promise.reject(new Error('not asked'));
+		expect(await standingOf(missing, load)).toBe('missing');
+	});
+
+	it('reads the export: files published is on show, a record or nothing is the reserve', async () => {
+		expect(await standingOf(held, published('files'))).toBe('shown');
+		expect(await standingOf(held, published('record'))).toBe('reserve');
+		expect(await standingOf(held, async () => null)).toBe('reserve');
 	});
 });
