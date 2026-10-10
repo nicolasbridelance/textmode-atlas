@@ -101,6 +101,7 @@ practices:
     label: { en: "Warez scene texts (applications, courier lists, cracking)", fr: "Textes de la scène warez (candidatures, listes de courriers, crack)" }
     family: scene
     holding: [file]
+    representative: { sha256: 47a11432796d7dba332b3917b408601c5a2069ba45901a7d759bb31d316567af, path: "textfiles:piracy/courier.txt" }
     sources: [textfiles piracy/, Defacto2]
     leads: [Q40, I84]
   - code: cracktros
@@ -134,11 +135,13 @@ practices:
     label: { en: "PETSCII (Commodore)", fr: "PETSCII (Commodore)" }
     family: home-computers
     holding: [file]
+    representative: { sha256: 90c7a25d0167a479772f21ca90c8a8a63316812f9fb66554f583ddc4fe9e684b, path: "scene.org:get/parties/2013/datastorm13/c64/petscii/acidt-rrorreast-faagel.zip" }
     sources: [scene.org compos, CSDb]
   - code: atascii
     label: { en: "ATASCII (Atari 8-bit)", fr: "ATASCII (Atari 8 bits)" }
     family: home-computers
     holding: [file]
+    representative: { sha256: cba16e6120ce7ca428bdac68fc0b6925ca37bd9ef51671b633eee6442faedd5e, path: "scene.org:get/parties/2021/atascii_compo21/atascii_compo/bugs.zip" }
     sources: [scene.org compos, Atarimania]
   - code: zx-spectrum
     label: { en: "ZX81 and ZX Spectrum block graphics", fr: "Graphismes en blocs du ZX81 et du ZX Spectrum" }
@@ -268,6 +271,7 @@ practices:
     label: { en: "Line printer art and early computer art", fr: "Art sur imprimante ligne et premier art informatique" }
     family: machines
     holding: [reproduction, file, record]
+    representative: { sha256: b4e922bb164f43bc3091f77fb284222fb091ff6d1afb1181bcc314ca983ad09a, path: "textfiles:art/DECUS/beethoven.txt" }
     sources: [to find]
   - code: banners
     label: { en: "Printed banners (banner, line printer calendars)", fr: "Bannières imprimées (banner, calendriers d'imprimante)" }
@@ -340,6 +344,7 @@ practices:
     label: { en: "Textmode demos (TMDC)", fr: "Démos en mode texte (TMDC)" }
     family: moving
     holding: [capture, record]
+    representative: { sha256: 2a4ae78646a692860ce51f4c33c951835289dcf7c52b83de4b9affa3c12522c4, path: "scene.org:get/parties/1996/distortion96/demo/ringnesm.zip" }
     sources: [Demozoo, Pouët, scene.org]
   - code: sizecoding
     label: { en: "Sizecoding in text mode", fr: "Sizecoding en mode texte" }
@@ -422,12 +427,14 @@ practices:
     label: { en: "Man pages", fr: "Pages de man" }
     family: documents
     holding: [file]
+    representative: { sha256: 68f1e8e9290a6476bf3a965a190e381643b7f35ace3e3b9fe81824af2ad34910, path: "unix-history-repo:dspinellis/unix-history-repo/BSD-4_4_Lite2/usr/src/bin/ls/ls.1" }
     sources: [Unix history repository]
     leads: [I87]
   - code: walkthroughs-faqs
     label: { en: "Walkthroughs, hints and FAQs", fr: "Soluces, astuces et FAQ" }
     family: documents
     holding: [file]
+    representative: { sha256: b62b1532d0fe4453ea968c63765753b0c1e227ec1d2b3fd7d8634be099b533e3, path: "textfiles:adventure/adventure.txt" }
     sources: [textfiles adventure/, textfiles games/]
     leads: [Q41, I84]
   - code: textfiles
@@ -443,11 +450,13 @@ practices:
     label: { en: "Source code as image (IOCCC)", fr: "Code source comme image (IOCCC)" }
     family: code
     holding: [file]
+    representative: { sha256: 0e743e82d0b2db6dad01dada78396e2f97f34d46493060bae8b0d2f27c58842f, path: "ioccc:1988/westley/westley.c" }
     sources: [IOCCC winners]
   - code: two-dimensional-languages
     label: { en: "Two-dimensional languages (Befunge)", fr: "Langages en deux dimensions (Befunge)" }
     family: code
     holding: [file]
+    representative: { sha256: 5013214d32fd15f3ca48cc4c0a115198b9ec8a9d46257427114d2ea5c1c64857, path: "esolangs:w/index.php" }
     sources: [esolangs.org]
   - code: comment-banners
     label: { en: "Banners in source code and server greetings", fr: "Bannières dans le code source et accueils de serveurs" }
@@ -460,6 +469,7 @@ practices:
     label: { en: "ROM character fonts", fr: "Polices de caractères en ROM" }
     family: type
     holding: [file]
+    representative: { sha256: 21b3c0a3770ef0afc46564760613d7b078f4fcc9ed93db4b829a440b68822e08, path: "int10h:oldschool-pc-fonts/download/oldschool_pc_font_pack_v2.2_FULL.zip" }
     sources: [corpus/fonts, The Ultimate Oldschool PC Font Pack]
     note: The VGA font is held as a profile asset (corpus/fonts), not as a work.
   - code: figlet-fonts
@@ -486,6 +496,7 @@ practices:
     label: { en: "ANSI music", fr: "Musique ANSI" }
     family: sound
     holding: [file]
+    representative: { sha256: 0bbbea37962fd6fbb8ab019245ff929c202838bdccf898d4229a8f710d772b00, path: "textfiles:ansimusic/songs/5th-symp.ams" }
     sources: [textfiles ansimusic/]
   - code: text-notation
     label: { en: "Text notations (ABC, ASCII tablature)", fr: "Notations en texte (ABC, tablatures ASCII)" }
@@ -503,11 +514,13 @@ practices:
     label: { en: "Concrete and visual poetry", fr: "Poésie concrète et visuelle" }
     family: poetry
     holding: [reproduction, record]
+    representative: { sha256: 76536270147e410446ac3c19ccb1cf9f1b2b92942c861d8f6741328e271aa282, path: "wikimedia-commons:wikipedia/commons/1/18/Mallarmé_-_Un_coup_de_dés,_1914.djvu" }
     sources: [Sackner Archive]
   - code: calligrams
     label: { en: "Calligrams and pattern poems", fr: "Calligrammes et poèmes figurés" }
     family: poetry
     holding: [reproduction, record]
+    representative: { sha256: 45564764dd854b8060f525b39e7a2b5ad187ad224db171231f22436dea522a23, path: "wikimedia-commons:wikipedia/commons/9/9b/Guillaume_Apollinaire_-_Calligramme_-_Il_pleut.png" }
     sources: [public domain editions]
   - code: technopaignia
     label: { en: "Technopaignia and carmina figurata", fr: "Technopaignia et carmina figurata" }
@@ -518,6 +531,7 @@ practices:
     label: { en: "Micrography", fr: "Micrographie" }
     family: poetry
     holding: [reproduction, record]
+    representative: { sha256: f22a7f2e7d6e69759d41a96a23ddbe1e5ac6c577f38e03d5db80d63b8c620488, path: "wikimedia-commons:wikipedia/commons/e/e0/Scribe_and_illuminator-_Aaron_Wolf_Herlingen_-_The_Five_Scrolls_in_multilingual_micrography_Ruth,_Song_of_Songs,_Ecclesiastes,_Esther,_and_Lamentat..._-_Google_Art_Project.jpg" }
     sources: [library digitizations]
 
   # --- ancestors -----------------------------------------------------------------------------
@@ -525,16 +539,19 @@ practices:
     label: { en: "Jacquard weaving and its cards", fr: "Tissage Jacquard et ses cartes" }
     family: ancestors
     holding: [reproduction, record]
+    representative: { sha256: d5a9ef99d97722e82dfeac295485e46e1981c82b08d4aa4cb6d8a4b3c528f7b4, path: "wikimedia-commons:wikipedia/commons/e/e1/Jacquard_Joseph_Marie_woven_silk.jpg" }
     sources: [museum digitizations]
   - code: punched-cards
     label: { en: "Punched cards and paper tape", fr: "Cartes perforées et bandes de papier" }
     family: ancestors
     holding: [reproduction, record]
+    representative: { sha256: 437333f08a9b35ace54aaaaabe42db9498ba995a4ffc37aaeb30ea0a3b7cce80, path: "wikimedia-commons:wikipedia/commons/5/53/80-column_punched_card_edited_by_sub-assemblies_of_a_Pentaconta_electromechanical_telephone_exchange.jpg" }
     sources: [museum digitizations]
   - code: cross-stitch
     label: { en: "Cross-stitch and needlework grids", fr: "Point de croix et grilles de broderie" }
     family: ancestors
     holding: [reproduction, record]
+    representative: { sha256: 17cb8018928fb55390372329cdb4efcb7d3df038c189bf9ba762081770aa15e6, path: "wikimedia-commons:wikipedia/commons/c/cb/Sampler_(England),_1774_(CH_18727633).jpg" }
     sources: [museum digitizations]
   - code: mosaic
     label: { en: "Mosaic", fr: "Mosaïque" }
