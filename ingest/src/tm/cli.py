@@ -71,23 +71,28 @@ def corpus_check(root: CorpusRoot = Path("corpus"), docs: DocsRoot = Path("docs"
             typer.echo(f"✗ {path}\n{err}", err=True)
         else:
             typer.echo(f"✓ {path}")
-    stale = [
-        name
+    for problem in [*corpus_mod.broken_references(root), *_stale_derived(root, docs)]:
+        errors += 1
+        typer.echo(f"✗ {problem}", err=True)
+    if errors:
+        raise typer.Exit(1)
+
+
+def _stale_derived(root: Path, docs: Path) -> list[str]:
+    """What is derived from the corpus files and no longer matches them, with the fix."""
+    schemas = [
+        f"corpus/schema/{name} is out of date: run `tm corpus schema`"
         for name, content in corpus_mod.json_schemas().items()
         if not (root / "schema" / name).exists()
         or (root / "schema" / name).read_text(encoding="utf-8") != content
     ]
-    for name in stale:
-        errors += 1
-        typer.echo(f"✗ corpus/schema/{name} is out of date: run `tm corpus schema`", err=True)
-    for problem in corpus_mod.broken_references(root):
-        errors += 1
-        typer.echo(f"✗ {problem}", err=True)
-    for path in _stale_ratings(root, docs):
-        errors += 1
-        typer.echo(f"✗ {path} is out of date: run `tm corpus ratings`", err=True)
-    if errors:
-        raise typer.Exit(1)
+    ratings = [
+        f"{path} is out of date: run `tm corpus ratings`" for path in _stale_ratings(root, docs)
+    ]
+    view = root / "practices.json"
+    if view.exists() and view.read_text(encoding="utf-8") == corpus_mod.practices_view(root):
+        return schemas + ratings
+    return [*schemas, *ratings, f"{view} is out of date: run `tm corpus practices --write`"]
 
 
 @corpus_app.command("schema")
@@ -100,8 +105,13 @@ def corpus_schema(root: CorpusRoot = Path("corpus")) -> None:
 
 
 @corpus_app.command("practices")
-def corpus_practices(root: CorpusRoot = Path("corpus")) -> None:
+def corpus_practices(
+    root: CorpusRoot = Path("corpus"),
+    write: Annotated[bool, typer.Option(help="Also write practices.json for the site.")] = False,
+) -> None:
     """Say which practices of the character arts the holdings represent, family by family."""
+    if write:
+        (root / "practices.json").write_bytes(corpus_mod.practices_view(root).encode("utf-8"))
     registry = corpus_mod.load_practices(root / "practices.yaml")
     held = {practice.code for practice in registry.held()}
     for family in registry.families:
