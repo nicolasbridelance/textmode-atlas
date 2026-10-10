@@ -34,6 +34,7 @@ from sqlalchemy import create_engine
 from thumbnails import MODES, thumbnail  # next to this file
 from tm.access import Access, load_access
 from tm.config import settings
+from tm.eda.live import Live
 from tm.storage import S3Store, grid_key, rendering_key, s3_client
 from tm_analysis.neighbours import PROFILE, profile
 from tm_render.compact import encode
@@ -52,6 +53,7 @@ PAGE_SIZE = 120
 NEIGHBOURS = 10  # as the graph build (k), so that the wall and the graph agree
 SHA = re.compile(r"^[0-9a-f]{64}$")
 SEED = re.compile(r"^[0-9A-Za-z_-]{1,32}$")
+FIRST_EDA = 60.0  # seconds a first visitor waits for the first exploration
 DEFAULT_SEED = "explorer"  # the shuffle every visitor sees first
 ORDERS = {
     "random": "hash(sha256 || ?)",  # shuffled by the seed (`_seed`)
@@ -413,6 +415,7 @@ class Handler(BaseHTTPRequestHandler):
 
     corpus: Corpus
     graph: Graph | None = None
+    live: Live | None = None
 
     def do_GET(self) -> None:
         url = urlparse(self.path)
@@ -442,6 +445,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.json(self.corpus.facets())
             case ["api", "works"]:
                 self.json(self.corpus.wall(query))
+            case ["api", "eda"]:
+                self.route_eda()
             case ["api", "surprise"]:
                 self.json(self.corpus.surprise(query))
             case ["api", "work", sha] if SHA.match(sha):
@@ -450,6 +455,14 @@ class Handler(BaseHTTPRequestHandler):
                 self.json(self.corpus.text(sha))
             case _:
                 self.route_page(parts)
+
+    def route_eda(self) -> None:
+        """The live exploration (ADR 0028); the first one is computed while the visitor waits."""
+        found = self.live.current(wait=FIRST_EDA) if self.live else None
+        if found is None:
+            self.send(HTTPStatus.SERVICE_UNAVAILABLE, "text/plain", b"exploration not ready")
+            return
+        self.send(HTTPStatus.OK, "application/json", json.dumps(found, default=str).encode())
 
     def route_page(self, parts: list[str]) -> None:
         if (unprefixed := english(parts)) is not None:
@@ -549,6 +562,10 @@ def main() -> None:
         Handler.graph = Graph(GRAPH, BUILD, allowed)
         Handler.graph.check(corpus.manifest)
         corpus.use_graph(Handler.graph)
+    Handler.live = Live(
+        create_engine(settings().database_url, execution_options={"postgresql_readonly": True})
+    )
+    Handler.live.start()
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     log.info("Museum on http://%s:%d (%s measured works)", HOST, PORT, len(corpus.order))
     server.serve_forever()
