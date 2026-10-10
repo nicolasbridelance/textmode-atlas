@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import shutil
 import subprocess
 import zipfile
 from pathlib import Path
@@ -122,6 +123,10 @@ def test_a_damaged_rar_is_a_classified_error(tmp_path: Path) -> None:
         expand(damaged, "rar")
 
 
+@pytest.mark.skipif(
+    shutil.which("arj") is None,
+    reason="arj is not installed: no Windows build exists (lead I97); CI runs this test",
+)
 def test_arj_members_in_name_order(tmp_path: Path) -> None:
     source = tmp_path / "src"
     for name, data in FILES.items():
