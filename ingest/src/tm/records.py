@@ -90,9 +90,12 @@ def insert_artifact(conn: Connection, row: ArtifactRow) -> None:
 
 def sauce_date(sauce: Sauce | None) -> dt.date | None:
     """The SAUCE date (`YYYYMMDD`), or None when absent or not a real date."""
-    if sauce is None:
-        return None
+    return None if sauce is None else parse_sauce_date(sauce.date)
+
+
+def parse_sauce_date(raw: str | None) -> dt.date | None:
+    """A SAUCE date field (`YYYYMMDD`) as a date, or None when absent or not a real date."""
     try:
-        return dt.datetime.strptime(sauce.date, "%Y%m%d").replace(tzinfo=dt.UTC).date()
+        return dt.datetime.strptime(raw or "", "%Y%m%d").replace(tzinfo=dt.UTC).date()
     except ValueError:
         return None

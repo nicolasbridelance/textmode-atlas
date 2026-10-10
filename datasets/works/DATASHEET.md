@@ -30,6 +30,8 @@ packs nobody has examined.
 - From v6, files an archive holds loose, outside any pack (textfiles.com's BBS ANSI and ASCII,
   RTTY, VT100; ADR 0024), with no pack, `packs` = 0 and their path on the site; and the grid's
   `system` and `charset` (ADR 0026), all `pc-vga` and `cp437` so far.
+- From v7, the texts of packs are works too (ADR 0033): NFO, FILE_ID.DIZ and text files, with
+  `format` `nfo`, `diz` or `text`. Filter on `format` to study the art alone.
 
 ## Collection and processing
 

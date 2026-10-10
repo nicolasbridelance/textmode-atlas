@@ -3,8 +3,8 @@
 #
 # Built by `tm dataset build works`. Datasheet: DATASHEET.md.
 name: works
-version: "6"
-description: The art files of the train split of every scene archive, in packs or held loose, with their decoding, rendering, grid features and text layer.
+version: "7"
+description: The art files and the texts of packs (NFO, DIZ, text files) of the train split of every scene archive, in packs or held loose, with their decoding, rendering, grid features and text layer.
 
 tables:
   works:

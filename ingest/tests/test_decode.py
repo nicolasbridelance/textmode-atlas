@@ -115,7 +115,7 @@ def test_a_stored_grid_that_matches_is_kept(db: Connection, stores: Stores) -> N
     assert len(decode_pending(db, stores.originals, stores.derived)) == 1
 
 
-def test_every_art_file_gets_a_result_and_ascii_is_read_as_ansi(
+def test_every_art_file_and_text_gets_a_result_and_ascii_is_read_as_ansi(
     db: Connection, stores: Stores, tmp_path: Path
 ) -> None:
     pack = tmp_path / "1996" / "mixed.zip"
@@ -123,17 +123,19 @@ def test_every_art_file_gets_a_result_and_ascii_is_read_as_ansi(
     with zipfile.ZipFile(pack, "w") as archive:
         archive.writestr("LOGO.ASC", b"  ___\r\n /   \\\r\n")
         archive.writestr("WIDE.XB", b"XBIN\x1a\x50\x00\x19\x00\x10\x00")
-        archive.writestr("README.NFO", b"not art\r\n")
+        archive.writestr("README.NFO", b"a text of the pack\r\n")
     ingest_pack(db, stores.originals, pack)
     results = {
         item.path.rsplit("/", 1)[1]: item
         for item in decode_pending(db, stores.originals, stores.derived)
     }
-    assert set(results) == {"LOGO.ASC", "WIDE.XB"}
+    assert set(results) == {"LOGO.ASC", "WIDE.XB", "README.NFO"}
     assert (results["LOGO.ASC"].error_class, results["LOGO.ASC"].cols) == (None, 80)
     assert results["WIDE.XB"].error_class == "unsupported_format"
+    assert results["README.NFO"].error_class is None  # read as ASCII (ADR 0033)
     assert db.execute(text("select decoder, status from decoding order by decoder")).all() == [
         (NO_DECODER, "error"),
+        (DECODER, "ok"),
         (DECODER, "ok"),
     ]
     assert decode_pending(db, stores.originals, stores.derived) == []

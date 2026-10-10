@@ -11,7 +11,8 @@ select
   a.bytes,
   a.format,
   lower(substring(m.path from '\.([^./]+)$')) as extension,
-  coalesce(fw.kind = 'single', false) as is_art,
+  -- The texts of a pack are works too (ADR 0033), but not art.
+  coalesce(fw.kind = 'single', false) and a.format not in ('nfo', 'diz', 'text') as is_art,
   a.sauce is not null as has_sauce,
   a.sauce ->> 'title' as sauce_title,
   a.sauce ->> 'author' as sauce_author,

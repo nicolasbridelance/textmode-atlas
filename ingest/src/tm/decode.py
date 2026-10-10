@@ -26,8 +26,9 @@ from tm.shards import EVERYTHING, Shard, condition
 from tm.storage import IntegrityError, ObjectStore, get_original, grid_key
 
 DECODER = "tm_render.ansi"
-# Art formats the decoder reads; other art gets an `unsupported_format` row from NO_DECODER.
-DECODED_FORMATS = ["ansi", "ascii"]
+# Formats the decoder reads, art and the texts of packs (ADR 0033); other art gets an
+# `unsupported_format` row from NO_DECODER.
+DECODED_FORMATS = ["ansi", "ascii", "nfo", "diz", "text"]
 NO_DECODER = "none"
 
 

@@ -70,3 +70,4 @@ What becomes easier, what becomes harder, what we must now do.
 | [0030](0030-screens-and-documents-of-text-mode-computing.md) | Screens and documents of text-mode computing enter the corpus, beside the art | Accepted |
 | [0031](0031-one-representative-of-every-practice.md) | A museum of every character art: a registry of practices, one representative first | Accepted |
 | [0032](0032-excerpts-taken-where-the-art-is.md) | Excerpts: the museum takes the textual artwork where it finds it, credited, withdrawable | Accepted |
+| [0033](0033-the-texts-of-a-pack-are-works.md) | The texts of a pack are works: NFO, FILE_ID.DIZ and text files | Accepted |
