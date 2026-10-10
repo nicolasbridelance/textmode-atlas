@@ -38,6 +38,9 @@ sources:
   - name: nethack
     url: https://github.com/NetHack/NetHack
     note: NetHack source tree; NetHack General Public License.
+  - name: pynitel
+    url: https://github.com/cquest/pynitel
+    note: Christian Quest's Python library for Minitel servers, with Minitel pages in videotex; AGPL-3.0.
   - name: ja.wikipedia
     url: https://ja.wikipedia.org/
     note: Japanese Wikipedia; text under CC BY-SA 4.0, revisions pinned by oldid.
@@ -307,3 +310,14 @@ entries:
     why:
       en: "A game in 256 bytes, from the 1995 256 Byte Game Compo, played in text mode."
       fr: "Un jeu en 256 octets, de la 256 Byte Game Compo de 1995, joué en mode texte."
+
+  # --- broadcast and videotex ------------------------------------------------------------------
+  - practice: minitel
+    title: Annuaire électronique (3611), page de recherche
+    url: https://raw.githubusercontent.com/cquest/pynitel/0aa8243594e0fc82807546c34ddf7a1129d646cd/ecrans/E.ANNUAIRE.vtx
+    source: pynitel
+    basis: license
+    license: AGPL-3.0
+    why:
+      en: "The search page of the 3611 electronic directory, the Minitel's first service, as a videotex byte stream: 40 columns, mosaic graphics, double-height letters."
+      fr: "La page de recherche de l’annuaire électronique 3611, le premier service du Minitel, sous forme de flux vidéotex : 40 colonnes, semi-graphiques en mosaïque, lettres en double hauteur."

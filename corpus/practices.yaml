@@ -238,6 +238,7 @@ practices:
     label: { en: "Minitel pages", fr: "Pages Minitel" }
     family: broadcast
     holding: [file, excerpt, capture]
+    representative: { sha256: c135d8108692cd55156ecf8773f8258fee69a63a7cc57b1fe23dbaab2c72097b, path: "pynitel:cquest/pynitel/0aa8243594e0fc82807546c34ddf7a1129d646cd/ecrans/E.ANNUAIRE.vtx" }
     sources: [awesome-minitel, 3615 IUT Auxerre mirror, goto10]
     leads: [I57, Q34]
   - code: prestel-btx
