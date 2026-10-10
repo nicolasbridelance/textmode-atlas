@@ -29,6 +29,12 @@ sources:
   - name: esolangs
     url: https://esolangs.org/
     note: Esolang wiki; all content under CC0 1.0.
+  - name: cs.cmu.edu
+    url: https://www.cs.cmu.edu/~sef/
+    note: Scott E. Fahlman's pages at Carnegie Mellon University.
+  - name: freebsd
+    url: https://github.com/freebsd/freebsd-src
+    note: FreeBSD source tree; BSD licence.
 
 entries:
   # --- home computers, demoscene -------------------------------------------------------------
@@ -37,19 +43,25 @@ entries:
     url: https://files.scene.org/get/parties/2013/datastorm13/c64/petscii/acidt-rrorreast-faagel.zip
     source: scene.org
     basis: scene
-    why: Winner of the C64 PETSCII compo at Datastorm 2013 (Demozoo production 51978).
+    why:
+      en: "Winner of the C64 PETSCII compo at Datastorm 2013."
+      fr: "Lauréate de la compétition PETSCII sur C64 à la Datastorm 2013."
   - practice: atascii
     title: Attack Of The Giant Bugs
     url: https://files.scene.org/get/parties/2021/atascii_compo21/atascii_compo/bugs.zip
     source: scene.org
     basis: scene
-    why: Winner of the ATASCII Compo 2021, a party held for the Atari 8-bit character set alone (Demozoo 298070).
+    why:
+      en: "Winner of the ATASCII Compo 2021, a party held for the Atari 8-bit character set alone."
+      fr: "Lauréate de l'ATASCII Compo 2021, une compétition consacrée au seul jeu de caractères des Atari 8 bits."
   - practice: textmode-demos
     title: Ringnes Motion
     url: https://files.scene.org/get/parties/1996/distortion96/demo/ringnesm.zip
     source: scene.org
     basis: scene
-    why: Winner of the demo compo at Distortion 1996, tagged textmode on Demozoo (29686); a PC demo drawn in character cells.
+    why:
+      en: "Winner of the demo compo at Distortion 1996: a PC demo drawn in character cells."
+      fr: "Lauréate de la compétition de démos à la Distortion 1996 : une démo PC dessinée en cellules de caractères."
 
   # --- textfiles.com ---------------------------------------------------------------------------
   - practice: line-printer-art
@@ -57,25 +69,37 @@ entries:
     url: http://www.textfiles.com/art/DECUS/beethoven.txt
     source: textfiles
     basis: scene
-    why: From the DECUS poster collection, printer art of computer labs about 1985, overprinted lines for near-black cells.
+    format: ascii
+    why:
+      en: "From the DECUS poster collection, printer art of computer labs about 1985; some lines are struck twice for near-black cells."
+      fr: "De la collection d'affiches DECUS, art d'imprimante des salles informatiques vers 1985 ; certaines lignes sont frappées deux fois pour des cellules presque noires."
   - practice: ansi-music
     title: Beethoven's 5th Symphony
     url: http://artscene.textfiles.com/ansimusic/songs/5th-symp.ams
     source: textfiles
     basis: scene
-    why: ANSI music by Ed Bragg (April 3, 1992), music played by the escape sequences of a BBS terminal.
+    format: ansi
+    why:
+      en: "ANSI music by Ed Bragg (3 April 1992): music played by the escape sequences of a BBS terminal."
+      fr: "Musique ANSI d'Ed Bragg (3 avril 1992) : de la musique jouée par les séquences d'échappement d'un terminal de BBS."
   - practice: walkthroughs-faqs
     title: "Walkthrough: The Original Colossal Cave"
     url: http://www.textfiles.com/adventure/adventure.txt
     source: textfiles
     basis: scene
-    why: A walkthrough of the first text adventure, from textfiles' adventure section (I84).
+    format: ascii
+    why:
+      en: "A walkthrough of the first text adventure, Colossal Cave."
+      fr: "La soluce de la première aventure textuelle, Colossal Cave."
   - practice: warez-documents
     title: You Hack 'Em, We Hump 'Em, or Why YOU should be a Software Courier
     url: http://www.textfiles.com/piracy/courier.txt
     source: textfiles
     basis: scene
-    why: A courier's recruiting text by Dixie Flatline, from textfiles' piracy section (I84, Q40).
+    format: ascii
+    why:
+      en: "A courier's recruiting text by Dixie Flatline, from the warez scene."
+      fr: "Un texte de recrutement de coursier par Dixie Flatline, issu de la scène warez."
 
   # --- documents and code ----------------------------------------------------------------------
   - practice: man-pages
@@ -84,28 +108,37 @@ entries:
     source: unix-history-repo
     basis: license
     license: BSD-4-Clause-UC
-    why: The manual page of ls as Berkeley released it in 1995, in roff, read on a character terminal (I87).
+    why:
+      en: "The manual page of ls as Berkeley released it in 1995, in roff, read on a character terminal."
+      fr: "La page de manuel de ls telle que Berkeley l'a publiée en 1995, en roff, lue sur un terminal en caractères."
   - practice: source-code-art
     title: westley.c (IOCCC 1988, best layout)
     url: https://www.ioccc.org/1988/westley/westley.c
     source: ioccc
     basis: license
+    format: ascii
     license: CC-BY-SA-4.0
-    why: Brian Westley's 1988 winner for best layout, a program whose source is drawn as a circle.
+    why:
+      en: "Brian Westley's 1988 winner for best layout: a program whose source is drawn as a circle."
+      fr: "Le programme de Brian Westley, primé en 1988 pour sa mise en page : un code source dessiné en cercle."
   - practice: two-dimensional-languages
     title: Befunge (Esolang wiki page)
     url: https://esolangs.org/w/index.php?title=Befunge&action=raw
     source: esolangs
     basis: license
     license: CC0-1.0
-    why: Befunge-93 (Chris Pressey, 1993), a language whose program is a grid of characters the instruction pointer walks; the page holds its examples.
+    why:
+      en: "Befunge-93 (Chris Pressey, 1993), a language whose program is a grid of characters walked by the instruction pointer; the page holds its examples."
+      fr: "Befunge-93 (Chris Pressey, 1993), un langage dont le programme est une grille de caractères que parcourt le pointeur d'instruction ; la page en donne des exemples."
   - practice: rom-fonts
     title: The Ultimate Oldschool PC Font Pack v2.2
     url: https://int10h.org/oldschool-pc-fonts/download/oldschool_pc_font_pack_v2.2_FULL.zip
     source: int10h
     basis: license
     license: CC-BY-SA-4.0
-    why: Remakes of the character ROMs of IBM PCs and compatibles, from VileR's dumps of the original hardware.
+    why:
+      en: "Remakes of the character ROMs of IBM PCs and compatibles, from VileR's dumps of the original hardware."
+      fr: "Les polices des ROM de caractères des PC IBM et compatibles, refaites par VileR d'après le matériel d'origine."
 
   # --- poetry and ancestors, reproductions ----------------------------------------------------
   - practice: calligrams
@@ -113,35 +146,73 @@ entries:
     url: https://upload.wikimedia.org/wikipedia/commons/9/9b/Guillaume_Apollinaire_-_Calligramme_-_Il_pleut.png
     source: wikimedia-commons
     basis: public-domain
-    why: The calligram whose letters fall as rain (written 1916, published 1918); public domain.
+    why:
+      en: "The calligram whose letters fall as rain (written 1916, published 1918)."
+      fr: "Le calligramme dont les lettres tombent en pluie (écrit en 1916, publié en 1918)."
   - practice: concrete-poetry
     title: Un coup de dés jamais n'abolira le hasard (Stéphane Mallarmé, 1914 edition)
     url: https://upload.wikimedia.org/wikipedia/commons/1/18/Mallarm%C3%A9_-_Un_coup_de_d%C3%A9s%2C_1914.djvu
     source: wikimedia-commons
     basis: public-domain
-    why: The poem laid out on the double page as Mallarmé wished it, first published so in 1914; the founding text of spatial poetry.
+    why:
+      en: "The poem laid out on the double page as Mallarmé wished it, first published so in 1914: the founding text of spatial poetry."
+      fr: "Le poème disposé sur la double page comme Mallarmé le voulait, publié ainsi pour la première fois en 1914 : le texte fondateur de la poésie spatiale."
   - practice: micrography
     title: The Five Scrolls in multilingual micrography (Aaron Wolf Herlingen, 1748)
     url: https://upload.wikimedia.org/wikipedia/commons/e/e0/Scribe_and_illuminator-_Aaron_Wolf_Herlingen_-_The_Five_Scrolls_in_multilingual_micrography_Ruth%2C_Song_of_Songs%2C_Ecclesiastes%2C_Esther%2C_and_Lamentat..._-_Google_Art_Project.jpg
     source: wikimedia-commons
     basis: public-domain
-    why: Pictures drawn with lines of minute script, by a Viennese scribe; public domain (Google Art Project).
+    why:
+      en: "Pictures drawn with lines of minute script, by a Viennese scribe of 1748."
+      fr: "Des images tracées en lignes d'écriture minuscule, par un scribe viennois de 1748."
   - practice: jacquard
     title: Portrait of Joseph Marie Jacquard, woven in silk (1839)
     url: https://upload.wikimedia.org/wikipedia/commons/e/e1/Jacquard_Joseph_Marie_woven_silk.jpg
     source: wikimedia-commons
     basis: public-domain
-    why: A portrait woven on a Jacquard loom from about 24,000 punched cards, an image made of discrete cells a century before the screen.
+    why:
+      en: "A portrait woven on a Jacquard loom from about 24,000 punched cards: an image made of discrete cells a century before the screen."
+      fr: "Un portrait tissé sur un métier Jacquard à partir de quelque 24 000 cartes perforées : une image faite de cellules distinctes, un siècle avant l'écran."
   - practice: punched-cards
     title: 80-column punched card
     url: https://upload.wikimedia.org/wikipedia/commons/5/53/80-column_punched_card_edited_by_sub-assemblies_of_a_Pentaconta_electromechanical_telephone_exchange.jpg
     source: wikimedia-commons
     basis: license
     license: CC0-1.0
-    why: The 80-column card whose width became the terminal's 80 columns.
+    why:
+      en: "The 80-column card whose width became the terminal's 80 columns."
+      fr: "La carte de 80 colonnes, dont la largeur est devenue celle du terminal."
   - practice: cross-stitch
     title: Sampler (England, 1774)
     url: https://upload.wikimedia.org/wikipedia/commons/c/cb/Sampler_%28England%29%2C_1774_%28CH_18727633%29.jpg
     source: wikimedia-commons
     basis: public-domain
-    why: Letters and motifs stitched on a grid of threads, Cooper Hewitt collection; public domain.
+    why:
+      en: "Letters and motifs stitched on a grid of threads (Cooper Hewitt collection)."
+      fr: "Lettres et motifs brodés sur une grille de fils (collection Cooper Hewitt)."
+
+  # --- excerpts, cut by the museum where the art sits (ADR 0032) ------------------------------
+  - practice: emoticons
+    title: The first smiley (Scott E. Fahlman, 19 September 1982)
+    url: http://www.cs.cmu.edu/~sef/Orig-Smiley.htm
+    source: cs.cmu.edu
+    basis: excerpt
+    lines: 124-127
+    html: true
+    credit: Scott E. Fahlman
+    format: ascii
+    why:
+      en: "The bboard message in which :-) and :-( were proposed, recovered from a 1982 backup tape in 2002 and kept by its author."
+      fr: "Le message de bboard où :-) et :-( furent proposés, retrouvé en 2002 sur une bande de sauvegarde de 1982 et conservé par son auteur."
+  - practice: os-screens
+    title: Beastie, the FreeBSD boot loader's daemon (black and white)
+    url: https://raw.githubusercontent.com/freebsd/freebsd-src/release/13.0.0/stand/forth/logo-beastiebw.4th
+    source: freebsd
+    basis: excerpt
+    lines: 38-56
+    pattern: 's"(.*)"\s+logo\+'
+    credit: FreeBSD boot loader
+    format: ascii
+    why:
+      en: "The mascot the boot loader drew in characters beside its menu, 19 rows by 34 columns, on every FreeBSD machine at start."
+      fr: "La mascotte que le chargeur d'amorçage dessinait en caractères à côté de son menu, 19 lignes sur 34 colonnes, au démarrage de chaque machine FreeBSD."

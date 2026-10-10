@@ -108,3 +108,8 @@ def test_representative_names_its_source() -> None:
     with pytest.raises(ValidationError):
         corpus.Representative(sha256="0" * 64, path="1996/acid-50a.zip/ANS-50A.ANS")
     assert corpus.Representative(sha256="0" * 64, path="16colo:1996/acid-50a.zip/ANS-50A.ANS")
+
+
+def test_the_site_reads_the_current_registry_of_practices() -> None:
+    view = (ROOT / "practices.json").read_text(encoding="utf-8")
+    assert view == corpus.practices_view(ROOT), "run `tm corpus practices --write`"

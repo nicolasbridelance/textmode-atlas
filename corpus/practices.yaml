@@ -134,191 +134,192 @@ practices:
   - code: petscii
     label: { en: "PETSCII (Commodore)", fr: "PETSCII (Commodore)" }
     family: home-computers
-    holding: [file]
+    holding: [file, excerpt]
     representative: { sha256: 90c7a25d0167a479772f21ca90c8a8a63316812f9fb66554f583ddc4fe9e684b, path: "scene.org:get/parties/2013/datastorm13/c64/petscii/acidt-rrorreast-faagel.zip" }
     sources: [scene.org compos, CSDb]
   - code: atascii
     label: { en: "ATASCII (Atari 8-bit)", fr: "ATASCII (Atari 8 bits)" }
     family: home-computers
-    holding: [file]
+    holding: [file, excerpt]
     representative: { sha256: cba16e6120ce7ca428bdac68fc0b6925ca37bd9ef51671b633eee6442faedd5e, path: "scene.org:get/parties/2021/atascii_compo21/atascii_compo/bugs.zip" }
     sources: [scene.org compos, Atarimania]
   - code: zx-spectrum
     label: { en: "ZX81 and ZX Spectrum block graphics", fr: "Graphismes en blocs du ZX81 et du ZX Spectrum" }
     family: home-computers
-    holding: [file]
+    holding: [file, excerpt]
     sources: [ZXArt]
   - code: bbc-mode7
     label: { en: "BBC Micro Mode 7", fr: "Mode 7 du BBC Micro" }
     family: home-computers
-    holding: [file]
+    holding: [file, excerpt]
     sources: [edit.tf, scene.org compos]
   - code: trs80-semigraphics
     label: { en: "TRS-80 and early semigraphics", fr: "TRS-80 et premiers semi-graphiques" }
     family: home-computers
-    holding: [file, capture]
+    holding: [file, excerpt, capture]
     sources: [to find]
   - code: apple-ii-text
     label: { en: "Apple II text and lo-res art", fr: "Art en texte et basse résolution de l'Apple II" }
     family: home-computers
-    holding: [file, capture]
+    holding: [file, excerpt, capture]
     sources: [textfiles apple/]
   - code: msx-cpc
     label: { en: "MSX, Amstrad CPC and other 8-bit character art", fr: "Art en caractères du MSX, de l'Amstrad CPC et des autres 8 bits" }
     family: home-computers
-    holding: [file]
+    holding: [file, excerpt]
     sources: [Demozoo links, scene.org]
   - code: pc98-art
     label: { en: "NEC PC-98 text art", fr: "Art en texte du NEC PC-98" }
     family: home-computers
-    holding: [file]
+    holding: [file, excerpt]
     sources: [to find]
   - code: amiga-ansi
     label: { en: "Amiga ANSI and BBS screens", fr: "ANSI et écrans de BBS Amiga" }
     family: home-computers
-    holding: [file]
+    holding: [file, excerpt]
     sources: [amigascne mirror on scene.org, Aminet]
 
   # --- networks ------------------------------------------------------------------------------
   - code: usenet-ascii
     label: { en: "Usenet ASCII art", fr: "Art ASCII d'Usenet" }
     family: networks
-    holding: [file]
+    holding: [file, excerpt]
     sources: [Internet Archive Giganews mbox, asciiart.eu Usenet archive]
   - code: signatures
     label: { en: "Email and Usenet signatures", fr: "Signatures de courriel et d'Usenet" }
     family: networks
-    holding: [file]
+    holding: [file, excerpt]
     sources: [Usenet archives]
   - code: irc-art
     label: { en: "IRC art (mIRC colour codes)", fr: "Art IRC (codes couleur mIRC)" }
     family: networks
-    holding: [file]
+    holding: [file, excerpt]
     sources: [to find]
     leads: [I82]
   - code: bbs-ascii
     label: { en: "ASCII from BBSes and early Internet", fr: "ASCII des BBS et des débuts d'Internet" }
     family: networks
-    holding: [file]
+    holding: [file, excerpt]
     representative: { sha256: 5d7856f2ab3d1717ff33e471aea23bbd05590f2279d2c44221a5ad4b7d1e130c, path: textfiles:asciiart/LOGOS/afl1.txt }
     sources: [textfiles asciiart/]
   - code: web-ascii
     label: { en: "ASCII art of the web (galleries, HTML comments)", fr: "Art ASCII du web (galeries, commentaires HTML)" }
     family: networks
-    holding: [file]
+    holding: [file, excerpt]
     sources: [chris.com via the Wayback Machine, asciiart.eu]
   - code: gopher
     label: { en: "Gopher holes and their menus", fr: "Trous Gopher et leurs menus" }
     family: networks
-    holding: [file, capture]
+    holding: [file, excerpt, capture]
     sources: [to find]
   - code: sms-art
     label: { en: "SMS and pager art", fr: "Art SMS et pager" }
     family: networks
-    holding: [file, record]
+    holding: [file, excerpt, record]
     sources: [to find]
   - code: social-media-text-art
     label: { en: "Text art and bots of social networks", fr: "Art textuel et bots des réseaux sociaux" }
     family: networks
-    holding: [file, record]
+    holding: [file, excerpt, record]
     sources: [to find]
 
   # --- broadcast -----------------------------------------------------------------------------
   - code: teletext
     label: { en: "Teletext art", fr: "Art télétexte" }
     family: broadcast
-    holding: [file]
+    holding: [file, excerpt]
     representative: { sha256: d2292a9ea6aa168c4c559a275bb42a4645bb3528b42dffde90f6dac6a54d05d0, path: 16colo:2016/mist1116.zip/ILLARTERATE-MISTFAX16.TTI }
     sources: [16colo mist1116, edit.tf, teletextart.co.uk, broadcast recoveries]
     leads: [I68]
   - code: minitel
     label: { en: "Minitel pages", fr: "Pages Minitel" }
     family: broadcast
-    holding: [file, capture]
+    holding: [file, excerpt, capture]
     sources: [awesome-minitel, 3615 IUT Auxerre mirror, goto10]
     leads: [I57, Q34]
   - code: prestel-btx
     label: { en: "Prestel, Bildschirmtext and European videotex", fr: "Prestel, Bildschirmtext et vidéotex européen" }
     family: broadcast
-    holding: [file, reproduction]
+    holding: [file, excerpt, reproduction]
     sources: [archive.org captures]
     leads: [I57]
   - code: naplps-telidon
     label: { en: "Telidon and NAPLPS", fr: "Telidon et NAPLPS" }
     family: broadcast
-    holding: [file, reproduction]
+    holding: [file, excerpt, reproduction]
     sources: [to find]
   - code: captain
     label: { en: "CAPTAIN (Japan)", fr: "CAPTAIN (Japon)" }
     family: broadcast
-    holding: [reproduction, record]
+    holding: [excerpt, reproduction, record]
     sources: [to find]
   - code: closed-captions
     label: { en: "Closed captions as a character grid", fr: "Sous-titres codés comme grille de caractères" }
     family: broadcast
-    holding: [file, capture]
+    holding: [file, excerpt, capture]
     sources: [to find]
 
   # --- machines ------------------------------------------------------------------------------
   - code: rtty-art
     label: { en: "RTTY art", fr: "Art RTTY" }
     family: machines
-    holding: [file]
+    holding: [file, excerpt]
     representative: { sha256: b5365f62fe74a820c591723e712dc91a24de042ea9ecefadb15a6b2ef37c3214, path: textfiles:rtty/COLLECTION/ARTWORK-01/000 }
     sources: [textfiles rtty/, rtty.com]
     leads: [I54]
   - code: line-printer-art
     label: { en: "Line printer art and early computer art", fr: "Art sur imprimante ligne et premier art informatique" }
     family: machines
-    holding: [reproduction, file, record]
+    holding: [excerpt, reproduction, file, record]
     representative: { sha256: b4e922bb164f43bc3091f77fb284222fb091ff6d1afb1181bcc314ca983ad09a, path: "textfiles:art/DECUS/beethoven.txt" }
     sources: [to find]
   - code: banners
     label: { en: "Printed banners (banner, line printer calendars)", fr: "Bannières imprimées (banner, calendriers d'imprimante)" }
     family: machines
-    holding: [file, reproduction]
+    holding: [file, excerpt, reproduction]
     sources: [Unix sources, to find]
   - code: typewriter-art
     label: { en: "Typewriter art", fr: "Art de la machine à écrire" }
     family: machines
-    holding: [reproduction, record]
+    holding: [excerpt, reproduction, record]
     sources: [Sackner Archive, public domain scans]
 
   # --- unicode and scripts -------------------------------------------------------------------
   - code: shift-jis-art
     label: { en: "Shift_JIS art (AA)", fr: "Art Shift_JIS (AA)" }
     family: unicode
-    holding: [file]
+    holding: [file, excerpt]
     sources: [no source identified]
   - code: kaomoji
     label: { en: "Kaomoji", fr: "Kaomoji" }
     family: unicode
-    holding: [file, record]
+    holding: [file, excerpt, record]
     sources: [to find]
   - code: emoticons
     label: { en: "Emoticons", fr: "Émoticônes" }
     family: unicode
-    holding: [file, record]
+    holding: [file, excerpt, record]
+    representative: { sha256: 2dfcc0e4812c57e13c0278fae1b2808b134e45e206f0ef01502f2bf445f04f74, path: "cs.cmu.edu:~sef/Orig-Smiley.htm#lines=124-127" }
     sources: [Fahlman's 1982 message, to find]
   - code: cjk-bbs-art
     label: { en: "Taiwanese and Korean BBS art (double-width cells)", fr: "Art des BBS taïwanais et coréens (cellules doubles)" }
     family: unicode
-    holding: [file, capture]
+    holding: [file, excerpt, capture]
     sources: [PTT, to find]
   - code: braille-art
     label: { en: "Braille pattern art", fr: "Art en motifs braille" }
     family: unicode
-    holding: [file]
+    holding: [file, excerpt]
     sources: [to find]
   - code: unicode-block-art
     label: { en: "Unicode block and half-block art", fr: "Art en blocs et demi-blocs Unicode" }
     family: unicode
-    holding: [file]
+    holding: [file, excerpt]
     sources: [to find]
   - code: emoji-art
     label: { en: "Emoji art", fr: "Art en émojis" }
     family: unicode
-    holding: [file, record]
+    holding: [file, excerpt, record]
     sources: [to find]
 
   # --- moving --------------------------------------------------------------------------------
@@ -356,91 +357,92 @@ practices:
   - code: roguelikes
     label: { en: "Roguelikes", fr: "Roguelikes" }
     family: games
-    holding: [capture, file]
+    holding: [excerpt, capture, file]
     sources: [NetHack and other free sources]
   - code: zzt
     label: { en: "ZZT and MegaZeux worlds", fr: "Mondes ZZT et MegaZeux" }
     family: games
-    holding: [file]
+    holding: [file, excerpt]
     sources: [Museum of ZZT]
     leads: [I88]
   - code: muds
     label: { en: "MUDs and their maps", fr: "MUD et leurs cartes" }
     family: games
-    holding: [capture, file]
+    holding: [excerpt, capture, file]
     sources: [to find]
   - code: door-games
     label: { en: "BBS door games", fr: "Jeux de porte des BBS" }
     family: games
-    holding: [capture, file]
+    holding: [excerpt, capture, file]
     sources: [shareware CDs]
   - code: interactive-fiction
     label: { en: "Interactive fiction", fr: "Fiction interactive" }
     family: games
-    holding: [file, capture]
+    holding: [file, excerpt, capture]
     sources: [IF Archive, IFDB]
   - code: text-mode-games
     label: { en: "Other text-mode games", fr: "Autres jeux en mode texte" }
     family: games
-    holding: [capture, record]
+    holding: [excerpt, capture, record]
     sources: [shareware CDs, Discmaster]
 
   # --- screens -------------------------------------------------------------------------------
   - code: os-screens
     label: { en: "Operating system screens (prompts, setup, BIOS)", fr: "Écrans des systèmes (invites, installation, BIOS)" }
     family: screens
-    holding: [capture, record]
+    holding: [excerpt, capture, record]
+    representative: { sha256: 8df3122044686e003d403038cc15a1039eaa4caa830eda99057c945ad49288e3, path: "freebsd:freebsd/freebsd-src/release/13.0.0/stand/forth/logo-beastiebw.4th#lines=38-56" }
     sources: [captures]
     leads: [I86]
   - code: text-user-interfaces
     label: { en: "Text user interfaces", fr: "Interfaces en mode texte" }
     family: screens
-    holding: [capture, record]
+    holding: [excerpt, capture, record]
     sources: [captures]
     leads: [I86]
   - code: splash-screens
     label: { en: "Splash and quit screens (ENDOOM)", fr: "Écrans d'accueil et de sortie (ENDOOM)" }
     family: screens
-    holding: [file, capture]
+    holding: [file, excerpt, capture]
     sources: [idgames ENDOOM, cd.textfiles.com]
     leads: [I85, I90]
   - code: error-screens
     label: { en: "Error screens (Guru Meditation, blue screens)", fr: "Écrans d'erreur (Guru Meditation, écrans bleus)" }
     family: screens
-    holding: [capture, record]
+    holding: [excerpt, capture, record]
     sources: [captures]
 
   # --- documents -----------------------------------------------------------------------------
   - code: readme
     label: { en: "Readme files", fr: "Fichiers readme" }
     family: documents
-    holding: [file]
+    holding: [file, excerpt]
     sources: [cd.textfiles.com, Discmaster]
     leads: [I90]
   - code: manuals
     label: { en: "Manuals and on-line documentation", fr: "Manuels et documentation en ligne" }
     family: documents
-    holding: [file, record]
+    holding: [file, excerpt, record]
     sources: [textfiles piracy/SOFTDOCS]
     leads: [C14]
   - code: man-pages
     label: { en: "Man pages", fr: "Pages de man" }
     family: documents
-    holding: [file]
+    holding: [file, excerpt]
     representative: { sha256: 68f1e8e9290a6476bf3a965a190e381643b7f35ace3e3b9fe81824af2ad34910, path: "unix-history-repo:dspinellis/unix-history-repo/BSD-4_4_Lite2/usr/src/bin/ls/ls.1" }
     sources: [Unix history repository]
     leads: [I87]
   - code: walkthroughs-faqs
     label: { en: "Walkthroughs, hints and FAQs", fr: "Soluces, astuces et FAQ" }
     family: documents
-    holding: [file]
+    holding: [file, excerpt]
     representative: { sha256: b62b1532d0fe4453ea968c63765753b0c1e227ec1d2b3fd7d8634be099b533e3, path: "textfiles:adventure/adventure.txt" }
     sources: [textfiles adventure/, textfiles games/]
     leads: [Q41, I84]
   - code: textfiles
     label: { en: "BBS textfiles and e-zines", fr: "Textfiles et e-zines des BBS" }
     family: documents
-    holding: [file]
+    holding: [file, excerpt]
     sources: [textfiles.com]
     representative: { sha256: 6c715d44b08af2fccc634923f065aee440518df07f887a9e1a21e01a4aa228fc, path: 16colo:2016/mist1116.zip/ANONYMOUS-KISS.LIT }
     note: A literature pack's text stands in until textfiles.com's own sections are ingested.
@@ -449,19 +451,19 @@ practices:
   - code: source-code-art
     label: { en: "Source code as image (IOCCC)", fr: "Code source comme image (IOCCC)" }
     family: code
-    holding: [file]
+    holding: [file, excerpt]
     representative: { sha256: 0e743e82d0b2db6dad01dada78396e2f97f34d46493060bae8b0d2f27c58842f, path: "ioccc:1988/westley/westley.c" }
     sources: [IOCCC winners]
   - code: two-dimensional-languages
     label: { en: "Two-dimensional languages (Befunge)", fr: "Langages en deux dimensions (Befunge)" }
     family: code
-    holding: [file]
+    holding: [file, excerpt]
     representative: { sha256: 5013214d32fd15f3ca48cc4c0a115198b9ec8a9d46257427114d2ea5c1c64857, path: "esolangs:w/index.php" }
     sources: [esolangs.org]
   - code: comment-banners
     label: { en: "Banners in source code and server greetings", fr: "Bannières dans le code source et accueils de serveurs" }
     family: code
-    holding: [file]
+    holding: [file, excerpt]
     sources: [free software sources]
 
   # --- type ----------------------------------------------------------------------------------
