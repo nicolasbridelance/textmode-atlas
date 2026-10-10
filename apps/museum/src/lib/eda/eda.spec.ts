@@ -35,12 +35,12 @@ describe('exploration helpers', () => {
 	});
 
 	it('reads nothing from an older host', async () => {
-		const old = async () => new Response(JSON.stringify({ schema: 1 }), { status: 200 });
+		const old = async () => new Response(JSON.stringify({ schema: 2 }), { status: 200 });
 		expect(await loadSnapshot(old as typeof fetch)).toBeNull();
 	});
 
 	it('falls back to the published snapshot without a live host', async () => {
-		const published = JSON.stringify({ schema: 2, computed_at: '2026-10-10' });
+		const published = JSON.stringify({ schema: 3, computed_at: '2026-10-10' });
 		const site = async (url: string) =>
 			url === '/files/eda/snapshot.json'
 				? new Response(published, { status: 200 })
@@ -51,7 +51,7 @@ describe('exploration helpers', () => {
 	});
 
 	it('prefers the live host', async () => {
-		const host = async () => new Response(JSON.stringify({ schema: 2 }), { status: 200 });
+		const host = async () => new Response(JSON.stringify({ schema: 3 }), { status: 200 });
 		expect((await loadSnapshot(host as typeof fetch))?.live).toBe(true);
 	});
 

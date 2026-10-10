@@ -6,6 +6,7 @@
 	import { onMount } from 'svelte';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { m } from '#lib/paraglide/messages.js';
+	import Breadth from '../../lib/eda/chapters/Breadth.svelte';
 	import Composition from '../../lib/eda/chapters/Composition.svelte';
 	import Contents from '../../lib/eda/chapters/Contents.svelte';
 	import Makers from '../../lib/eda/chapters/Makers.svelte';
@@ -89,6 +90,7 @@
 		<Composition chapter={c.composition} {f} />
 		<Palette chapter={c.palette} {f} />
 		<Revival chapter={c.revival} years={c.peak.years} {f} />
+		<Breadth chapter={c.breadth} {f} />
 
 		<section id="next">
 			<h3>{m.eda_next_title()}</h3>
