@@ -890,7 +890,7 @@ Modifications apportées à ce document :
 | 3. Juridique | stratégie d'affichage en trois voies ; `policy.allows()` fermée par défaut ; invariant contre les dérivés ; structure porteuse proposée |
 | 4. Muséographie | carte des styles à une touche de chaque œuvre ; salle des archives à facettes ; accessibilité ; affichage sur téléphone ; sites à étudier |
 
-Pratiques voisines relevées par la cartographie, classées par proximité avec le cœur du projet :
+Pratiques voisines relevées par la cartographie, classées par proximité avec le cœur du projet. Le musée est celui de tous les arts du caractère : la liste complète des pratiques, avec ce que le fonds en détient et où trouver ce qui manque, est le registre `corpus/practices.yaml` ; les acquisitions visent d'abord un représentant de chaque pratique ([ADR 0031](adr/0031-one-representative-of-every-practice.md)).
 
 | Pratique | Décision |
 | --- | --- |
@@ -900,7 +900,7 @@ Pratiques voisines relevées par la cartographie, classées par proximité avec 
 | Écrans de l'informatique en mode texte (systèmes, interfaces, écrans d'accueil et de sortie, jeux, Minitel), documents (NFO, DIZ, readme, manuels, pages de man, soluces, FAQ) et scène warez (NFO, cracktros, textes) | dans le périmètre comme collections, l'usage de chaque œuvre la distinguant de l'art ; jamais un programme cracké ni un logiciel commercial ; écrans de logiciels tiers montrés seulement avec un droit ([ADR 0030](adr/0030-screens-and-documents-of-text-mode-computing.md)) |
 | Code source graphique (IOCCC), sizecoding, polices des ROM de caractères | collections secondaires ; les polices ROM entrent d'abord comme données des profils de rendu |
 | Notation des trackers, musique de téléscripteur | liées au son ; à reconsidérer avec la musique des œuvres |
-| Tissage Jacquard, cartes perforées | hors périmètre ; un parcours peut les évoquer comme ancêtres |
+| Tissage Jacquard, cartes perforées, point de croix, mosaïque, calligrammes, micrographie | dans le périmètre comme ancêtres, en reproduction ou en notice ([ADR 0031](adr/0031-one-representative-of-every-practice.md)) |
 
 ## Risques principaux
 
