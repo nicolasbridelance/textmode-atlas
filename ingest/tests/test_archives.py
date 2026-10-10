@@ -23,13 +23,17 @@ def make_zip(path: Path, files: dict[str, bytes] = FILES) -> Path:
     return path
 
 
-def refuse(name: str, monkeypatch: pytest.MonkeyPatch) -> None:
+def refuse(
+    name: str,
+    monkeypatch: pytest.MonkeyPatch,
+    error: Exception | None = None,
+) -> None:
     """Make Python's reader fail on one member, as it does on PKZIP 1.x methods."""
     read = zipfile.ZipFile.read
 
     def fake(self: zipfile.ZipFile, member: str | zipfile.ZipInfo, pwd: bytes | None = None):
         if getattr(member, "filename", member) == name:
-            raise NotImplementedError("That compression method is not supported")
+            raise error or NotImplementedError("That compression method is not supported")
         return read(self, member, pwd)
 
     monkeypatch.setattr(zipfile.ZipFile, "read", fake)
@@ -42,6 +46,15 @@ def test_zip_members_in_archive_order(tmp_path: Path) -> None:
 
 def test_infozip_reads_what_python_cannot(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     refuse("LOGO.ANS", monkeypatch)
+    result = expand(make_zip(tmp_path / "p.zip"), "zip")
+    assert (result.members, result.unreadable) == (list(FILES.items()), [])
+
+
+def test_a_member_recorded_before_the_archive_goes_to_infozip(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # textfiles' ascii/jasper/jasper06.zip: its first member's offset is -1
+    refuse("LOGO.ANS", monkeypatch, ValueError("negative seek value -1"))
     result = expand(make_zip(tmp_path / "p.zip"), "zip")
     assert (result.members, result.unreadable) == (list(FILES.items()), [])
 
