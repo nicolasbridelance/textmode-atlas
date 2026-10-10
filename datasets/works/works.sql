@@ -70,8 +70,14 @@ join artifact a on a.sha256 = s.sha256
 join version av on av.id = a.version_id
 join work aw on aw.id = av.work_id and aw.kind = 'single'
 -- Each art file has one decoder at the current version: the ANSI decoder, or `none` for a
--- format no decoder reads yet (error `unsupported_format`).
-left join decoding d on d.sha256 = a.sha256 and d.decoder_version = :decoder_version
+-- format no decoder reads yet (error `unsupported_format`). A file whose format a manifest
+-- corrected after a first run keeps that run's `none` row too: the real decoder's row wins.
+left join lateral (
+  select * from decoding d0
+  where d0.sha256 = a.sha256 and d0.decoder_version = :decoder_version
+  order by d0.decoder = 'none', d0.decoder
+  limit 1
+) d on true
 left join features f on f.sha256 = a.sha256 and f.extractor_version = :features_version
   and f.grid_sha256 = d.grid_sha256
 left join lateral (
