@@ -140,8 +140,15 @@ needs the one before says so.
     manifest `corpus/acquisitions.yaml` (`tm acquire`).
     - [x] Registry of 86 practices in 15 families; 19 held from the holdings, 17 more acquired
       (36 of 86 on 2026-10-10)
-    - [ ] Next manifests, family by family: unicode and scripts, games, screens, networks first
-      (I91–I94); `record` holdings once the schema has them (I95)
+    - [x] Excerpts taken where the art is ([ADR 0032](adr/0032-excerpts-taken-where-the-art-is.md)):
+      `can_display()` shows licensed, public-domain and excerpted works; `tm acquire` cuts excerpts
+    - [x] A room for the practices (`/practices`) and an eighth EDA chapter, the breadth of the
+      collection; 92 practices with the owner's additions (I98), 51 held, no family empty
+    - [ ] Next manifests: networks (Usenet, IRC, web, 404 pages through the Wayback Machine),
+      unicode (kaomoji, braille, emoji, CJK BBS), loading and splash screens, documents (I91–I94,
+      I98); `record` holdings once the schema has them (I95)
+    - [ ] `works` v7 with the textfiles trees and the acquisitions, once rendered and measured,
+      read by the collection
 
 Later, deliberately (nothing depends on them yet):
 
