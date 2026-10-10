@@ -263,7 +263,7 @@ class Representative(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     sha256: Sha256
-    path: Annotated[str, Field(pattern=r"^[a-z0-9.]+:\S.*$")]
+    path: Annotated[str, Field(pattern=r"^[a-z0-9]+([.-][a-z0-9]+)*:\S.*$")]
 
 
 class Practice(BaseModel):
