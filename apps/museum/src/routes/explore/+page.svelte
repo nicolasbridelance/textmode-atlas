@@ -43,7 +43,12 @@ SPDX-License-Identifier: Apache-2.0
 	let drawing = $state(false);
 	let nothingToDraw = $state(false);
 
-	const params = $derived(browser ? page.url.searchParams : null);
+	/** The address asked for while its navigation is still under way: two settings changed in
+	 * quick succession must build on each other, not both on the address still shown. */
+	let pending = $state<string | null>(null);
+	const params = $derived(
+		browser ? (pending !== null ? new URLSearchParams(pending) : page.url.searchParams) : null
+	);
 	const scope = $derived.by(() => {
 		const value = params?.get('scope');
 		return SCOPES.includes(value as (typeof SCOPES)[number])
@@ -119,17 +124,30 @@ SPDX-License-Identifier: Apache-2.0
 	function href(sha256: string): string {
 		return `${resolve(localizeHref('/work') as Path)}?w=${sha256}`;
 	}
+	/** What a change builds on: the address under way if any, else the one shown. */
+	function base(clean: boolean): string {
+		if (clean) return '';
+		return pending ?? page.url.search;
+	}
 	function navigate(values: Record<string, string>, clean = false): void {
-		const query = new SvelteURLSearchParams(clean ? '' : page.url.search);
+		const query = new SvelteURLSearchParams(base(clean));
 		if (params?.get('source') === 'public') query.set('source', 'public');
 		if (corpus) query.set('source', 'corpus');
 		for (const [key, value] of Object.entries(values)) {
 			if (value) query.set(key, value);
 			else query.delete(key);
 		}
-		void goto(`${resolve(localizeHref('/explore') as Path)}?${query}`, {
+		go(query.toString());
+	}
+	/** Navigate to the collection with `asked`, which stays the base of later changes until the
+	 * page shows it. */
+	function go(asked: string): void {
+		pending = asked;
+		void goto(`${resolve(localizeHref('/explore') as Path)}?${asked}`, {
 			replace: true,
 			reset: false
+		}).finally(() => {
+			if (pending === asked) pending = null;
 		});
 	}
 	function apply(next: BrowseFilters): void {
