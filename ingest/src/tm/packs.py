@@ -5,8 +5,9 @@
 
 A pack is a `set` work. Its archive is stored whole, and so is every member, each addressed by
 its SHA-256; `set_member` lists them in archive order. The same file in two packs is one
-artifact and two `set_member` rows. Textmode art members are also `single` works; other members
-(NFO, music, images, programs) are artifacts only. Rights record the scene publication on the
+artifact and two `set_member` rows. Textmode art members are also `single` works, and so are
+the pack's texts (NFO, FILE_ID.DIZ, text files; ADR 0033); other members (music, images,
+programs) are artifacts only. Rights record the scene publication on the
 archive the pack came from (ADR 0009); a file already met through another archive keeps its
 first source. Run twice, it leaves the same state: a pack whose archive is known is skipped.
 
@@ -79,6 +80,7 @@ SAUCE_ART: dict[tuple[int, int | None], str] = {
 SAUCE_BINARY_TEXT = 5
 CSI = b"\x1b["
 EOF_BYTE = b"\x1a"
+NUL = b"\x00"  # programs have it, text never
 CHARSET = "cp437"
 YEAR_DIGITS = 4
 
@@ -244,7 +246,7 @@ def _add_member(
         sauce = split(data)[1]
         art = art_format(name, sauce, data)
         version_id = None
-        if art:
+        if art or is_document(name, data):
             title = sauce.title if sauce and sauce.title else PurePosixPath(name).name
             version_id = insert_work(conn, "single", title, pack.rights, pack.dating)
         doc = DOCUMENTS.get(PurePosixPath(name).suffix.lower())
@@ -268,6 +270,12 @@ def _add_member(
         ),
         {"set_work": set_work, "sha256": sha256, "path": name, "position": position},
     )
+
+
+def is_document(name: str, data: bytes) -> bool:
+    """An NFO, a FILE_ID.DIZ or a text file that reads as text: a work of its own (ADR 0033)."""
+    suffix = PurePosixPath(name).suffix.lower()
+    return suffix in DOCUMENTS and not binary_format(data) and NUL not in data
 
 
 def art_format(
@@ -296,9 +304,9 @@ def art_format(
         if by_sauce or not declared:
             return by_sauce
     if declared:
-        return None if b"\x00" in data else declared
+        return None if NUL in data else declared
     shown = data.split(EOF_BYTE, 1)[0]  # DOS `type` stops at the first EOF byte
-    return "ansi" if CSI in shown and b"\x00" not in shown else None
+    return "ansi" if CSI in shown and NUL not in shown else None
 
 
 def extension(name: str) -> str | None:

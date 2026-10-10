@@ -54,7 +54,7 @@ def test_the_pilot_draws_its_packs_then_builds_from_the_frozen_sample(
     assert {f["pack_sha256"] for f in files} == drawn
     assert len(files) == 18
     works = pq.read_table(built.directory / "works.parquet").to_pylist()
-    assert len(works) == 9
+    assert len(works) == 12  # nine art files, and one NFO per year (ADR 0033)
 
 
 def test_a_pilot_whose_frame_changed_is_not_built(

@@ -1,7 +1,8 @@
 -- SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 -- SPDX-License-Identifier: CC0-1.0
 --
--- One row per art file of the train split (view work_split), whatever its format and whichever
+-- One row per work file of the train split (view work_split): art, and from v7 the texts of packs
+-- (NFO, DIZ, text files; ADR 0033), whatever its format and whichever
 -- scene archive holds it (ADR 0018). A file in several packs is placed in the earliest one (by
 -- year, then archive, then path); `packs` says how many hold it, `archives` in which archives.
 -- A file an archive holds loose, outside any pack (ADR 0024), has no pack: its `path` is its

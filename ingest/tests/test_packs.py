@@ -83,10 +83,10 @@ def test_a_pack_is_a_set_of_stored_members(db: Connection, stores: Stores, tmp_p
         " left join work w on w.id = v.work_id order by m.position",
     ) == [
         (0, "HORIZON.ANS", "ansi", "cp437", "Horizon"),
-        (1, "DEMO.NFO", "nfo", "cp437", None),
+        (1, "DEMO.NFO", "nfo", "cp437", "DEMO.NFO"),
         (2, "TUNE.XM", "xm", None, None),
         (3, "LOGO.GR", "ansi", "cp437", "Horizon"),
-        (4, "SUB/FILE_ID.DIZ", "diz", "cp437", None),
+        (4, "SUB/FILE_ID.DIZ", "diz", "cp437", "FILE_ID.DIZ"),
     ]
     paths = rows(db, "select source_path from artifact where format = 'nfo'")
     assert paths == [("1995/demo95.zip/DEMO.NFO",)]
@@ -97,7 +97,7 @@ def test_every_work_of_a_pack_may_be_shown_as_released(
 ) -> None:
     ingest_pack(db, stores.originals, make_pack(tmp_path / "1995" / "demo95.zip", MEMBERS))
     works = db.execute(text("select rights from work")).scalars().all()
-    assert len(works) == 3  # the set and its two art files
+    assert len(works) == 5  # the set, its two art files, its NFO and its DIZ
     for raw in works:
         rights = Rights.model_validate(raw)
         assert str(rights.scene_publication.url) == "https://16colo.rs/pack/demo95/"  # type: ignore[union-attr]
@@ -126,7 +126,8 @@ def test_a_file_in_two_packs_is_one_artifact(
     sha = sha256_hex(HORIZON)
     assert rows(db, f"select count(*) from artifact where sha256 = '{sha}'") == [(1,)]
     assert rows(db, f"select count(*) from set_member where sha256 = '{sha}'") == [(2,)]
-    assert rows(db, "select count(*) from work where kind = 'single'") == [(2,)]
+    # Horizon, the logo, the NFO and DIZ of the first pack, the NFO of the second.
+    assert rows(db, "select count(*) from work where kind = 'single'") == [(5,)]
 
 
 def test_a_pack_from_textfiles_is_shown_as_released_there(
@@ -228,7 +229,7 @@ def test_art_signed_with_a_group_extension_is_found_by_its_content(
         "select m.path, a.format, v.id is not null from set_member m"
         " join artifact a on a.sha256 = m.sha256 left join version v on v.id = a.version_id"
         " order by m.position",
-    ) == [("BW-INF.MIR", "ansi", True), ("LOADER.EXE", "exe", False), ("INFO.NFO", "nfo", False)]
+    ) == [("BW-INF.MIR", "ansi", True), ("LOADER.EXE", "exe", False), ("INFO.NFO", "nfo", True)]
 
 
 def test_an_entry_listed_twice_is_one_member(
@@ -257,3 +258,16 @@ def test_a_picture_stamped_as_ansi_is_not_art(
         " join artifact a on a.sha256 = m.sha256 left join version v on v.id = a.version_id"
         " order by m.position",
     ) == [("WZ-FUNK.JPG", "jpg", False), ("LOGO.GR", "ansi", True)]
+
+
+def test_a_text_member_is_a_work_unless_its_bytes_are_binary(
+    db: Connection, stores: Stores, tmp_path: Path
+) -> None:
+    files = {"MEMBERS.TXT": b"members:\r\n  ink\r\n", "SETUP.TXT": b"PK\x03\x04 not text"}
+    ingest_pack(db, stores.originals, make_pack(tmp_path / "1996" / "ink-96.zip", files))
+    assert rows(
+        db,
+        "select m.path, a.format, w.title from set_member m join artifact a on a.sha256 = m.sha256"
+        " left join version v on v.id = a.version_id left join work w on w.id = v.work_id"
+        " order by m.position",
+    ) == [("MEMBERS.TXT", "text", "MEMBERS.TXT"), ("SETUP.TXT", "text", None)]

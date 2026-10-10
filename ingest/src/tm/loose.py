@@ -4,7 +4,8 @@
 
 The mirror is laid out as the archive's site (`scripts/mirror_textfiles_collections.py`), so a
 file's path under the mirror's root is its path on the site. Every file is stored, addressed by
-its SHA-256; an art file is also a `single` work, with no set. Art is found as in packs
+its SHA-256; an art file or a text (NFO, DIZ, text file; ADR 0033) is also a `single` work,
+with no set. Art is found as in packs
 (extension, SAUCE, content); in a tree the archive's curator declares as art of one kind, other
 text files take that kind. Archives are packs (`tm ingest pack`), and the site's own index files
 are not the scene's: both are left out here. Run twice, it leaves the same state: a file the
@@ -26,6 +27,7 @@ from tm.packs import (
     PackSource,
     art_format,
     extension,
+    is_document,
     scene_rights,
 )
 from tm.records import (
@@ -83,7 +85,8 @@ def ingest_loose(
     sauce = split(data)[1]
     art = art_format(path.name, sauce, data, declared)
     version_id = None
-    if art:
+    doc = DOCUMENTS.get(PurePosixPath(path.name).suffix.lower())
+    if art or is_document(path.name, data):
         date = sauce_date(sauce)
         version_id = insert_work(
             conn,
@@ -92,7 +95,6 @@ def ingest_loose(
             scene_rights(source, source.url + source_path),
             Dating(date, date, "sauce" if date else None),
         )
-    doc = DOCUMENTS.get(PurePosixPath(path.name).suffix.lower())
     insert_artifact(
         conn,
         ArtifactRow(
@@ -106,4 +108,5 @@ def ingest_loose(
             version_id=version_id,
         ),
     )
-    return LooseIngested(source_path, sha256, new=True, format=art, work=art is not None)
+    work = version_id is not None
+    return LooseIngested(source_path, sha256, new=True, format=art or doc, work=work)

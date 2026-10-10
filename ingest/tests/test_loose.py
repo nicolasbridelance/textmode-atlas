@@ -51,7 +51,7 @@ def test_loose_files_leave_out_packs_and_the_site_index(tmp_path: Path) -> None:
     assert [p.relative_to(tmp_path).as_posix() for p in found] == ["ansi/b.txt", "ansi/bbs/a.ans"]
 
 
-def test_a_loose_art_file_is_a_work_released_at_its_url(
+def test_loose_art_and_texts_are_works_released_at_their_url(
     db: Connection, stores: Stores, tmp_path: Path
 ) -> None:
     write(tmp_path, "ansi/bbs/WELCOME.ANS", HORIZON)
@@ -59,7 +59,7 @@ def test_a_loose_art_file_is_a_work_released_at_its_url(
     ingested = ingest_tree(db, stores, tmp_path, "ansi")
     assert [(i.path, i.format, i.work) for i in ingested] == [
         ("ansi/bbs/WELCOME.ANS", "ansi", True),
-        ("ansi/information/history.txt", None, False),
+        ("ansi/information/history.txt", "text", True),
     ]
     found = rows(
         db,
@@ -69,9 +69,10 @@ def test_a_loose_art_file_is_a_work_released_at_its_url(
         " order by 1",
     )
     url = "http://artscene.textfiles.com/ansi/bbs/WELCOME.ANS"
+    history = "http://artscene.textfiles.com/ansi/information/history.txt"
     assert found == [
         ("ansi/bbs/WELCOME.ANS", "ansi", "textfiles", "single", url),
-        ("ansi/information/history.txt", "text", "textfiles", None, None),
+        ("ansi/information/history.txt", "text", "textfiles", "single", history),
     ]
 
 

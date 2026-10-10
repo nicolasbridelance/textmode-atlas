@@ -25,6 +25,7 @@ from tm.config import settings
 from tm.datasets import DatasetError, build, draw_sample
 from tm.decode import decode_artifact, pending_artifacts
 from tm.dev import storage_init
+from tm.documents import promote_documents
 from tm.eda import publish, snapshot
 from tm.export import ExportError, Outcome, export_work, exportable
 from tm.features import extract_artifact, pending_features
@@ -466,6 +467,19 @@ def ingest_files_command(
     typer.echo(
         f"{len(files)} files: {len(new)} new, {sum(r.work for r in new)} works,"
         f" {len(files) - len(new)} already held"
+    )
+
+
+@ingest_app.command("documents")
+def ingest_documents_command() -> None:
+    """Make works of the NFO, FILE_ID.DIZ and text files already held (ADR 0033)."""
+    cfg = settings()
+    store = S3Store(s3_client(), cfg.originals_bucket)
+    with create_engine(cfg.database_url).begin() as conn:
+        promoted = promote_documents(conn, store)
+    works = sum(p.work for p in promoted)
+    typer.echo(
+        f"{len(promoted)} texts without a work: {works} works, {len(promoted) - works} binary"
     )
 
 
