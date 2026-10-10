@@ -151,3 +151,9 @@ def test_a_published_snapshot_is_the_json_the_page_reads(tmp_path: Path) -> None
     found = {"schema": 2, "computed_at": "2026-10-10T00:00:00+00:00", "chapters": {}}
     assert publish(found, public) == PUBLIC_KEY
     assert json.loads(public.get(PUBLIC_KEY)) == found
+
+
+@pytest.mark.db
+def test_the_snapshot_reads_without_parallel_workers(db: Connection) -> None:
+    snapshot(db)
+    assert db.execute(text("show max_parallel_workers_per_gather")).scalar_one() == "0"
