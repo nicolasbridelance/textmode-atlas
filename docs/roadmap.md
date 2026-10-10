@@ -128,6 +128,13 @@ needs the one before says so.
 19. [ ] Ingest textfiles' other trees (ADR 0024) as their mirror completes; then sources for PETSCII, ATASCII and teletext through Demozoo's links (I55), with source notes for CSDb and files.scene.org first.
 20. [ ] Then, as planned before: the review queue (D2) for inferred ratings and the rule 4
     sample; Discmaster over the 16colo archives (I33).
+21. [ ] Screens and documents of text-mode computing ([ADR 0030](adr/0030-screens-and-documents-of-text-mode-computing.md),
+    owner's request of 2026-10-10: OS, software, splash screens, games, Minitel, walkthroughs,
+    NFO, readme, manuals, man pages, warez): `work.usage` with art kept apart by default; then
+    textfiles.com's piracy, adventure, games, computers and programming sections (I84); `ENDOOM`
+    and BIN dumps after grid v2 (I85); man pages (I87); ZZT (I88); captures after a spike
+    (I86); Minitel once a source is found (I57). Never a cracked program; third-party software
+    screens shown only after the owner's and the lawyer's decision.
 
 Later, deliberately (nothing depends on them yet):
 

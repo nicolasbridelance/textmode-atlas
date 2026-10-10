@@ -59,6 +59,9 @@ Rules:
 | Q36 | Why so little sexual material? Inferred ratings find 953 works at 18 for sexual words (of 24,186 works with an inferred rating), and what the owner saw at 16 looked tame. Hypotheses: keywords miss drawings without words; the art groups and 16colo kept such work out; it circulated elsewhere (BBS adult areas, ASCII collections, private trades) and was lost or never archived | owner, 2026-10-09 | an image classifier on a sample (I46), the textfiles.com art directories and Discmaster by keyword, NFO rules of the big groups | open |
 | Q37 | Do groups that greet each other draw closer in style than groups that do not? The nearest-works graph and the greets graph side by side: the first link between the social network the scene wrote down and the one its works form | nearest-works graph (step 12) | greets graph (I23), then a test on the test packs | open |
 | Q38 | Which works are famous, and do we hold them? Fame has several witnesses: Wikipedia articles (groups, artists, packs, works named in 1,902 downloaded pages), books and documentaries (*BBS: The Documentary*), 16colo and Defacto2 features, compo wins, reissues across packs and archives (a work in several packs travelled), greets and dedications naming it. First count, 2026-10-09 snapshot, English pages on the art scene only: at least 60 group names they cite hold works here (CiA 1,459, ACiD 1,060, Dark Illustrated 644, Blocktronics 742, iCE 491…), but almost no single work is named. A "famous" room needs a fame score with its witnesses, signed `algo:`, never a fact | owner, 2026-10-10 | open |
+| Q39 | What made a screen art? The same cells drew interfaces, NFO, quit screens and artpacks: box drawing, shades and colour measured in each family, and whether the art scene's habits left it (ANSI artists drawing ENDOOM screens, BBS software menus) or came from it | owner, 2026-10-10 (ADR 0030) | features v1 by `work.usage`, once screens and documents are in | open |
+| Q40 | Did the warez NFO and the art NFO share hands and templates before the art groups stood apart? textfiles' `piracy/NFO/` (978 entries, 1990 on) against 16colo's NFO | owner, 2026-10-10 (ADR 0030) | text layer and handles of both, by year | open |
+| Q41 | Who drew the ASCII headers of walkthroughs and FAQs, and did they borrow the art scene's ASCII styles (FIGlet fonts, oldskool, newskool)? | owner, 2026-10-10 (ADR 0030) | textfiles `adventure/` and `games/`, glyph histograms against the ASCII packs | open |
 
 ## Hypotheses (to pre-register before a confirmatory test)
 
@@ -163,6 +166,13 @@ Rules:
 | I81 | Binary files decoded as text: some "works" are data (`srg-0295`, five files with lines read as Turkish). A text-likeness test (share of high CP437 letters, entropy) before any text work, and maybe a decoder flag | spike 0006 | open |
 | I82 | IRC logs pasted into the art (`*** X has joined #channel`, `<nick> …`): about 175 files in 1997, from 6 in 1991 (the pattern also catches BBS chat). Quotes as content, a record of the scene's chat; handles stay under principle 10 | spike 0006 | open |
 | I83 | Code pages in the text layer: read Polish files as Mazovia or CP852, Brazilian ones as CP860 (C10), Nordic ones as CP865, when the language says so; part of grid v2's charsets (ADR 0026) | spike 0006 | open |
+| I84 | Ingest textfiles.com's `piracy/`, `adventure/`, `games/`, `computers/`, `programming/` from its per-directory archives (one request each) as loose files of usage `document` (ADR 0024, 0030) | ADR 0030 | open |
+| I85 | Video memory as a format: the BIN decoder reads raw 80 × 25 dumps; extract DOOM's `ENDOOM` lump from the WADs of the idgames archive (lump directory, no game code), one quit screen per WAD, dated by its text file | ADR 0030 | open |
+| I86 | Spike: captures of running programs as grids read from video memory (DOSBox-X, a B800 dump at chosen moments), with the recipe as a `trace`: MS-DOS and FreeDOS prompts, Norton Commander, Turbo Pascal, BBS software, door games; only freely distributable programs kept | ADR 0030 | open |
+| I87 | Man pages as grids: `mandoc` over the Unix history repository, one rendering per commit date; bold by overstrike (`XX`) is a stacked cell, grid v2's `layer` (ADR 0026) | ADR 0030 | open |
+| I88 | A ZZT board decoder (60 × 25 cells, CP437, elements and colours), over the Museum of ZZT's worlds after asking it | ADR 0030 | open |
+| I89 | Programs named in NFO as records without bytes: name, version, group, date, size and hash when given, linking each NFO to the software it travelled with; never the file (ADR 0030 point 4) | ADR 0030 | open |
+| I90 | cd.textfiles.com's shareware CDs: splash screens (ANSI, BIN) and readme files, each dated by its CD; measure it before fetching | ADR 0030 | open |
 
 ## Curiosities
 
@@ -178,6 +188,7 @@ Rules:
 | C9 | 16colo, Demozoo, Defacto2, Blocktronics, Mistigris and PabloDraw have no Wikipedia article in any language checked; the artpack has 3. | Wikipedia survey | open |
 | C10 | Black Maiden (Brazil) wrote Portuguese with CP437's ä and ö for ã and õ. Did other Brazilian groups share the habit, or use CP860 and look broken on CP437 screens? | D1 additions (maiden14) | open |
 | C13 | Masked board numbers that speak: `DiE-FEDS`, `NOT-OPEN`, `NoB-itch`. What else did the scene write in the digits' place, and when? | spike 0006 | open |
+| C14 | `piracy/SOFTDOCS/`: manuals retyped or rewritten so that cracked programs could be used. Who typed them, did they sign, and did they draw headers like the NFO? | source register, 2026-10-10 | open |
 | C5 | A `.ANS` of 1996 with 605 rows of grey line drawing (`02-STEPS.ANS`, swap07): line art in ANSI, how common? | explorer | open |
 | C12 | Community 19 gathers 411 works drawn strictly line by line, with box lines and weight high: menus and screens written top to bottom by a program (a BBS menu generator) rather than drawn in an editor? | nearest-works graph, communities | open |
 | C11 | Several of the tallest works (`43-duck.ans`, `we-sublime.ans`, thousands of rows) are nearly black below their first screens when seen whole: padding written by the editor, a decoder that counts written blank rows, or works meant to scroll into darkness? | explorer "whole work" cards, 2026-10-09 | open |

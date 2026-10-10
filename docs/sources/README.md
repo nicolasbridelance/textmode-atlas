@@ -67,6 +67,28 @@ existed outside the art archives, a witness that does not descend from 16colo.
 | Minitel, Videotex | Joconde and Europeana are claimed to hold Minitel collections | **not confirmed**; to check before relying on it |
 | Academic work | Gleb J. Albert, "From Currency in the Warez Economy to Self-Sufficient Art Form", WiderScreen 2017 | to read at the source; bibliography to start (leads) |
 
+## Screens and documents of text-mode computing (ADR 0030)
+
+Owner's request of 2026-10-10: operating systems, software, splash screens, games, Minitel,
+walkthroughs, NFO, readme, manuals, man pages, warez, cracks. Checked 2026-10-10; "claimed"
+figures are the source's own words or a search result, to measure before relying on them.
+
+| Family | Source | What it brings | Volume | Access | Terms and limits |
+| --- | --- | --- | --- | --- | --- |
+| Warez scene, NFO | textfiles.com `piracy/` | NFO and information files by group (Fairlight, Razor 1911, INC, TDU-Jam, The Humble Guys, Hybrid, Prestige, The Dream Team), a large `NFO/` directory (1990 on), applications, courier lists, texts on cracking, unprotection schemes, BBS and group tags in ANSI | measured: 2,573 files, 24 MB (site statistics, 2005); 978 entries in `NFO/`, 180 in `SOFTDOCS/`, 107 in `CRACKING/`, 27 in `ANSI/` | one archive per directory (`archives.textfiles.com/piracy.zip`, `.tar.gz`), offered "to assist this research" | as [textfiles.md](textfiles.md); `UNPROTECTS/` describes how to remove protections: texts, kept as documents, never applied |
+| Documentation | textfiles.com `piracy/SOFTDOCS/` | "On-line documentation, usually for pirated programs": the manuals that travelled with cracks | measured: 180 entries | same | manuals of commercial programs: records only until ADR 0030 point 5 is decided |
+| Walkthroughs | textfiles.com `adventure/` | walkthroughs and hints for text adventures | measured: 557 files, 6.9 MB | per-directory archive | as textfiles |
+| Games, computers, programming | textfiles.com `games/`, `computers/`, `programming/`, `apple/` | information files on home and arcade games, computer lore, programming texts; many with ASCII headers | measured: 991, 1,714, 608, 1,558 files | per-directory archives | as textfiles |
+| The whole of textfiles.com | [textfiles.com](http://www.textfiles.com/directory.html) | 58,227 files, 1.33 GB in 40 sections (2005 statistics) | measured | per-directory archives | sections outside ADR 0030 (anarchy, drugs, sex: 5,264 files, …) are not ingested by it; `sex/` matters to Q36 |
+| Shareware CDs | cd.textfiles.com | CD-ROM images of shareware and BBS collections: readme files, manuals, splash screens in ANSI and BIN, programs released for distribution | answers (HTTP 200); not measured | static HTTP | shareware was released for distribution; commercial CDs are not |
+| Readme, manuals, dated copies | Discmaster | files of 43,856 CD-ROM, disk and FTP items, searchable by name and hash | see above | JSON search | one request per query |
+| Quit screens | DOOM `ENDOOM` lumps, idgames archive | the 80 × 25 text-mode screen shown on quitting, one per WAD that sets it: raw video memory (BIN layout) | claimed: thousands of WADs; not measured | idgames mirrors (FTP, HTTP) | WADs are released freely by their authors, most with a text file of terms |
+| Text-mode games | Museum of ZZT (museumofzzt.com) | ZZT and Super ZZT worlds, boards drawn in CP437 cells, with a file viewer | claimed: 3,000 to 4,000 files | zipped downloads; site code on GitHub (DrDos0016/museum-of-zzt), no API found | ask the museum before a bulk fetch |
+| Man pages | Unix history repository (github.com/dspinellis/unix-history-repo), BSD and GNU sources | `roff` sources rendered by `mandoc` into a character grid: the documentation of Unix from 1970 on, dated by commit | not measured | Git | BSD and GNU licences: may be shown with their notice |
+| Minitel pages | awesome-minitel list (github.com/bill-of-materials/awesome-minitel), 3615 IUT Auxerre mirror, goto10 | editors, emulators, some servers' pages | no bulk collection of `.vdt` pages found (I57) | Git, HTTP | per page |
+| Scene NFO of the 2000s on | srrdb, pre databases | NFO of release groups | not checked (search found no documentation) | unknown | warez: NFO only, never the release |
+| Captures of running programs | emulators (DOSBox-X copies a text screen; B800 dump tools; `TheDraw` imports BIN) | OS prompts, program interfaces, game screens as grids read from video memory | none until made | spike first | program must be freely distributable, or the capture is records only |
+
 ## What the cartography report got wrong or could not support
 
 - **Demozoo's license.** The report says "licence permissive permettant la réutilisation des
