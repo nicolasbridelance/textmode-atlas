@@ -86,3 +86,10 @@ falls back to that file, and then says it shows a published snapshot, with its d
 data. The snapshot holds only what the page draws: aggregates, pack-name prefixes, and checks,
 computed with hidden works left out, grid measures from train packs only. Publishing train
 aggregates does not open the test packs. Run it after `tm export`, like `tm lists`.
+
+## Amendment 2 (2026-10-10): one research room
+
+At the owner's request, the exploration is no longer a room of its own: it is the first part
+of the research room (`/research`), above the dated studies, so that the museum has one place
+for research and one header link. The chapters, checks and data sources are unchanged; the
+exploration's address is `/research#corpus`.
