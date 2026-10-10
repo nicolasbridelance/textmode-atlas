@@ -16,6 +16,27 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-10 — A crowd at the peak, an art of greys
+
+**The peak was a crowd.** Grouping packs by the prefix of their name, the ten largest groups
+made 43% of the art works of 1990–93, 19% of those of 1996–97, the busiest era (399 groups),
+then 58% in 2000–04 and 74% since 2013 (83 groups). Inequality inside each era barely moves
+(Gini 0.55 to 0.79): what changes is how many groups there were. *Evidence: live exploration
+`/corpus`, chapter 3 (`tm eda`), 2026-10-10. Caveat: name prefixes stand for groups.*
+
+**ANSI art is first an art of greys.** In coloured ANSI works of the training packs, dark grey,
+light grey and white carry 41% to 48% of the ink in every era; dark grey alone is the most used
+colour (16% to 22%), the colour of shading. *Evidence: same page, chapter 6, from `fg_hist` of
+features v1. Story: the palette people remember is the accents.*
+
+**iCE never fully took SAUCE.** Of iCE's packs (`ice…`) with five ANSI files or more, 0 of 19
+carry SAUCE in 1993, 1 of 21 in 1994, then about half each year to 1998 (6/12, 5/12, 1/14,
+5/12), while ACiD's switch at once and stay. *Evidence: same page, chapter 4, the SAUCE map.*
+
+**Block art without colour lost its shades around 2000.** Its mean share of shade characters
+falls from 22% (1990–93) to 5% (1998–2004), then comes back to 13–15%: the one-colour "blocky"
+style drew with full blocks. *Evidence: same page, chapter 5, by content kind (train packs).*
+
 ## 2026-10-10 — Who wrote SAUCE, and what came back after 2013
 
 **SAUCE arrived pack by pack, and group by group.** In 1994, the year SAUCE appears, packs are
