@@ -8,6 +8,7 @@
 	interface Series {
 		name: string;
 		values: (number | null)[];
+		colour?: string; // a CSS colour; by default the series' slot
 	}
 	let {
 		x,
@@ -29,7 +30,9 @@
 	const W = $derived(Math.max(CHART.minWidth, measured || CHART.width));
 	const H = 220;
 	const ROOMY = 480; // below this width the legend names the lines, not their ends
-	const END_ROOM = 150;
+	const END_ROOM = $derived(
+		Math.max(0, ...series.map((s) => s.name.length)) * CHAR_PX + CHART.endLabel * 2
+	);
 	const EDGE = 12;
 	const ends = $derived(W >= ROOMY);
 	const PAD = $derived({ left: 46, right: ends ? END_ROOM : EDGE, top: EDGE, bottom: 24 });
@@ -58,13 +61,30 @@
 	}
 	const widest = $derived(Math.max(0, ...x.map((name) => name.length)) * CHAR_PX);
 	const spacing = $derived(labelEvery(step, widest, every));
+	const LABEL_GAP = 15; // pixels between two end labels
+	/** Where each series' name sits at its end: at its last point, moved apart from the
+	 * others so that two lines ending close together keep readable names. */
+	const labels = $derived.by(() => {
+		const placed = series
+			.map((s, k) => ({ k, end: last(s.values) }))
+			.filter((e) => e.end >= 0)
+			.map((e) => ({ ...e, y: py(series[e.k].values[e.end] ?? 0) }))
+			.sort((a, b) => a.y - b.y);
+		for (let i = 1; i < placed.length; i++)
+			placed[i].y = Math.max(placed[i].y, placed[i - 1].y + LABEL_GAP);
+		return new Map(placed.map((e) => [e.k, e]));
+	});
+	/** A series' colour: its own, or the categorical slot of its place. */
+	const tint = (s: Series, k: number) => s.colour ?? `var(--cat-${k + 1})`;
 	let hover = $state<number | null>(null);
 </script>
 
 <div class="chart" bind:clientWidth={measured}>
 	{#if series.length > 1}
 		<ul class="legend">
-			{#each series as s, k (s.name)}<li><span class={`key s${k + 1}`}></span>{s.name}</li>{/each}
+			{#each series as s, k (s.name)}<li>
+					<span class="key" style:background={tint(s, k)}></span>{s.name}
+				</li>{/each}
 		</ul>
 	{/if}
 	<svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label}>
@@ -87,15 +107,21 @@
 		{/if}
 		{#each series as s, k (s.name)}
 			{@const end = last(s.values)}
-			<path class={`line s${k + 1}`} d={path(s.values)} />
+			<path class="line" d={path(s.values)} style:stroke={tint(s, k)} />
 			{#each s.values as v, i (i)}
-				{#if v != null}<circle class={`dot s${k + 1}`} cx={px(i)} cy={py(v)} r="4" />{/if}
+				{#if v != null}<circle
+						class="dot"
+						cx={px(i)}
+						cy={py(v)}
+						r="4"
+						style:fill={tint(s, k)}
+					/>{/if}
 			{/each}
 			{#if ends && end >= 0}
 				<text
 					class="end"
 					x={px(end) + CHART.endLabel}
-					y={py(s.values[end] ?? 0) + CHART.tickBaseline}>{s.name}</text
+					y={(labels.get(k)?.y ?? 0) + CHART.tickBaseline}>{s.name}</text
 				>
 			{/if}
 		{/each}
@@ -118,7 +144,7 @@
 			{#each series as s, k (s.name)}
 				{@const v = s.values[hover]}
 				<span
-					><span class={`key s${k + 1}`}></span>{s.name}:
+					><span class="key" style:background={tint(s, k)}></span>{s.name}:
 					<strong>{v == null ? '–' : format(v)}</strong></span
 				>
 			{/each}
@@ -157,25 +183,9 @@
 		stroke-width: 2;
 		stroke-linejoin: round;
 	}
-	.line.s1 {
-		stroke: var(--series-1);
-	}
-	.line.s2 {
-		stroke: var(--series-2);
-	}
 	.dot {
 		stroke: var(--surface);
 		stroke-width: 2;
-	}
-	.dot.s1,
-	.key.s1 {
-		fill: var(--series-1);
-		background: var(--series-1);
-	}
-	.dot.s2,
-	.key.s2 {
-		fill: var(--series-2);
-		background: var(--series-2);
 	}
 	.hit {
 		fill: transparent;

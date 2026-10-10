@@ -23,7 +23,7 @@ from tm.config import settings
 from tm.datasets import DatasetError, build, draw_sample
 from tm.decode import decode_artifact, pending_artifacts
 from tm.dev import storage_init
-from tm.eda import snapshot
+from tm.eda import publish, snapshot
 from tm.export import ExportError, Outcome, export_work, exportable
 from tm.features import extract_artifact, pending_features
 from tm.ingest import ingest_golden
@@ -305,12 +305,23 @@ def export_command(
 
 
 @app.command("eda")
-def eda_command() -> None:
+def eda_command(
+    publish_it: Annotated[
+        bool, typer.Option("--publish", help="Write it to the public bucket for the static site.")
+    ] = False,
+) -> None:
     """Print the live exploration (ADR 0028) as JSON: figures and checks, read from the database
-    now. Reads only; the museum serves the same at /api/eda."""
-    engine = create_engine(settings().database_url, execution_options={"postgresql_readonly": True})
+    now; the museum serves the same at /api/eda. With --publish, write it where the static site
+    reads it instead."""
+    cfg = settings()
+    engine = create_engine(cfg.database_url, execution_options={"postgresql_readonly": True})
     with engine.connect() as conn:
-        typer.echo(json.dumps(snapshot(conn), default=str, indent=1))
+        found = snapshot(conn)
+    if not publish_it:
+        typer.echo(json.dumps(found, default=str, indent=1))
+        return
+    key = publish(found, S3Store(s3_client(), cfg.public_bucket))
+    typer.echo(f"published {key} ({found['computed_at']})")
 
 
 @app.command("lists")

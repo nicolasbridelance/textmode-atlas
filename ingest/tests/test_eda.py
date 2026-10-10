@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -12,8 +13,18 @@ from sqlalchemy import Connection, create_engine, text
 from stores import Stores
 from tm import features
 from tm.decode import decode_pending
-from tm.eda import fingerprint, snapshot
-from tm.eda.stats import Kind, agreement, group_agreement_test, histogram, kitagawa
+from tm.eda import PUBLIC_KEY, fingerprint, publish, snapshot
+from tm.eda.stats import (
+    Kind,
+    agreement,
+    gini,
+    group_agreement_test,
+    histogram,
+    kitagawa,
+    lorenz,
+    quantile,
+)
+from tm.storage import LocalStore
 
 PLAIN = b"Just words, typed in grey on black.\r\n" * 3
 
@@ -62,6 +73,21 @@ def test_histogram_closes_the_last_bin() -> None:
     assert histogram([0, 0.1, 0.5, 1.0, 1.5], 0, 1, 2) == [2, 2]
 
 
+def test_quantiles_interpolate_as_postgresql() -> None:
+    assert quantile([1, 2, 3, 4], 0.5) == 2.5
+    assert quantile([7], 0.9) == 7
+    assert quantile([], 0.5) == 0.0
+
+
+def test_equal_groups_have_no_inequality_and_one_giant_has_much() -> None:
+    assert gini([5, 5, 5, 5]) == pytest.approx(0)
+    assert gini([0, 0, 0, 100]) == pytest.approx(0.75)
+    curve = lorenz([1, 1, 2, 6])
+    assert curve[0] == (0.0, 0.0)
+    assert curve[-1] == (1.0, 1.0)
+    assert curve[2] == (0.5, 0.2)  # the smaller half of the groups holds a fifth
+
+
 @pytest.fixture
 def corpus(db: Connection, stores: Stores, tmp_path: Path) -> None:
     ingest(db, stores, tmp_path / "1995" / "demo95.zip", {"HORIZON.ANS": HORIZON}, "train")
@@ -83,6 +109,10 @@ def test_the_snapshot_reads_the_database_as_it_is(db: Connection) -> None:
     assert set(years) == {1995, 1996}
     eras = {e["era"] for e in found["chapters"]["revival"]["eras"]}
     assert eras == {"1994-95", "1996-97"}  # train packs, measured
+    makers = {e["era"]: e for e in found["chapters"]["makers"]["eras"]}
+    assert makers["1994-95"]["largest"] == [{"prefix": "demo", "works": 1}]
+    [coloured] = found["chapters"]["palette"]["eras"]  # Horizon; the words are plain grey
+    assert sum(coloured["ink"]) == pytest.approx(1)
 
 
 @pytest.mark.db
@@ -98,7 +128,8 @@ def test_a_withdrawn_work_is_counted_nowhere(db: Connection) -> None:
     found = snapshot(db)
     assert found["hidden"] == 1
     assert found["chapters"]["contents"]["funnel"]["art"] == 1
-    assert [y["year"] for y in found["chapters"]["peak"]["years"]] == [1996]
+    years = {y["year"]: y for y in found["chapters"]["peak"]["years"]}
+    assert (years[1995]["works"], years[1995]["median_art"]) == (0, 0)  # the pack, emptied
     assert {e["era"] for e in found["chapters"]["revival"]["eras"]} == {"1996-97"}
 
 
@@ -113,3 +144,10 @@ def test_the_fingerprint_moves_with_a_write(db_url: str) -> None:
         conn.execute(text("select pg_stat_clear_snapshot()"))
         assert fingerprint(conn) != before
     engine.dispose()
+
+
+def test_a_published_snapshot_is_the_json_the_page_reads(tmp_path: Path) -> None:
+    public = LocalStore(tmp_path / "public")
+    found = {"schema": 2, "computed_at": "2026-10-10T00:00:00+00:00", "chapters": {}}
+    assert publish(found, public) == PUBLIC_KEY
+    assert json.loads(public.get(PUBLIC_KEY)) == found

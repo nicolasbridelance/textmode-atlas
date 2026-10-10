@@ -14,21 +14,25 @@
 		format,
 		label,
 		marked = [],
-		every = 1
+		every = 1,
+		height = CHART.barHeight,
+		max: fixedMax
 	}: {
 		points: Point[];
 		format: (value: number) => string;
 		label: string;
 		marked?: string[];
 		every?: number; // label every nth category
+		height?: number;
+		max?: number; // a shared scale, for small multiples
 	} = $props();
 
 	let measured = $state(0);
 	const W = $derived(Math.max(CHART.minWidth, measured || CHART.width));
-	const H = 200;
+	const H = $derived(height);
 	const PAD = { left: 46, right: 8, top: 10, bottom: 24 };
 	const R = CHART.corner;
-	const max = $derived(Math.max(0, ...points.map((p) => p.y)));
+	const max = $derived(fixedMax ?? Math.max(0, ...points.map((p) => p.y)));
 	const grid = $derived(ticks(max));
 	const top = $derived(grid.at(-1) || 1);
 	const band = $derived((W - PAD.left - PAD.right) / Math.max(1, points.length));

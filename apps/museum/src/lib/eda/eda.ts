@@ -3,8 +3,9 @@
 //
 // The live exploration served by the museum host at /api/eda (ADR 0028). The host computes
 // every number and every check; the page only formats and draws them.
+import { fileUrl } from '../files';
 
-export type Check = { holds: boolean } & Record<string, number | boolean | null>;
+export type Check = { holds: boolean } & Record<string, number | boolean | string | null>;
 type Checks = Record<string, Check>;
 
 interface Year {
@@ -12,6 +13,33 @@ interface Year {
 	works: number;
 	packs: number;
 	median_art: number;
+	spread: number[]; // 10th, 25th, 50th, 75th and 90th percentiles of works per pack
+}
+
+interface FormatYear {
+	year: number;
+	ansi: number;
+	ascii: number;
+	other: number;
+	grids: number;
+}
+
+interface MakersEra {
+	era: string;
+	groups: number;
+	works: number;
+	top: number;
+	gini: number;
+	largest: { prefix: string; works: number }[];
+	lorenz: [number, number][] | null;
+}
+
+interface PaletteEra {
+	era: string;
+	works: number;
+	ink: number[]; // share of the ink in each of the sixteen VGA colours
+	greys: number;
+	glyphs: Record<string, number>;
 }
 
 interface SauceYear {
@@ -27,6 +55,7 @@ interface Era {
 	median_rows: number;
 	wide: number;
 	ice: number;
+	heights: number[]; // works by height in rows, in powers of two from 1
 }
 
 interface KindShare {
@@ -45,9 +74,11 @@ export interface Snapshot {
 			sources: { source: string; files: number }[];
 			funnel: Record<'art' | 'decoding' | 'grids' | 'rendered' | 'measured' | 'packs', number>;
 			unread: { format: string; error_class: string; works: number }[];
+			years: FormatYear[];
 			checks: Checks;
 		};
-		peak: { years: Year[]; checks: Checks };
+		peak: { years: Year[]; min_packs: number; checks: Checks };
+		makers: { eras: MakersEra[]; top: number; checks: Checks };
 		sauce: {
 			by_year: SauceYear[];
 			year: number;
@@ -58,6 +89,11 @@ export interface Snapshot {
 			full_mean_dates: number | null;
 			full_mean_files: number | null;
 			groups: { prefix: string; with: number; packs: number }[];
+			map: {
+				groups: string[];
+				years: number[];
+				cells: { with: number; packs: number }[][];
+			};
 			test: {
 				groups: number;
 				packs: number;
@@ -73,9 +109,10 @@ export interface Snapshot {
 			eras: { era: string; all: number; kinds: Record<string, KindShare> }[];
 			before: string;
 			after: string;
-			split: { total: number; within: number; composition: number };
+			split: { total: number; within: number; composition: number } | null;
 			checks: Checks;
 		};
+		palette: { eras: PaletteEra[]; checks: Checks };
 		revival: { eras: Era[]; checks: Checks };
 	};
 }
@@ -88,6 +125,28 @@ export function checkState(check: Check | undefined): CheckState {
 	return check.holds ? 'holds' : 'broken';
 }
 
+const SCHEMA = 2; // as tm.eda: an older host is not read
+
+/** The sixteen colours of the VGA palette, in attribute order: the works' own ink. */
+export const VGA = [
+	'#000000',
+	'#0000aa',
+	'#00aa00',
+	'#00aaaa',
+	'#aa0000',
+	'#aa00aa',
+	'#aa5500',
+	'#aaaaaa',
+	'#555555',
+	'#5555ff',
+	'#55ff55',
+	'#55ffff',
+	'#ff5555',
+	'#ff55ff',
+	'#ffff55',
+	'#ffffff'
+];
+
 export const REFRESH_MS = 30_000; // as often as the host looks at the database
 const PERCENT = 100;
 const TICKS = 3;
@@ -99,12 +158,33 @@ const P_FLOOR = 0.001;
 const LABEL_ROOM = 8; // pixels between two axis labels
 export const CHAR_PX = 7; // width of a character of the axis font
 
-export async function loadSnapshot(fetcher: typeof fetch = fetch): Promise<Snapshot | null> {
-	const response = await fetcher('/api/eda');
-	if (!response.ok) return null;
-	const found = (await response.json()) as Snapshot;
-	return found.schema === 1 ? found : null;
+export const PUBLISHED = 'eda/snapshot.json'; // as tm.eda.PUBLIC_KEY
+
+export interface Found {
+	snapshot: Snapshot;
+	live: boolean; // from the live host, or the last snapshot `tm eda --publish` wrote
 }
+
+async function read(fetcher: typeof fetch, url: string): Promise<Snapshot | null> {
+	const response = await fetcher(url).catch(() => null);
+	if (!response?.ok) return null;
+	const found = (await response.json().catch(() => null)) as Snapshot | null;
+	return found?.schema === SCHEMA ? found : null;
+}
+
+/** The live exploration when a museum host serves it, else the last published one. */
+export async function loadSnapshot(
+	fetcher: typeof fetch = fetch,
+	published = fileUrl(PUBLISHED)
+): Promise<Found | null> {
+	const live = await read(fetcher, '/api/eda');
+	if (live) return { snapshot: live, live: true };
+	const last = await read(fetcher, published);
+	return last ? { snapshot: last, live: false } : null;
+}
+
+export type Format = ReturnType<typeof formatter>;
+export type Chapters = Snapshot['chapters'];
 
 export function formatter(locale: string) {
 	const integer = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
