@@ -27,7 +27,15 @@ from pathlib import Path
 MAX_MEMBER_BYTES = 256 * 1024 * 1024
 TOOL_TIMEOUT_SECONDS = 300
 FAILED_7ZZ = re.compile(rb"^ERROR: [^:]+ : (.+?)\r?$", re.MULTILINE)
-UNREADABLE = (zipfile.BadZipFile, NotImplementedError, RuntimeError, zlib.error, EOFError)
+# ValueError: a member whose recorded offset lies before the archive (negative seek).
+UNREADABLE = (
+    zipfile.BadZipFile,
+    NotImplementedError,
+    RuntimeError,
+    zlib.error,
+    EOFError,
+    ValueError,
+)
 
 
 class ArchiveError(Exception):
