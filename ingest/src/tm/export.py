@@ -46,6 +46,10 @@ Outcome = Literal["files", "record", "nothing"]
 
 WORKS = """
 select a.sha256, a.source_path, a.format, a.sauce, w.title, w.rights, w.privacy,
+  coalesce(w.rights -> 'scene_publication' ->> 'url', w.rights -> 'excerpt' ->> 'taken_from',
+    case when w.rights ? 'license' then (select q.url from acquisition q
+      where q.sha256 = a.sha256 order by q.retrieved_at nulls last limit 1) end) as own_url,
+  w.rights ->> 'license' as license, w.rights -> 'excerpt' ->> 'credit' as excerpt_credit,
   d.grid_sha256, d.cols, d.rows, d.sauce_problems,
   wa.level, wa.descriptors, wa.notices, wa.reviewed,
   r.output_sha256 as rendering_sha256,
@@ -107,8 +111,8 @@ def decide(row: Row[Any]) -> tuple[Outcome, str]:
         return "nothing", level
     if display == "metadata" or level in NOT_YET_SHOWN:
         return "record", level
-    if not row.pack_url:
-        raise ExportError(f"{row.sha256}: no credit link to its archive (ADR 0009)")
+    if not credit_url(row):
+        raise ExportError(f"{row.sha256}: no credit link to its source (ADR 0009, 0032)")
     if not row.rendering_sha256:
         raise ExportError(f"{row.sha256}: no conservation rendering of the acquired file")
     return "files", level
@@ -203,14 +207,21 @@ def credit_of(row: Row[Any]) -> dict[str, Any]:
     }
 
 
+def credit_url(row: Row[Any]) -> str | None:
+    """The link a shown file credits: its pack at the archive, else its own place at its source:
+    where the scene released it, the page the museum cut it from, or where its licence was."""
+    return row.pack_url or row.own_url
+
+
 def _credit(row: Row[Any]) -> dict[str, Any]:
     signed = credit_of(row)
     return {
-        "author": signed["author"],
+        "author": signed["author"] or row.excerpt_credit,
         "group": signed["group"],
         "pack": row.pack,
         "archive": row.archive,
-        "url": row.pack_url,
+        "url": credit_url(row),
+        "license": row.license,
     }
 
 
@@ -264,7 +275,7 @@ def list_paths(row: Row[Any]) -> dict[str, str | None]:
     """Where the lists of a shown work live in the public bucket (ADR 0023)."""
     author = slug(_credit(row)["author"] or "")
     return {
-        "pack": f"lists/packs/{slug(row.archive)}-{slug(row.pack)}.json",
+        "pack": f"lists/packs/{slug(row.archive)}-{slug(row.pack)}.json" if row.pack else None,
         "author": f"lists/authors/{author}.json" if author else None,
         "year": f"lists/years/{row.year}.json" if row.year else None,
     }

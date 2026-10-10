@@ -135,6 +135,24 @@ def test_no_file_is_shown_without_a_credit_link(
 
 
 @pytest.mark.usefixtures("ready")
+def test_an_excerpt_is_credited_to_the_page_it_was_cut_from(
+    db: Connection, stores: Stores, public: LocalStore
+) -> None:
+    page = "https://web.archive.org/web/1999/http://example.org/sig.html"
+    excerpt = {"taken_from": page, "cut": "lines 3-9", "taken_at": "2026-10-10", "credit": "Ola"}
+    db.execute(
+        text("update work set rights = cast(:r as jsonb) where kind = 'single'"),
+        {"r": json.dumps({"excerpt": excerpt})},
+    )
+    db.execute(text("delete from set_member"))
+    assert export(db, stores, public) == "files"
+    record = json.loads(public.get(PREFIX + "record.json"))
+    # Horizon is signed in its SAUCE record: the signature wins over the excerpt's credit
+    assert (record["credit"]["url"], record["credit"]["author"]) == (page, "claude")
+    assert record["lists"]["pack"] is None
+
+
+@pytest.mark.usefixtures("ready")
 def test_an_unchanged_work_is_not_written_again(
     db: Connection, stores: Stores, public: LocalStore
 ) -> None:

@@ -43,9 +43,10 @@ class Lists:
     def add(self, row: Row[Any], level: str) -> None:
         entry = _entry(row, level)
         paths = list_paths(row)
-        self.heads[paths["pack"] or ""] = {
-            "pack": row.pack, "archive": row.archive, "url": row.pack_url, "year": row.year,
-        }  # fmt: skip
+        if paths["pack"]:
+            self.heads[paths["pack"]] = {
+                "pack": row.pack, "archive": row.archive, "url": row.pack_url, "year": row.year,
+            }  # fmt: skip
         if paths["author"]:
             self.heads[paths["author"]] = {"author": entry["author"]}
         if paths["year"]:
