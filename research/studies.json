@@ -20,6 +20,25 @@
       }
     },
     {
+      "id": "words",
+      "date": "2026-10-10",
+      "kind": "trial",
+      "strand": "linkage",
+      "status": "exploratory",
+      "dataset": "works v6",
+      "leads": ["I51", "I22", "I23", "Q10", "Q25"],
+      "source": "docs/spikes/0006-reading-the-words.md",
+      "language": "en",
+      "title": {
+        "en": "Reading the words in the works",
+        "fr": "Lire les mots dans les œuvres"
+      },
+      "summary": {
+        "en": "What plain rules and offline tools read in the text drawn inside the works: phone numbers, addresses, credits and languages read well, greetings not yet. Phone numbers give way to web addresses, crossing in 1996.",
+        "fr": "Ce que des règles simples et des outils hors ligne lisent dans le texte dessiné dans les œuvres : numéros, adresses, crédits et langues se lisent bien, les salutations pas encore. Les numéros de téléphone cèdent la place aux adresses web, les courbes se croisent en 1996."
+      }
+    },
+    {
       "id": "corpus",
       "date": "2026-10-10",
       "kind": "exploration",
