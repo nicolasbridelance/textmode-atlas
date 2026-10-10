@@ -89,6 +89,25 @@ figures are the source's own words or a search result, to measure before relying
 | Scene NFO of the 2000s on | srrdb, pre databases | NFO of release groups | not checked (search found no documentation) | unknown | warez: NFO only, never the release |
 | Captures of running programs | emulators (DOSBox-X copies a text screen; B800 dump tools; `TheDraw` imports BIN) | OS prompts, program interfaces, game screens as grids read from video memory | none until made | spike first | program must be freely distributable, or the capture is records only |
 
+## Single acquisitions (ADR 0031)
+
+Sources from which the museum takes one file at a time, to give a practice its first
+representative. Each file, its basis and its check are in
+[`corpus/acquisitions.yaml`](../../corpus/acquisitions.yaml); `tm acquire` fetches them.
+
+| Source | Basis | Checked 2026-10-10 |
+| --- | --- | --- |
+| scene.org (`files.scene.org/get/…`) | scene (ADR 0009) | compo entries found through Demozoo's tags and placings (I91) |
+| textfiles.com (www and artscene) | scene (ADR 0009) | `art/DECUS/`, `adventure/`, `piracy/`, `ansimusic/` listings |
+| Wikimedia Commons | public domain or the file's licence | licence read from each file's metadata (API `extmetadata`) |
+| Unix history repository (GitHub) | the file's licence | 4.4BSD-Lite2 files carry the University of California licence with its advertising clause |
+| IOCCC | CC BY-SA 4.0 | [ioccc.org/license.html](https://www.ioccc.org/license.html) |
+| The Ultimate Oldschool PC Font Pack (int10h.org) | CC BY-SA 4.0 | its readme |
+| Esolang wiki | CC0 1.0 | its copyright page |
+
+Candidates for the next manifests, by family, are leads I91–I94: Demozoo tags, the Wayback
+Machine, searches by practice, loose files found elsewhere.
+
 ## What the cartography report got wrong or could not support
 
 - **Demozoo's license.** The report says "licence permissive permettant la réutilisation des

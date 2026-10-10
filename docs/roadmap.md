@@ -135,6 +135,13 @@ needs the one before says so.
     and BIN dumps after grid v2 (I85); man pages (I87); ZZT (I88); captures after a spike
     (I86); Minitel once a source is found (I57). Never a cracked program; third-party software
     screens shown only after the owner's and the lawyer's decision.
+22. [ ] One representative of every practice ([ADR 0031](adr/0031-one-representative-of-every-practice.md),
+    owner's request of 2026-10-10): registry `corpus/practices.yaml` (`tm corpus practices`),
+    manifest `corpus/acquisitions.yaml` (`tm acquire`).
+    - [x] Registry of 86 practices in 15 families; 19 held from the holdings, 17 more acquired
+      (36 of 86 on 2026-10-10)
+    - [ ] Next manifests, family by family: unicode and scripts, games, screens, networks first
+      (I91–I94); `record` holdings once the schema has them (I95)
 
 Later, deliberately (nothing depends on them yet):
 

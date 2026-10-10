@@ -62,6 +62,7 @@ Rules:
 | Q39 | What made a screen art? The same cells drew interfaces, NFO, quit screens and artpacks: box drawing, shades and colour measured in each family, and whether the art scene's habits left it (ANSI artists drawing ENDOOM screens, BBS software menus) or came from it | owner, 2026-10-10 (ADR 0030) | features v1 by `work.usage`, once screens and documents are in | open |
 | Q40 | Did the warez NFO and the art NFO share hands and templates before the art groups stood apart? textfiles' `piracy/NFO/` (978 entries, 1990 on) against 16colo's NFO | owner, 2026-10-10 (ADR 0030) | text layer and handles of both, by year | open |
 | Q41 | Who drew the ASCII headers of walkthroughs and FAQs, and did they borrow the art scene's ASCII styles (FIGlet fonts, oldskool, newskool)? | owner, 2026-10-10 (ADR 0030) | textfiles `adventure/` and `games/`, glyph histograms against the ASCII packs | open |
+| Q42 | Did the same pictures travel from line printers to teleprinters to BBS ASCII? DECUS posters (about 1985), RTTY art and textfiles' ASCII share subjects (Snoopy, Alfred E. Neuman, nudes): copies, conversions or shared models? | field notes, 2026-10-10 | near-duplicates of the grids across the three collections (I40), dates of each | open |
 
 ## Hypotheses (to pre-register before a confirmatory test)
 
@@ -173,6 +174,12 @@ Rules:
 | I88 | A ZZT board decoder (60 × 25 cells, CP437, elements and colours), over the Museum of ZZT's worlds after asking it | ADR 0030 | open |
 | I89 | Programs named in NFO as records without bytes: name, version, group, date, size and hash when given, linking each NFO to the software it travelled with; never the file (ADR 0030 point 4) | ADR 0030 | open |
 | I90 | cd.textfiles.com's shareware CDs: splash screens (ANSI, BIN) and readme files, each dated by its CD; measure it before fetching | ADR 0030 | open |
+| I91 | Demozoo's tags as a map of the practices it knows: `petscii` 2,118, `textmode` 579, `teletext` 447, `atascii` 111, `ansimation` 66, `block-ansi` 24, `mirc` 23, `unicode` 6; with competition placings and scene.org links, one query proposes a compo winner per practice (used for the first manifest) | owner, 2026-10-10 (ADR 0031) | taken in part: `corpus/acquisitions.yaml` |
+| I92 | The Wayback Machine for the web era (GeoCities and personal ASCII galleries, chris.com, early forums): its CDX API lists captures by URL prefix; a capture is a witness with a date. Needs a basis: most such files would be `record` holdings unless a licence or a scene archive applies | owner, 2026-10-10 (ADR 0031) | open |
+| I93 | Searches by practice (forums, mailing lists, GitHub repositories with a licence, collectors' sites) for the families with nothing held: unicode and scripts, games, screens, networks. One session per family, results into the source register before any download | owner, 2026-10-10 (ADR 0031) | open |
+| I94 | Loose text files found here and there (personal sites, FTP listings, Discmaster) for practices no archive keeps: each gets its basis, most will be records | owner, 2026-10-10 (ADR 0031) | open |
+| I95 | `record` and `reproduction` holdings need the schema to hold a work with no file, or with a link and a description only (ADR 0031): a migration with the first record | ADR 0031 | open |
+| I96 | `tm acquire` drops a URL's query: the Befunge page is stored at `w/index.php`, format `php`. Keep the query in the path and take the format from the content type when the path has no extension | first acquisition run | open |
 
 ## Curiosities
 
@@ -189,6 +196,7 @@ Rules:
 | C10 | Black Maiden (Brazil) wrote Portuguese with CP437's ä and ö for ã and õ. Did other Brazilian groups share the habit, or use CP860 and look broken on CP437 screens? | D1 additions (maiden14) | open |
 | C13 | Masked board numbers that speak: `DiE-FEDS`, `NOT-OPEN`, `NoB-itch`. What else did the scene write in the digits' place, and when? | spike 0006 | open |
 | C14 | `piracy/SOFTDOCS/`: manuals retyped or rewritten so that cracked programs could be used. Who typed them, did they sign, and did they draw headers like the NFO? | source register, 2026-10-10 | open |
+| C15 | The ATASCII Compo 2021, a party for one character set: who organised it, and are there others like it (PETSCII, teletext, ANSI-only parties)? | field notes, 2026-10-10 | open |
 | C5 | A `.ANS` of 1996 with 605 rows of grey line drawing (`02-STEPS.ANS`, swap07): line art in ANSI, how common? | explorer | open |
 | C12 | Community 19 gathers 411 works drawn strictly line by line, with box lines and weight high: menus and screens written top to bottom by a program (a BBS menu generator) rather than drawn in an editor? | nearest-works graph, communities | open |
 | C11 | Several of the tallest works (`43-duck.ans`, `we-sublime.ans`, thousands of rows) are nearly black below their first screens when seen whole: padding written by the editor, a decoder that counts written blank rows, or works meant to scroll into darkness? | explorer "whole work" cards, 2026-10-09 | open |

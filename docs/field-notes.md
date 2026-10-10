@@ -16,6 +16,22 @@ entry).
 Add an entry whenever the work turns up something worth telling (CLAUDE.md, "During the
 session"). Newest first.
 
+## 2026-10-10 — Before the screen, the printer; a party for one character set
+
+**Computer labs printed posters on line printers, darkened by striking twice.** The DECUS
+poster collection (about 1985) holds portraits, comic characters and greetings printed on line
+printers; some lines end without a line feed, so the printer strikes the row again and the
+cells come out near black. RTTY art did the same on teleprinters: the grey scale of the
+character arts began as overprinting on paper, before the screen's shade blocks. *Evidence:
+textfiles.com `art/DECUS/` listing and its introduction; `beethoven.txt` acquired (136,950
+bytes). Coverage: one collection, its dates as textfiles gives them.*
+
+**A party held for one character set.** The ATASCII Compo 2021 was a party of its own for the
+Atari 8-bit character set, with an ATASCII compo and a "wild" one. Demozoo tags 111
+productions `atascii`, 2,118 `petscii`, 579 `textmode`, 447 `teletext`: the character arts of
+home computers live on as compos, decades after the machines. *Evidence: Demozoo dump of
+2026-10-09, tags and competition placings. Coverage: what Demozoo's editors tagged.*
+
 ## 2026-10-10 — The words in the works (spike 0006)
 
 **The internet replaced the BBS inside the art, and they crossed in 1996.** The share of files
