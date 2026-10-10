@@ -87,3 +87,40 @@ def histogram(values: Sequence[float], low: float, high: float, bins: int) -> li
         if low <= value <= high:
             counts[min(bins - 1, int((value - low) / width))] += 1
     return counts
+
+
+def quantile(ordered: Sequence[float], q: float) -> float:
+    """The `q` quantile of sorted values, interpolated as PostgreSQL's `percentile_cont`."""
+    if not ordered:
+        return 0.0
+    at = q * (len(ordered) - 1)
+    low = int(at)
+    high = min(low + 1, len(ordered) - 1)
+    return ordered[low] + (ordered[high] - ordered[low]) * (at - low)
+
+
+def lorenz(sizes: Sequence[int], points: int = 40) -> list[tuple[float, float]]:
+    """The Lorenz curve of `sizes`: for the smallest share x of the groups, the share y of
+    the total they hold, sampled at about `points` places from (0, 0) to (1, 1)."""
+    ordered = sorted(sizes)
+    total = sum(ordered)
+    if not total:
+        return [(0.0, 0.0), (1.0, 1.0)]
+    curve = [(0.0, 0.0)]
+    held = 0
+    step = max(1, len(ordered) // points)
+    for i, size in enumerate(ordered, 1):
+        held += size
+        if i % step == 0 or i == len(ordered):
+            curve.append((i / len(ordered), held / total))
+    return curve
+
+
+def gini(sizes: Sequence[int]) -> float:
+    """0 when every group holds as much, towards 1 when one holds everything."""
+    ordered = sorted(sizes)
+    total, n = sum(ordered), len(ordered)
+    if not total:
+        return 0.0
+    weighted = sum((2 * i - n - 1) * size for i, size in enumerate(ordered, 1))
+    return weighted / (n * total)

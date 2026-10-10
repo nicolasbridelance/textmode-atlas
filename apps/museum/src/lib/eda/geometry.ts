@@ -6,6 +6,9 @@
 export const CHART = {
 	width: 640, // until the chart has measured its container
 	minWidth: 280,
+	height: 220, // a chart's height, unless it says otherwise
+	barHeight: 200,
+	axisTitle: 32, // an axis title sits this far below its axis
 	tickGap: 6, // between an axis and its labels
 	tickBaseline: 4, // lowers a label onto the middle of its line
 	axisLabel: 8, // x labels sit this far above the bottom edge

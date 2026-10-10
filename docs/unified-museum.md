@@ -34,7 +34,8 @@ is a compatibility alias. The existing machine-local Wi-Fi forwarding still work
   the host recomputes everything when the database's write counter moves (looked at every
   30 s), and the page says beside a reading when its check no longer holds. Catalogue
   metadata over every pack, grid measures over train packs only, hidden works counted
-  nowhere. The first computation takes 10–30 s after the host starts.
+  nowhere. The first computation takes 10–30 s after the host starts. Without a host, the
+  page reads the last snapshot `tm eda --publish` wrote to the public bucket and says so.
 - `/fr/research` and `/research`: existing dated reports and research programme.
   Source documents retain their original language and dataset scope.
 - `/fr/work?w=<sha256>` and its English equivalent: conservation, credit, audience,

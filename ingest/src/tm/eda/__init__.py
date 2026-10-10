@@ -8,6 +8,7 @@ suggests is tested later on the `test` packs, which it never reads for grid meas
 
 from __future__ import annotations
 
+import json
 import time
 from datetime import UTC, datetime
 from typing import Any
@@ -15,9 +16,13 @@ from typing import Any
 from sqlalchemy import Connection, text
 
 from tm.access import load_access
-from tm.eda.chapters import Scope, contents, material, peak, sauce
+from tm.eda.base import Scope
+from tm.eda.chapters import contents, makers, peak, sauce
+from tm.eda.grids import grids
+from tm.storage import ObjectStore
 
-SCHEMA = 1
+SCHEMA = 2
+PUBLIC_KEY = "eda/snapshot.json"  # where the static site finds the last published snapshot
 # Any write anywhere changes it: inserts, updates and deletes counted by PostgreSQL itself.
 FINGERPRINT = """select coalesce(sum(n_tup_ins + n_tup_upd + n_tup_del), 0)::bigint
 from pg_stat_user_tables"""
@@ -34,7 +39,7 @@ def snapshot(conn: Connection) -> dict[str, Any]:
     mark = fingerprint(conn)
     access = load_access(conn)
     scope = Scope(sorted(sha for sha, rule in access.items() if rule.shown == "nothing"))
-    grids = material(conn, scope)
+    measured = grids(conn, scope)
     return {
         "schema": SCHEMA,
         "computed_at": datetime.now(UTC).isoformat(timespec="seconds"),
@@ -43,9 +48,19 @@ def snapshot(conn: Connection) -> dict[str, Any]:
         "chapters": {
             "contents": contents(conn, scope),
             "peak": peak(conn, scope),
+            "makers": makers(conn, scope),
             "sauce": sauce(conn, scope),
-            "composition": grids["composition"],
-            "revival": grids["revival"],
+            "composition": measured["composition"],
+            "palette": measured["palette"],
+            "revival": measured["revival"],
         },
         "seconds": round(time.perf_counter() - started, 2),
     }
+
+
+def publish(found: dict[str, Any], public: ObjectStore) -> str:
+    """Write a snapshot where the static site reads it: aggregates only, hidden works already
+    left out of every count (ADR 0028, amendment 1). Returns the key written."""
+    data = json.dumps(found, default=str, separators=(",", ":")).encode()
+    public.put(PUBLIC_KEY, data, "application/json")
+    return PUBLIC_KEY

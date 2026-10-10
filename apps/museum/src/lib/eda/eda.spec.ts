@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2026 textmode-atlas contributors
 // SPDX-License-Identifier: Apache-2.0
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+vi.mock('$app/env/public', () => ({ FILES_BASE: '/files' }));
+
 import { checkState, everyYear, formatter, labelEvery, loadSnapshot, ticks } from './eda';
 
 describe('exploration helpers', () => {
@@ -32,7 +34,28 @@ describe('exploration helpers', () => {
 		expect(f.pIs(0.03)).toBe('= 0.03');
 	});
 
-	it('reads nothing from a host without the exploration', async () => {
+	it('reads nothing from an older host', async () => {
+		const old = async () => new Response(JSON.stringify({ schema: 1 }), { status: 200 });
+		expect(await loadSnapshot(old as typeof fetch)).toBeNull();
+	});
+
+	it('falls back to the published snapshot without a live host', async () => {
+		const published = JSON.stringify({ schema: 2, computed_at: '2026-10-10' });
+		const site = async (url: string) =>
+			url === '/files/eda/snapshot.json'
+				? new Response(published, { status: 200 })
+				: new Response('', { status: 404 });
+		const found = await loadSnapshot(site as typeof fetch);
+		expect(found?.live).toBe(false);
+		expect(found?.snapshot.computed_at).toBe('2026-10-10');
+	});
+
+	it('prefers the live host', async () => {
+		const host = async () => new Response(JSON.stringify({ schema: 2 }), { status: 200 });
+		expect((await loadSnapshot(host as typeof fetch))?.live).toBe(true);
+	});
+
+	it('reads nothing when neither answers', async () => {
 		const none = async () => new Response('', { status: 404 });
 		expect(await loadSnapshot(none as typeof fetch)).toBeNull();
 	});
