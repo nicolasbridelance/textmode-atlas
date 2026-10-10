@@ -31,3 +31,6 @@ apps/museum/static/data/
 
 # Machine-local files (tools, private backups, evidence, worktrees), all in one folder
 /.local/
+
+# Claude Code settings of one machine (permissions granted by the owner)
+.claude/settings.local.json
