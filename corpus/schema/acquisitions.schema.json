@@ -96,6 +96,11 @@
           "default": null,
           "title": "Pattern"
         },
+        "escapes": {
+          "default": false,
+          "title": "Escapes",
+          "type": "boolean"
+        },
         "credit": {
           "anyOf": [
             {
