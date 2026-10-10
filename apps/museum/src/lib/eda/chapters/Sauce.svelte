@@ -33,7 +33,7 @@
 </script>
 
 <section id="sauce">
-	<h2>{m.eda_sauce_title()}</h2>
+	<h3>{m.eda_sauce_title()}</h3>
 	<p>{m.eda_sauce_why()}</p>
 	<Figure
 		caption={m.eda_sauce_fig_years()}

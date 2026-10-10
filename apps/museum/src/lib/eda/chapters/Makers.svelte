@@ -23,7 +23,7 @@
 </script>
 
 <section id="makers">
-	<h2>{m.eda_makers_title()}</h2>
+	<h3>{m.eda_makers_title()}</h3>
 	<p>{m.eda_makers_why()}</p>
 	<Figure
 		caption={m.eda_makers_fig_top()}

@@ -22,7 +22,7 @@
 </script>
 
 <section id="peak">
-	<h2>{m.eda_peak_title()}</h2>
+	<h3>{m.eda_peak_title()}</h3>
 	<p>{m.eda_peak_why()}</p>
 	<Figure
 		caption={m.eda_peak_fig_works()}

@@ -35,7 +35,7 @@
 </script>
 
 <section id="contents">
-	<h2>{m.eda_contents_title()}</h2>
+	<h3>{m.eda_contents_title()}</h3>
 	<p>{m.eda_contents_why()}</p>
 	<Figure
 		caption={m.eda_contents_fig()}
