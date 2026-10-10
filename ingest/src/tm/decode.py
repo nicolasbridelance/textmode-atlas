@@ -88,7 +88,7 @@ def decode_artifact(
     except DecodeError as err:
         return _error(conn, row, path, err.kind)
     grid, problems, stream = decoded.grid, decoded.sauce_problems, decoded.stream
-    _put_grid(derived, grid_key(sha256, DECODER, DECODER_VERSION), grid)
+    put_grid(derived, grid_key(sha256, DECODER, DECODER_VERSION), grid)
     conn.execute(
         text(
             "insert into decoding (sha256, decoder, decoder_version, status, grid_sha256, cols,"
@@ -123,7 +123,7 @@ def _error(conn: Connection, row: dict[str, str], path: str, error_class: str) -
     return Decoded(path, row["sha256"], error_class)
 
 
-def _put_grid(store: ObjectStore, key: str, grid: Grid) -> None:
+def put_grid(store: ObjectStore, key: str, grid: Grid) -> None:
     """Write the grid once; an object already there must hold the same grid."""
     if store.exists(key):
         if from_parquet(store.get(key)).digest() != grid.digest():
