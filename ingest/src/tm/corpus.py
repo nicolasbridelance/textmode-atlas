@@ -13,13 +13,14 @@ from __future__ import annotations
 import datetime as dt
 import json
 from pathlib import Path
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Literal, get_args
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator, model_validator
 from tm_render.grid import ATTRIBUTES
 
 from tm.i18n import LocalizedText
+from tm.rights import SceneArchive
 
 Sha256 = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
 Slug = Annotated[str, Field(pattern=r"^[a-z0-9]+(-[a-z0-9]+)*$")]
@@ -306,6 +307,65 @@ class Practices(BaseModel):
         return [practice for practice in self.practices if practice.representative]
 
 
+Basis = Literal["scene", "license", "public-domain"]
+SourceName = Annotated[str, Field(pattern=r"^[a-z0-9]+([.-][a-z0-9]+)*$")]
+
+
+class AcquisitionSource(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: SourceName
+    url: HttpUrl
+    note: str
+
+
+class Acquisition(BaseModel):
+    """One file chosen to represent a practice, and why the museum may hold it (ADR 0031)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    practice: Slug
+    title: str
+    url: HttpUrl
+    source: SourceName
+    basis: Basis
+    license: str | None = None
+    why: str
+
+    @model_validator(mode="after")
+    def _basis_is_complete(self) -> Acquisition:
+        if self.basis == "license" and not self.license:
+            raise ValueError(f"{self.url}: a licensed file names its licence")
+        if self.basis == "scene" and self.source not in get_args(SceneArchive):
+            raise ValueError(f"{self.url}: {self.source} is not a scene archive (ADR 0009)")
+        return self
+
+
+class Acquisitions(BaseModel):
+    """The manifest of single acquisitions: what `tm acquire` fetches, from where, on what basis."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    version: Annotated[int, Field(ge=1)]
+    sources: list[AcquisitionSource] = Field(min_length=1)
+    entries: list[Acquisition] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _consistent(self) -> Acquisitions:
+        names = {source.name for source in self.sources}
+        unknown = sorted({entry.source for entry in self.entries} - names)
+        if unknown:
+            raise ValueError(f"unknown sources: {', '.join(unknown)}")
+        urls = [str(entry.url) for entry in self.entries]
+        twice = sorted({url for url in urls if urls.count(url) > 1})
+        if twice:
+            raise ValueError(f"each file is acquired once: {', '.join(twice)}")
+        return self
+
+    def source(self, name: str) -> AcquisitionSource:
+        return next(source for source in self.sources if source.name == name)
+
+
 KINDS: dict[str, type[BaseModel]] = {
     "system": CharacterSystem,
     "charset": Charset,
@@ -315,25 +375,30 @@ KINDS: dict[str, type[BaseModel]] = {
     "radios": Radios,
     "grid": Grid,
     "practices": Practices,
+    "acquisitions": Acquisitions,
 }
 
 
 REGISTRIES = {"systems": "system", "charsets": "charset", "palettes": "palette"}
 
 
+# Files named for what they hold, at the corpus root or in their folder.
+NAMED = {
+    "radios.yaml": "radios",
+    "practices.yaml": "practices",
+    "acquisitions.yaml": "acquisitions",
+    "ratings/grid.yaml": "grid",
+}
+FOLDERS = {**REGISTRIES, "profiles": "profile", "collections": "collection"}
+
+
 def kind_of(path: Path) -> str:
-    if path.name == "radios.yaml":
-        return "radios"
-    if path.name == "practices.yaml":
-        return "practices"
-    if path.parent.name in REGISTRIES:
-        return REGISTRIES[path.parent.name]
-    if path.parent.name == "profiles":
-        return "profile"
-    if path.parent.name == "collections":
-        return "collection"
-    if path.parent.name == "ratings" and path.name == "grid.yaml":
-        return "grid"
+    folder = path.parent.name
+    for name in (path.name, f"{folder}/{path.name}"):
+        if name in NAMED:
+            return NAMED[name]
+    if folder in FOLDERS:
+        return FOLDERS[folder]
     raise ValueError(f"unknown corpus file: {path}")
 
 
@@ -353,7 +418,12 @@ def load_practices(path: Path) -> Practices:
 def corpus_files(root: Path) -> list[Path]:
     folders = ["profiles", "collections", *REGISTRIES]
     files = sorted(path for folder in folders for path in root.glob(f"{folder}/*.yaml"))
-    extra = [root / "radios.yaml", root / "practices.yaml", root / "ratings" / "grid.yaml"]
+    extra = [
+        root / "radios.yaml",
+        root / "practices.yaml",
+        root / "acquisitions.yaml",
+        root / "ratings" / "grid.yaml",
+    ]
     return files + [path for path in extra if path.exists()]
 
 
@@ -366,9 +436,25 @@ def json_schemas() -> dict[str, str]:
     }
 
 
+def load_acquisitions(path: Path) -> Acquisitions:
+    return Acquisitions.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))
+
+
+def _unknown_practices(root: Path) -> list[str]:
+    manifest = root / "acquisitions.yaml"
+    if not manifest.exists():
+        return []
+    practices = {p.code for p in load_practices(root / "practices.yaml").practices}
+    return [
+        f"{manifest}: {entry.url} names no practice {entry.practice}"
+        for entry in load_acquisitions(manifest).entries
+        if entry.practice not in practices
+    ]
+
+
 def broken_references(root: Path) -> list[str]:
-    """What a character system names that the corpus does not hold."""
-    problems: list[str] = []
+    """What a character system or an acquisition names that the corpus does not hold."""
+    problems = _unknown_practices(root)
     for path in sorted(root.glob("systems/*.yaml")):
         system = CharacterSystem.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))
         wanted = [

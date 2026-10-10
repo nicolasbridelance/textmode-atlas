@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import json
+import time
 from collections import Counter
 from pathlib import Path
 from typing import Annotated
@@ -16,6 +17,7 @@ from tm_render.conservation import MAX_SCALE, BitmapFont
 
 from tm import corpus as corpus_mod
 from tm import ratings
+from tm.acquire import acquire
 from tm.acquisitions import load_acquisitions
 from tm.audience import rate_flashing, rate_words
 from tm.budget import BudgetError, Ledger
@@ -54,6 +56,7 @@ SiteRoot = Annotated[
     Path | None, typer.Option(help="Root of a mirror laid out as the archive's site (ADR 0024).")
 ]
 FONT = Path("ibm-vga-8x16.f16")
+ACQUIRE_PAUSE_SECONDS = 2  # one request at a time, politely
 
 
 @corpus_app.command("check")
@@ -199,6 +202,30 @@ def ingest_golden_command(
     with engine.begin() as conn:
         for item in ingest_golden(conn, store, root):
             typer.echo(f"{'ingested' if item.new else 'already known'} {item.path} {item.sha256}")
+
+
+@app.command("acquire")
+def acquire_command(
+    manifest: Annotated[Path, typer.Option(help="Manifest of single acquisitions.")] = Path(
+        "corpus/acquisitions.yaml"
+    ),
+    practice: Annotated[
+        str | None, typer.Option(help="Only the entries for this practice.")
+    ] = None,
+) -> None:
+    """Fetch and store the files the manifest names, one at a time (ADR 0031)."""
+    registry = corpus_mod.load_acquisitions(manifest)
+    entries = [e for e in registry.entries if practice in (None, e.practice)]
+    cfg = settings()
+    store = S3Store(s3_client(), cfg.originals_bucket)
+    engine = create_engine(cfg.database_url)
+    for entry in entries:
+        with engine.begin() as conn:  # one transaction per file
+            got = acquire(conn, store, entry, registry.source(entry.source))
+        state = "new work" if got.new_work else "fetched" if got.fetched else "already held"
+        typer.echo(f"{entry.practice}: {state} {got.sha256} {got.url}")
+        if got.fetched:
+            time.sleep(ACQUIRE_PAUSE_SECONDS)
 
 
 SHARD_HELP = "Take only shard i of n (i/n): run n processes, one per index, to share the work."
