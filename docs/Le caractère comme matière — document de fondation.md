@@ -348,7 +348,7 @@ create table work (
   id        uuid primary key,
   kind      text not null check (kind in ('single','set')),  -- set = pack, disquette, BBS
   title     text,
-  usage     text[],   -- image, signature, emblem, world, place, interface, tool
+  usage     text[],   -- image, signature, emblem, world, place, interface, tool, document (ADR 0030)
   system    text[],   -- ansi-cp437, petscii, atascii, teletext, unicode...
   scene     text[],
   channel   text[],   -- bbs, artpack, usenet, broadcast, web, irc
@@ -757,7 +757,7 @@ Six jalons, chacun avec un livrable et un critère de sortie vérifiable. Le pé
 | M2 Chaîne ANSI | `tm ingest`, `tm decode`, `tm render`, `tm features` sur 20 packs | test de déterminisme vert ; 100 % des fichiers ont une grille ou une erreur classée |
 | M3 Site minimal | fiche d'œuvre, bascule de profils, lecture temporisée, timeline, radio de la scène | une œuvre consultable de la source à l'analyse ; `can_display()` couvert par des tests ; le parcours tient sur téléphone |
 | M4 Passage à l'échelle | tout 16colo en métadonnées ; extraction des crédits depuis les NFO | taux de couverture publié ; précision de l'extraction mesurée sur 200 lignes relues |
-| M5 Extensions | Usenet, demoscene, PETSCII et ATASCII, télétexte, Minitel, AA japonais, FAQ, jeux ; musique des œuvres | un décodeur, un profil et une collection par système ajouté ; modules joués seulement pour les œuvres autorisées |
+| M5 Extensions | Usenet, demoscene, PETSCII et ATASCII, télétexte, Minitel, AA japonais, FAQ, jeux ; écrans et documents de l'informatique en mode texte (ADR 0030) ; musique des œuvres | un décodeur, un profil et une collection par système ajouté ; modules joués seulement pour les œuvres autorisées |
 
 M1 et M2 peuvent avancer en parallèle. Le prototype de l'écran d'œuvre commence dès M2, sur les artefacts de référence (CC0) et les premières œuvres autorisées, sans attendre le reste de M3. Les cinq premiers entretiens se font pendant M2 et M3.
 
@@ -897,6 +897,7 @@ Pratiques voisines relevées par la cartographie, classées par proximité avec 
 | AA japonais (Shift_JIS, 2channel), pseudographie soviétique et FidoNet, BBS asiatiques et sud-américains | dans le périmètre ; ce sont des scènes du même art, sous-représentées dans les archives occidentales |
 | Vidéotex hors Europe (Telidon, NAPLPS, CAPTAIN), Minitel | dans le périmètre ; un décodeur par norme, NAPLPS et CAPTAIN étant en partie vectoriels, à évaluer |
 | RTTY art, art de la machine à écrire, FIGlet, bannières | dans le périmètre comme collections ; la machine à écrire relève de la numérisation d'objets physiques, donc d'un niveau `conservation` sans original numérique |
+| Écrans de l'informatique en mode texte (systèmes, interfaces, écrans d'accueil et de sortie, jeux, Minitel), documents (NFO, DIZ, readme, manuels, pages de man, soluces, FAQ) et scène warez (NFO, cracktros, textes) | dans le périmètre comme collections, l'usage de chaque œuvre la distinguant de l'art ; jamais un programme cracké ni un logiciel commercial ; écrans de logiciels tiers montrés seulement avec un droit ([ADR 0030](adr/0030-screens-and-documents-of-text-mode-computing.md)) |
 | Code source graphique (IOCCC), sizecoding, polices des ROM de caractères | collections secondaires ; les polices ROM entrent d'abord comme données des profils de rendu |
 | Notation des trackers, musique de téléscripteur | liées au son ; à reconsidérer avec la musique des œuvres |
 | Tissage Jacquard, cartes perforées | hors périmètre ; un parcours peut les évoquer comme ancêtres |
