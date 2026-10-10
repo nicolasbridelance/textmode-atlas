@@ -76,3 +76,13 @@ except those that read features through the `work_split` view (about 15 seconds)
 - The static public build cannot show this room without the host: it says so.
 - A new chapter is a function returning figures and checks, plus its messages in every
   required locale.
+
+## Amendment 1 (2026-10-10): a published snapshot for the static site
+
+The owner asked for the charts on the website, which has no live host (the host and domain
+are still to be chosen). `tm eda --publish` writes the snapshot to the public bucket at
+`eda/snapshot.json`, beside what `tm export` publishes; the page reads the live host first and
+falls back to that file, and then says it shows a published snapshot, with its date, not live
+data. The snapshot holds only what the page draws: aggregates, pack-name prefixes, and checks,
+computed with hidden works left out, grid measures from train packs only. Publishing train
+aggregates does not open the test packs. Run it after `tm export`, like `tm lists`.
