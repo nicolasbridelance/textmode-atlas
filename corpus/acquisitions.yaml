@@ -35,6 +35,12 @@ sources:
   - name: freebsd
     url: https://github.com/freebsd/freebsd-src
     note: FreeBSD source tree; BSD licence.
+  - name: nethack
+    url: https://github.com/NetHack/NetHack
+    note: NetHack source tree; NetHack General Public License.
+  - name: ja.wikipedia
+    url: https://ja.wikipedia.org/
+    note: Japanese Wikipedia; text under CC BY-SA 4.0, revisions pinned by oldid.
 
 entries:
   # --- home computers, demoscene -------------------------------------------------------------
@@ -216,3 +222,46 @@ entries:
     why:
       en: "The mascot the boot loader drew in characters beside its menu, 19 rows by 34 columns, on every FreeBSD machine at start."
       fr: "La mascotte que le chargeur d’amorçage dessinait en caractères à côté de son menu, 19 lignes sur 34 colonnes, au démarrage de chaque machine FreeBSD."
+  - practice: roguelikes
+    title: The tombstone of NetHack 3.6
+    url: https://raw.githubusercontent.com/NetHack/NetHack/NetHack-3.6.6_Released/src/rip.c
+    source: nethack
+    basis: excerpt
+    lines: 24-38
+    pattern: '"(.*)"'
+    escapes: true
+    credit: NetHack DevTeam
+    format: ascii
+    why:
+      en: "The grave every NetHack game ends on, drawn in characters with the hero's name, gold and cause of death written on the stone."
+      fr: "La tombe sur laquelle finit toute partie de NetHack, dessinée en caractères, avec le nom du héros, son or et la cause de sa mort gravés sur la pierre."
+  - practice: shift-jis-art
+    title: おまえらもひまな奴らだなぁ (2channel AA)
+    url: https://ja.wikipedia.org/w/index.php?title=%E3%83%A2%E3%83%8A%E3%83%BC&oldid=110719286&action=raw
+    source: ja.wikipedia
+    basis: excerpt
+    lines: 41-47
+    html: true
+    credit: unknown (2channel)
+    format: unicode
+    why:
+      en: "A character of 2channel's AA with its speech balloon, drawn for the proportional MS PGothic font, as quoted in the Japanese article on Mona."
+      fr: "Un personnage des AA de 2channel avec sa bulle, dessiné pour la police proportionnelle MS PGothic, tel que le cite l’article japonais sur Mona."
+  - practice: text-user-interfaces
+    title: Midnight Commander (screenshot)
+    url: https://upload.wikimedia.org/wikipedia/commons/6/6b/Midnight_Commander_screenshot.png
+    source: wikimedia-commons
+    basis: license
+    license: GPL
+    why:
+      en: "The two-panel file manager of the text terminal, its frames, menus and function keys all drawn in characters."
+      fr: "Le gestionnaire de fichiers à deux panneaux du terminal texte, cadres, menus et touches de fonction tous dessinés en caractères."
+  - practice: mosaic
+    title: Justinian and his court (San Vitale, Ravenna, 547)
+    url: https://upload.wikimedia.org/wikipedia/commons/7/74/Justinian_mosaic%2C_San_Vitale%2C_consecrated_547%2C_Ravenna%2C_Italy.jpg
+    source: wikimedia-commons
+    basis: license
+    license: CC-BY-2.0
+    why:
+      en: "An image built of small square tesserae, each one colour: the grid of cells fifteen centuries before the screen."
+      fr: "Une image faite de petites tesselles carrées, chacune d’une couleur : la grille de cellules quinze siècles avant l’écran."
