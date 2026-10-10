@@ -114,6 +114,10 @@ needs the one before says so.
       `just concordance`): file frequencies, contexts, temporal coverage, unresolved SAUCE
       registries; source hashes verified, outputs local in `datasets/build/lexicon/1/`.
       Supports I53; zone classification and entity resolution remain open.
+    - [x] Spike 0006, reading the words with rules and offline tools ([report](spikes/0006-reading-the-words.md)):
+      phone numbers, URLs, credits and file-level language read well; greets need zones and a gold set.
+    - [ ] ADR for the per-line reading (classes, languages, entities as signed readings), from spike 0006.
+    - [ ] D2, first 200 lines drawn from D1 and labelled by a person (class, names, numbers).
 16. [ ] Nomenclature from Wikipedia and Wikidata: a controlled vocabulary (kinds, techniques,
     formats, tools, groups) with QIDs and labels in every language, as data in `corpus/`, used by
     the records and the explorer (I27, I50). ADR before code.
@@ -176,6 +180,7 @@ Detailed in [research-program.md](research-program.md). Phases run alongside the
 | 0002 | Can a canvas draw a 500-line ANSI at cell zoom and modem speed at 60 fps on a mid-range phone? | 2 h | modem-speed playback |
 | 0003 | Can Paraglide build offline (vendored inlang plugins)? | 1 h | known debt below |
 | 0004 | Can a white background keep a work legible and faithful? Palette mappings (inverted value, swapped black/white, ink on paper) on 30 works across content kinds and colour families, judged side by side | 3 h | white-background profile |
+| 0006 | What can plain rules and offline tools read in the words of the works? | 3 h | step 15 ADR; done 2026-10-10 |
 | 0005 | Does a vision model see what an ANSI shows? The ten Calvin and Hobbes works of works v5 (title or text says so) and controls, blind then with context, at 4 sizes, PNG and JPEG: recognition rate, and what the descriptions get wrong | 4 h | any model-written text on the site |
 
 ## M0 tasks that need a person (Nicolas)

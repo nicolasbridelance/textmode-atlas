@@ -39,3 +39,4 @@ And the ADR it leads to, if any.
 | Spike | Question | Outcome |
 | --- | --- | --- |
 | [0001](0001-ansilove-parity.md) | Does our grid renderer match ansilove pixel for pixel? | yes, 96 of 99 VGA files; the rest explained → [ADR 0010](../adr/0010-render-from-the-grid.md) |
+| [0006](0006-reading-the-words.md) | What can plain rules and offline tools read in the words of the works? | phone numbers, URLs, credits and file-level language yes; greets names no (about 52% precision); D2 needed → step 15 ADR |
