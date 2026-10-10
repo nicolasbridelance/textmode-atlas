@@ -10,7 +10,7 @@ version: 1
 
 families:
   - code: scene
-    label: { en: "Computer art scenes", fr: "Scènes de l'art informatique" }
+    label: { en: "Computer art scenes", fr: "Scènes de l’art informatique" }
   - code: home-computers
     label: { en: "Home computers and their character sets", fr: "Micro-ordinateurs et leurs jeux de caractères" }
   - code: networks
@@ -111,7 +111,7 @@ practices:
     sources: [Defacto2, Demozoo, Pouët]
     note: Programs; held as captures, only when a scene archive holds them on their own (ADR 0030).
   - code: latin-american-bbs
-    label: { en: "Latin American BBS art", fr: "Art des BBS d'Amérique latine" }
+    label: { en: "Latin American BBS art", fr: "Art des BBS d’Amérique latine" }
     family: scene
     holding: [file]
     representative: { sha256: 124d6c503b214192e20ca9f69fafed50af3844e2175ad0c230f7858453edb6bd, path: 16colo:1997/maiden14.rar/5D-AHL.ANS }
@@ -159,12 +159,12 @@ practices:
     holding: [file, excerpt, capture]
     sources: [to find]
   - code: apple-ii-text
-    label: { en: "Apple II text and lo-res art", fr: "Art en texte et basse résolution de l'Apple II" }
+    label: { en: "Apple II text and lo-res art", fr: "Art en texte et basse résolution de l’Apple II" }
     family: home-computers
     holding: [file, excerpt, capture]
     sources: [textfiles apple/]
   - code: msx-cpc
-    label: { en: "MSX, Amstrad CPC and other 8-bit character art", fr: "Art en caractères du MSX, de l'Amstrad CPC et des autres 8 bits" }
+    label: { en: "MSX, Amstrad CPC and other 8-bit character art", fr: "Art en caractères du MSX, de l’Amstrad CPC et des autres 8 bits" }
     family: home-computers
     holding: [file, excerpt]
     sources: [Demozoo links, scene.org]
@@ -181,12 +181,12 @@ practices:
 
   # --- networks ------------------------------------------------------------------------------
   - code: usenet-ascii
-    label: { en: "Usenet ASCII art", fr: "Art ASCII d'Usenet" }
+    label: { en: "Usenet ASCII art", fr: "Art ASCII d’Usenet" }
     family: networks
     holding: [file, excerpt]
     sources: [Internet Archive Giganews mbox, asciiart.eu Usenet archive]
   - code: signatures
-    label: { en: "Email and Usenet signatures", fr: "Signatures de courriel et d'Usenet" }
+    label: { en: "Email and Usenet signatures", fr: "Signatures de courriel et d’Usenet" }
     family: networks
     holding: [file, excerpt]
     sources: [Usenet archives]
@@ -197,7 +197,7 @@ practices:
     sources: [to find]
     leads: [I82]
   - code: bbs-ascii
-    label: { en: "ASCII from BBSes and early Internet", fr: "ASCII des BBS et des débuts d'Internet" }
+    label: { en: "ASCII from BBSes and early Internet", fr: "ASCII des BBS et des débuts d’Internet" }
     family: networks
     holding: [file, excerpt]
     representative: { sha256: 5d7856f2ab3d1717ff33e471aea23bbd05590f2279d2c44221a5ad4b7d1e130c, path: textfiles:asciiart/LOGOS/afl1.txt }
@@ -274,7 +274,7 @@ practices:
     representative: { sha256: b4e922bb164f43bc3091f77fb284222fb091ff6d1afb1181bcc314ca983ad09a, path: "textfiles:art/DECUS/beethoven.txt" }
     sources: [to find]
   - code: banners
-    label: { en: "Printed banners (banner, line printer calendars)", fr: "Bannières imprimées (banner, calendriers d'imprimante)" }
+    label: { en: "Printed banners (banner, line printer calendars)", fr: "Bannières imprimées (banner, calendriers d’imprimante)" }
     family: machines
     holding: [file, excerpt, reproduction]
     sources: [Unix sources, to find]
@@ -401,13 +401,13 @@ practices:
     sources: [captures]
     leads: [I86]
   - code: splash-screens
-    label: { en: "Splash and quit screens (ENDOOM)", fr: "Écrans d'accueil et de sortie (ENDOOM)" }
+    label: { en: "Splash and quit screens (ENDOOM)", fr: "Écrans d’accueil et de sortie (ENDOOM)" }
     family: screens
     holding: [file, excerpt, capture]
     sources: [idgames ENDOOM, cd.textfiles.com]
     leads: [I85, I90]
   - code: error-screens
-    label: { en: "Error screens (Guru Meditation, blue screens)", fr: "Écrans d'erreur (Guru Meditation, écrans bleus)" }
+    label: { en: "Error screens (Guru Meditation, blue screens)", fr: "Écrans d’erreur (Guru Meditation, écrans bleus)" }
     family: screens
     holding: [excerpt, capture, record]
     sources: [captures]

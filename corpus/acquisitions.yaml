@@ -53,7 +53,7 @@ entries:
     basis: scene
     why:
       en: "Winner of the ATASCII Compo 2021, a party held for the Atari 8-bit character set alone."
-      fr: "Lauréate de l'ATASCII Compo 2021, une compétition consacrée au seul jeu de caractères des Atari 8 bits."
+      fr: "Lauréate de l’ATASCII Compo 2021, une compétition consacrée au seul jeu de caractères des Atari 8 bits."
   - practice: textmode-demos
     title: Ringnes Motion
     url: https://files.scene.org/get/parties/1996/distortion96/demo/ringnesm.zip
@@ -72,7 +72,7 @@ entries:
     format: ascii
     why:
       en: "From the DECUS poster collection, printer art of computer labs about 1985; some lines are struck twice for near-black cells."
-      fr: "De la collection d'affiches DECUS, art d'imprimante des salles informatiques vers 1985 ; certaines lignes sont frappées deux fois pour des cellules presque noires."
+      fr: "De la collection d’affiches DECUS, art d’imprimante des salles informatiques vers 1985 ; certaines lignes sont frappées deux fois pour des cellules presque noires."
   - practice: ansi-music
     title: Beethoven's 5th Symphony
     url: http://artscene.textfiles.com/ansimusic/songs/5th-symp.ams
@@ -81,7 +81,7 @@ entries:
     format: ansi
     why:
       en: "ANSI music by Ed Bragg (3 April 1992): music played by the escape sequences of a BBS terminal."
-      fr: "Musique ANSI d'Ed Bragg (3 avril 1992) : de la musique jouée par les séquences d'échappement d'un terminal de BBS."
+      fr: "Musique ANSI d’Ed Bragg (3 avril 1992) : de la musique jouée par les séquences d’échappement d’un terminal de BBS."
   - practice: walkthroughs-faqs
     title: "Walkthrough: The Original Colossal Cave"
     url: http://www.textfiles.com/adventure/adventure.txt
@@ -110,7 +110,7 @@ entries:
     license: BSD-4-Clause-UC
     why:
       en: "The manual page of ls as Berkeley released it in 1995, in roff, read on a character terminal."
-      fr: "La page de manuel de ls telle que Berkeley l'a publiée en 1995, en roff, lue sur un terminal en caractères."
+      fr: "La page de manuel de ls telle que Berkeley l’a publiée en 1995, en roff, lue sur un terminal en caractères."
   - practice: source-code-art
     title: westley.c (IOCCC 1988, best layout)
     url: https://www.ioccc.org/1988/westley/westley.c
@@ -129,7 +129,7 @@ entries:
     license: CC0-1.0
     why:
       en: "Befunge-93 (Chris Pressey, 1993), a language whose program is a grid of characters walked by the instruction pointer; the page holds its examples."
-      fr: "Befunge-93 (Chris Pressey, 1993), un langage dont le programme est une grille de caractères que parcourt le pointeur d'instruction ; la page en donne des exemples."
+      fr: "Befunge-93 (Chris Pressey, 1993), un langage dont le programme est une grille de caractères que parcourt le pointeur d’instruction ; la page en donne des exemples."
   - practice: rom-fonts
     title: The Ultimate Oldschool PC Font Pack v2.2
     url: https://int10h.org/oldschool-pc-fonts/download/oldschool_pc_font_pack_v2.2_FULL.zip
@@ -138,7 +138,7 @@ entries:
     license: CC-BY-SA-4.0
     why:
       en: "Remakes of the character ROMs of IBM PCs and compatibles, from VileR's dumps of the original hardware."
-      fr: "Les polices des ROM de caractères des PC IBM et compatibles, refaites par VileR d'après le matériel d'origine."
+      fr: "Les polices des ROM de caractères des PC IBM et compatibles, refaites par VileR d’après le matériel d’origine."
 
   # --- poetry and ancestors, reproductions ----------------------------------------------------
   - practice: calligrams
@@ -164,7 +164,7 @@ entries:
     basis: public-domain
     why:
       en: "Pictures drawn with lines of minute script, by a Viennese scribe of 1748."
-      fr: "Des images tracées en lignes d'écriture minuscule, par un scribe viennois de 1748."
+      fr: "Des images tracées en lignes d’écriture minuscule, par un scribe viennois de 1748."
   - practice: jacquard
     title: Portrait of Joseph Marie Jacquard, woven in silk (1839)
     url: https://upload.wikimedia.org/wikipedia/commons/e/e1/Jacquard_Joseph_Marie_woven_silk.jpg
@@ -172,7 +172,7 @@ entries:
     basis: public-domain
     why:
       en: "A portrait woven on a Jacquard loom from about 24,000 punched cards: an image made of discrete cells a century before the screen."
-      fr: "Un portrait tissé sur un métier Jacquard à partir de quelque 24 000 cartes perforées : une image faite de cellules distinctes, un siècle avant l'écran."
+      fr: "Un portrait tissé sur un métier Jacquard à partir de quelque 24 000 cartes perforées : une image faite de cellules distinctes, un siècle avant l’écran."
   - practice: punched-cards
     title: 80-column punched card
     url: https://upload.wikimedia.org/wikipedia/commons/5/53/80-column_punched_card_edited_by_sub-assemblies_of_a_Pentaconta_electromechanical_telephone_exchange.jpg
@@ -215,4 +215,4 @@ entries:
     format: ascii
     why:
       en: "The mascot the boot loader drew in characters beside its menu, 19 rows by 34 columns, on every FreeBSD machine at start."
-      fr: "La mascotte que le chargeur d'amorçage dessinait en caractères à côté de son menu, 19 lignes sur 34 colonnes, au démarrage de chaque machine FreeBSD."
+      fr: "La mascotte que le chargeur d’amorçage dessinait en caractères à côté de son menu, 19 lignes sur 34 colonnes, au démarrage de chaque machine FreeBSD."
