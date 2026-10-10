@@ -72,7 +72,7 @@ Rules:
 | H6 | One-screen works compose for the 80×25 frame: their ink is centred and their fill higher than the first screen of long scrolls. | centre of mass, fill of rows 0–24 | same rows of scrolls | open |
 | H8 | The golden age is real: across independent sources, artpacks per year peak in the mid-nineties, not only in 16colo. | artpacks per year in each source, overlap-corrected | each source's own curve, resampled | open |
 | H9 | SAUCE was adopted by groups, not by artists or packagers: in 1994, packs of the same group make the same choice more often than chance. | share of packs agreeing with their group's majority (groups by pack-name prefix, packs with 5 ANSI files or more) | choices shuffled across groups of the same sizes, 2,000 draws | explored (all packs, metadata): 83% against 72% by chance (95% of draws below 74%); the packager guess is refuted (7% of fully stamped packs have one SAUCE date). Live in `/corpus`, chapter 3 |
-| H7 | Groups keep a house palette: colour histograms are closer within a group than between groups of the same years. | distance of `fg_hist`/`bg_hist` | group labels permuted within year | open |
+| H7 | Groups keep a house palette: colour histograms are closer within a group than between groups of the same years. | distance of `fg_hist`/`bg_hist` | group labels permuted within year | open; the live exploration (chapter 6) finds the greys carry 41–48% of the ink in every era: compare the hues with the greys set apart, or every group will look alike |
 
 ## Ideas (tools, measures, museum)
 
@@ -155,6 +155,7 @@ Rules:
 | I73 | A live exploratory analysis of the database: the EDA (counts by year, archive, format, group, decoding coverage, rights and audience) computed from PostgreSQL rather than from frozen datasets, served by the API so that the site is always current; frozen research datasets stay as they are for reproducibility (rule 3), and the live page says which it shows. Gated like everything else: aggregates must not leak withheld works | owner, 2026-10-10 | **taken up**: the room `/corpus`, an exploration in chapters whose readings are re-checked on every refresh (ADR 0028) |
 | I74 | SAUCE spread group by group (H9): follow it through people. When an artist moves from a group that writes SAUCE to one that does not, does the second group adopt it sooner? Needs dated memberships (R1); the pack-name prefix stands in for the group until then | live exploration, chapter 3, 2026-10-10 | open |
 | I75 | The revival after 2013 came back taller (median 50 rows against 25) and with bright backgrounds (9.6% of works against 0.3%): how much is the editors' doing? PabloDraw and Moebius offer iCE and write SAUCE by default; date their releases and features in `tool`, then compare works made before and after each (rule 6, H4) | live exploration, chapter 5, 2026-10-10 | open |
+| I76 | Is the revival's concentration (ten groups, 74% of the works) the scene's or 16colo's? Recent packs may reach 16colo mostly through a few large collectives that submit their own releases; other archives of the 2010s (Demozoo productions, sixteencolors' own uploads, artists' sites) would tell | live exploration, chapter 3, 2026-10-10 | open |
 
 ## Curiosities
 
