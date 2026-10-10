@@ -12,6 +12,7 @@ from tm import loose, packs
 from tm.documents import promote_documents
 from tm.loose import ingest_loose
 from tm.packs import TEXTFILES, ingest_pack
+from tm.storage import original_key, sha256_hex
 
 pytestmark = pytest.mark.db
 
@@ -72,3 +73,17 @@ def test_a_loose_text_held_before_is_released_at_its_url(
     assert rows(db, WORK) == [
         ("ansi/information/history.txt", "single", "history.txt", None, None, url)
     ]
+
+
+def test_a_text_whose_original_is_not_stored_waits(
+    db: Connection, stores: Stores, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    path = tmp_path / "ansi" / "info.nfo"
+    path.parent.mkdir(parents=True)
+    path.write_bytes(NFO)
+    with monkeypatch.context() as patch:
+        held_before_adr_0033(patch)
+        ingest_loose(db, stores.originals, path, site_root=tmp_path, source=TEXTFILES)
+    stores.originals.delete(original_key(sha256_hex(NFO)))
+    assert [(p.work, p.held) for p in promote_documents(db, stores.originals)] == [(False, False)]
+    assert rows(db, WORK) == []
